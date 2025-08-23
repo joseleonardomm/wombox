@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMaster - Desafío de Cálculo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Fondo espacial con estrellas */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.1;
+            animation: float 30s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, 40px) scale(1.2); }
+            50% { transform: translate(-30px, 70px) scale(0.8); }
+            75% { transform: translate(10px, 30px) scale(1.1); }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 1;
+            background: rgba(10, 15, 30, 0.7);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(100, 150, 255, 0.3);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-display, .time-display, .level-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .score-display {
+            color: #4ecdc4;
+        }
+        
+        .time-display {
+            color: #ffd166;
+        }
+        
+        .level-display {
+            color: #ff9f1c;
+        }
+        
+        .operation-display {
+            font-size: 48px;
+            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .correct {
+            background: rgba(46, 204, 113, 0.3);
+            border: 2px solid #2ecc71;
+        }
+        
+        .incorrect {
+            background: rgba(231, 76, 60, 0.3);
+            border: 2px solid #e74c3c;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #2a8f88);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .screen {
+            display: none;
+            width: 100%;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4ecdc4, #2a8f88);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ffd166;
+            text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+        }
+        
+        .description {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+        
+        .results-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .final-score {
+            font-size: 72px;
+            color: #4ecdc4;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .time-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #ffd166, #f39c12);
+            width: 100%;
+            border-radius: 5px;
+            transition: width 0.1s linear;
+            margin-bottom: 20px;
+        }
+        
+        .operation-history {
+            margin-top: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .correct-history {
+            color: #2ecc71;
+        }
+        
+        .incorrect-history {
+            color: #e74c3c;
+        }
+        
+        /* Animaciones */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .operation-display {
+                font-size: 36px;
+                padding: 20px;
+                min-height: 150px;
+            }
+            
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .option {
+                padding: 15px;
+                font-size: 20px;
+                min-height: 70px;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+            
+            .game-header {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .operation-display {
+                font-size: 28px;
+                min-height: 120px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo espacial -->
+    <div class="space-background" id="space-background"></div>
+    
+    <div class="container">
+        <!-- Pantalla de inicio -->
+        <div id="start-screen" class="screen active">
+            <h1 class="title">MathMaster Espacial</h1>
+            <p class="description">
+                ¡Viaja por el espacio resolviendo operaciones matemáticas!<br>
+                Cada acierto aumenta la dificultad. ¿Podrás completar las 50 operaciones?
+            </p>
+            <button class="btn" id="start-btn">¡Comenzar!</button>
+            <div>
+                <button class="btn btn-danger" id="how-to-play-btn">¿Cómo jugar?</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de juego -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="score-display">🏆 <span id="score">0</span> pts</div>
+                <div class="level-display">⭐ Nivel <span id="level">1</span></div>
+                <div class="time-display">⏱️ <span id="time">10</span>s</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="operation-display" id="operation"></div>
+            
+            <div class="time-bar" id="time-bar"></div>
+            
+            <div class="options-container" id="options-container">
+                <!-- Las opciones se generarán con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Pantalla de resultados -->
+        <div id="results-screen" class="screen">
+            <h2 class="title">¡Juego Terminado!</h2>
+            
+            <div class="results-container">
+                <p>Operaciones completadas:</p>
+                <div class="final-score" id="final-score">0/50</div>
+                <p>Puntuación final: <span id="total-score">0</span> puntos</p>
+                <p>Nivel máximo alcanzado: <span id="max-level">1</span></p>
+                
+                <div class="operation-history" id="operation-history">
+                    <h3>Historial de operaciones:</h3>
+                    <!-- El historial se generará con JavaScript -->
+                </div>
+            </div>
+            
+            <button class="btn" id="restart-btn">Jugar de Nuevo</button>
+        </div>
+        
+        <!-- Pantalla de instrucciones -->
+        <div id="instructions-screen" class="screen">
+            <h2 class="title">¿Cómo jugar?</h2>
+            
+            <div class="results-container">
+                <ul style="text-align: left; line-height: 2;">
+                    <li>Tienes <strong>10 segundos</strong> para responder cada operación.</li>
+                    <li>Cada acierto suma puntos y aumenta la dificultad.</li>
+                    <li>Si aciertas, el tiempo se reinicia pero la dificultad aumenta.</li>
+                    <li>Si fallas o se acaba el tiempo, el juego termina.</li>
+                    <li>¡Tu objetivo es completar 50 operaciones!</li>
+                    <li>Los puntos se calculan según la dificultad: más puntos por niveles altos.</li>
+                    <li>Las operaciones son completamente aleatorias para que cada partida sea única.</li>
+                </ul>
+            </div>
+            
+            <button class="btn" id="back-btn">Volver al Inicio</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables del juego
+        let score = 0;
+        let operationsCompleted = 0;
+        let level = 1;
+        let timeLeft = 10;
+        let timer;
+        let currentOperation = {};
+        let gameActive = false;
+        let maxLevel = 1;
+        let operationHistory = [];
+        let usedOperations = new Set();
+        
+        // Elementos DOM
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const instructionsScreen = document.getElementById('instructions-screen');
+        
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const levelDisplay = document.getElementById('level');
+        const operationDisplay = document.getElementById('operation');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBar = document.getElementById('progress-bar');
+        const timeBar = document.getElementById('time-bar');
+        const finalScore = document.getElementById('final-score');
+        const totalScoreDisplay = document.getElementById('total-score');
+        const maxLevelDisplay = document.getElementById('max-level');
+        const operationHistoryContainer = document.getElementById('operation-history');
+        
+        // Event listeners
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('restart-btn').addEventListener('click', startGame);
+        document.getElementById('how-to-play-btn').addEventListener('click', showInstructions);
+        document.getElementById('back-btn').addEventListener('click', showStartScreen);
+        
+        // Crear fondo espacial
+        function createSpaceBackground() {
+            const spaceBackground = document.getElementById('space-background');
+            
+            // Crear estrellas
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const size = Math.random() * 3;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                spaceBackground.appendChild(star);
+            }
+            
+            // Crear nebulosas
+            const nebulaColors = ['#4ecdc4', '#ff6b6b', '#6c5ce7', '#ffd166'];
+            for (let i = 0; i < 4; i++) {
+                const nebula = document.createElement('div');
+                nebula.classList.add('nebula');
+                
+                const size = Math.random() * 300 + 200;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                nebula.style.width = `${size}px`;
+                nebula.style.height = `${size}px`;
+                nebula.style.left = `${posX}%`;
+                nebula.style.top = `${posY}%`;
+                nebula.style.background = `radial-gradient(circle, ${nebulaColors[i]}, transparent)`;
+                nebula.style.animationDelay = `${Math.random() * 10}s`;
+                
+                spaceBackground.appendChild(nebula);
+            }
+        }
+        
+        function startGame() {
+            score = 0;
+            operationsCompleted = 0;
+            level = 1;
+            maxLevel = 1;
+            operationHistory = [];
+            usedOperations.clear();
+            updateDisplays();
+            showScreen(gameScreen);
+            generateOperation();
+            startTimer();
+            gameActive = true;
+        }
+        
+        function generateOperation() {
+            let num1, num2, operation, result;
+            let options = [];
+            let operationString;
+            
+            // Aumentar dificultad según el nivel
+            const maxNumber = 10 + (level * 5); // Números más grandes
+            const operations = ['+', '-', '*', '/']; // Incluir división
+            
+            // Generar una operación única
+            let attempts = 0;
+            do {
+                // Seleccionar operación aleatoria
+                const opIndex = Math.floor(Math.random() * operations.length);
+                operation = operations[opIndex];
+                
+                switch(operation) {
+                    case '+':
+                        num1 = Math.floor(Math.random() * maxNumber) + 10;
+                        num2 = Math.floor(Math.random() * maxNumber) + 10;
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        num1 = Math.floor(Math.random() * maxNumber) + 20;
+                        num2 = Math.floor(Math.random() * (num1 - 5)) + 5;
+                        result = num1 - num2;
+                        break;
+                    case '*':
+                        num1 = Math.floor(Math.random() * (level + 5)) + 2;
+                        num2 = Math.floor(Math.random() * (level + 5)) + 2;
+                        result = num1 * num2;
+                        break;
+                    case '/':
+                        // Para división, asegurar que sea exacta
+                        result = Math.floor(Math.random() * 10) + 2;
+                        num2 = Math.floor(Math.random() * 10) + 2;
+                        num1 = result * num2;
+                        break;
+                }
+                
+                operationString = `${num1} ${operation} ${num2}`;
+                attempts++;
+                
+                // Prevenir bucle infinito
+                if (attempts > 50) {
+                    usedOperations.clear();
+                    break;
+                }
+            } while (usedOperations.has(operationString) || result > 200); // Limitar resultado máximo
+            
+            // Guardar la operación actual
+            usedOperations.add(operationString);
+            currentOperation = {
+                num1: num1,
+                num2: num2,
+                operation: operation,
+                result: result,
+                display: operationString
+            };
+            
+            // Generar opciones de respuesta
+            options = [result];
+            while (options.length < 4) {
+                // Generar opciones incorrectas más variadas
+                let wrongOption;
+                const variationType = Math.floor(Math.random() * 3);
+                
+                switch(variationType) {
+                    case 0: // Resultado cercano
+                        const variation = Math.floor(Math.random() * 10) + 1;
+                        wrongOption = result + (Math.random() > 0.5 ? variation : -variation);
+                        break;
+                    case 1: // Error de operación
+                        if (operation === '+') wrongOption = num1 - num2;
+                        else if (operation === '-') wrongOption = num1 + num2;
+                        else if (operation === '*') wrongOption = num1 + num2;
+                        else if (operation === '/') wrongOption = num1 * num2;
+                        break;
+                    case 2: // Número aleatorio en rango similar
+                        const range = Math.max(10, Math.floor(result * 0.5));
+                        wrongOption = Math.floor(Math.random() * range) + (result - range/2);
+                        break;
+                }
+                
+                // Asegurar que no sea negativo, no se repita y sea diferente al resultado correcto
+                if (wrongOption > 0 && !options.includes(wrongOption) && wrongOption !== result) {
+                    options.push(wrongOption);
+                }
+            }
+            
+            // Mezclar opciones
+            options = shuffleArray(options);
+            
+            // Mostrar operación
+            operationDisplay.textContent = `${operationString} = ?`;
+            
+            // Mostrar opciones
+            optionsContainer.innerHTML = '';
+            options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => checkAnswer(option));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Actualizar nivel máximo
+            if (level > maxLevel) {
+                maxLevel = level;
+            }
+            
+            updateDisplays();
+        }
+        
+        function checkAnswer(selectedAnswer) {
+            if (!gameActive) return;
+            
+            clearInterval(timer);
+            gameActive = false;
+            
+            const options = document.querySelectorAll('.option');
+            const correctAnswer = currentOperation.result;
+            
+            // Mostrar respuesta correcta/incorrecta
+            options.forEach(option => {
+                if (parseInt(option.textContent) === correctAnswer) {
+                    option.classList.add('correct');
+                }
+                
+                if (parseInt(option.textContent) === selectedAnswer && selectedAnswer !== correctAnswer) {
+                    option.classList.add('incorrect');
+                }
+                
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Guardar en el historial
+            const isCorrect = selectedAnswer === correctAnswer;
+            operationHistory.push({
+                operation: currentOperation.display,
+                answer: selectedAnswer,
+                correct: correctAnswer,
+                isCorrect: isCorrect
+            });
+            
+            // Verificar respuesta
+            if (isCorrect) {
+                // Respuesta correcta
+                operationsCompleted++;
+                score += level * 10; // Más puntos por niveles más altos
+                
+                // Aumentar nivel cada 5 operaciones
+                if (operationsCompleted % 5 === 0) {
+                    level++;
+                }
+                
+                // Verificar si se completaron 50 operaciones
+                if (operationsCompleted >= 50) {
+                    endGame(true);
+                    return;
+                }
+                
+                // Continuar con siguiente operación después de un breve delay (más rápido)
+                setTimeout(() => {
+                    timeLeft = 10;
+                    generateOperation();
+                    startTimer();
+                    gameActive = true;
+                }, 800); // Reducido de 1500ms a 800ms
+            } else {
+                // Respuesta incorrecta
+                setTimeout(() => endGame(false), 800); // Reducido de 1500ms a 800ms
+            }
+            
+            updateDisplays();
+        }
+        
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 10;
+            updateTimeDisplay();
+            
+            timer = setInterval(() => {
+                timeLeft -= 0.1;
+                updateTimeDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    
+                    // Guardar en el historial
+                    operationHistory.push({
+                        operation: currentOperation.display,
+                        answer: null,
+                        correct: currentOperation.result,
+                        isCorrect: false
+                    });
+                    
+                    endGame(false);
+                }
+            }, 100);
+        }
+        
+        function updateTimeDisplay() {
+            timeDisplay.textContent = timeLeft.toFixed(1);
+            timeBar.style.width = `${(timeLeft / 10) * 100}%`;
+            
+            // Cambiar color cuando el tiempo se agota
+            if (timeLeft < 3) {
+                timeBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+            } else {
+                timeBar.style.background = 'linear-gradient(90deg, #ffd166, #f39c12)';
+            }
+        }
+        
+        function updateDisplays() {
+            scoreDisplay.textContent = score;
+            levelDisplay.textContent = level;
+            progressBar.style.width = `${(operationsCompleted / 50) * 100}%`;
+        }
+        
+        function endGame(victory) {
+            clearInterval(timer);
+            gameActive = false;
+            
+            if (victory) {
+                finalScore.textContent = '50/50';
+            } else {
+                finalScore.textContent = `${operationsCompleted}/50`;
+            }
+            
+            totalScoreDisplay.textContent = score;
+            maxLevelDisplay.textContent = maxLevel;
+            
+            // Mostrar historial de operaciones
+            operationHistoryContainer.innerHTML = '<h3>Historial de operaciones:</h3>';
+            operationHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.classList.add('history-item');
+                historyItem.classList.add(item.isCorrect ? 'correct-history' : 'incorrect-history');
+                
+                historyItem.innerHTML = `
+                    <span>${index + 1}. ${item.operation} = ${item.answer || 'Sin respuesta'}</span>
+                    <span>${item.isCorrect ? '✓' : `✗ (Correcto: ${item.correct})`}</span>
+                `;
+                
+                operationHistoryContainer.appendChild(historyItem);
+            });
+            
+            showScreen(resultsScreen);
+        }
+        
+        function showInstructions() {
+            showScreen(instructionsScreen);
+        }
+        
+        function showStartScreen() {
+            showScreen(startScreen);
+        }
+        
+        function showScreen(screen) {
+            // Ocultar todas las pantallas
+            startScreen.classList.remove('active');
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.remove('active');
+            instructionsScreen.classList.remove('active');
+            
+            // Mostrar la pantalla solicitada
+            screen.classList.add('active');
+        }
+        
+        // Función para mezclar array (algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Inicializar
+        window.onload = function() {
+            createSpaceBackground();
+        };
+    </script>
+</body>
+</html>

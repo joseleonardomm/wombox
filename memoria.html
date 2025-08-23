@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoriza el Camino - Controles Táctiles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a, #0a1a2a);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Fondo moderno con efectos */
+        .modern-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            perspective: 1000px;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--color1), var(--color2));
+            opacity: 0.15;
+            filter: blur(40px);
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            --color1: rgba(78, 205, 196, 0.5);
+            --color2: rgba(42, 143, 136, 0.5);
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            --color1: rgba(255, 159, 28, 0.5);
+            --color2: rgba(255, 209, 102, 0.5);
+            width: 250px;
+            height: 250px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+        
+        .shape-3 {
+            --color1: rgba(108, 92, 231, 0.5);
+            --color2: rgba(74, 60, 193, 0.5);
+            width: 200px;
+            height: 200px;
+            bottom: 15%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, 30px) rotate(5deg);
+            }
+            50% {
+                transform: translate(0, 60px) rotate(0deg);
+            }
+            75% {
+                transform: translate(-20px, 30px) rotate(-5deg);
+            }
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 1;
+            background: rgba(15, 25, 35, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .level-display, .lives-display, .timer-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .level-display {
+            color: #4ecdc4;
+        }
+        
+        .lives-display {
+            color: #ffd166;
+        }
+        
+        .timer-display {
+            color: #ff9f1c;
+        }
+        
+        .game-board {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .cell {
+            width: 10%;
+            height: 10%;
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .path {
+            background-color: #4ecdc4;
+        }
+        
+        .player {
+            background-color: #ffd166;
+            border-radius: 50%;
+            z-index: 10;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(255, 209, 102, 0.7);
+        }
+        
+        .correct {
+            background-color: #2ecc71;
+        }
+        
+        .wrong {
+            background-color: #e74c3c;
+            animation: shake 0.5s ease;
+        }
+        
+        .screen {
+            display: none;
+            width: 100%;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4ecdc4, #2a8f88);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+        
+        .btn:hover:before {
+            animation: btnShine 1.5s ease;
+        }
+        
+        @keyframes btnShine {
+            0% {
+                left: -50%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                left: 100%;
+                opacity: 0;
+            }
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ffd166;
+            text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffd166, transparent);
+            border-radius: 3px;
+        }
+        
+        .description {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .instructions:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #4ecdc4, #2a8f88);
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .control-key {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        /* Controles táctiles */
+        .touch-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            max-width: 200px;
+            margin: 20px auto;
+        }
+        
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .control-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 30%, rgba(255, 255, 255, 0.2) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .control-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+        
+        .control-btn:active:before {
+            opacity: 1;
+        }
+        
+        .up-btn {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .left-btn {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .down-btn {
+            grid-column: 2;
+            grid-row: 3;
+        }
+        
+        .right-btn {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        
+        /* Modo tocar celdas directamente */
+        .tap-mode-container {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
+            border-radius: 20px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 30px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4ecdc4;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        /* Animaciones */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-board {
+                height: 320px;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+            
+            .game-header {
+                justify-content: center;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .floating-shape {
+                transform: scale(0.8);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-board {
+                height: 280px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .floating-shape {
+                transform: scale(0.6);
+            }
+            
+            .bg-grid {
+                background-size: 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo moderno -->
+    <div class="modern-background">
+        <div class="bg-grid"></div>
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <!-- Las partículas se generarán con JavaScript -->
+    </div>
+    
+    <div class="container">
+        <!-- Pantalla de inicio -->
+        <div id="start-screen" class="screen active">
+            <h1 class="title">Memoriza el Camino</h1>
+            <p class="description">
+                Memoriza el camino que se ilumina y luego recórrelo.<br>
+                ¡Cada nivel es más difícil! ¿Podrás completar los 6 niveles?
+            </p>
+            
+            <div class="instructions">
+                <h3>Instrucciones:</h3>
+                <ul>
+                    <li>Observa atentamente el camino que se ilumina durante unos segundos</li>
+                    <li>Usa los controles en pantalla o toca directamente las casillas para moverte</li>
+                    <li>Solo puedes pasar por las casillas que formaban parte del camino</li>
+                    <li>Si te sales del camino, pierdes una vida</li>
+                    <li>Completa todos los niveles para ganar</li>
+                </ul>
+            </div>
+            
+            <button class="btn" id="start-btn">¡Comenzar!</button>
+        </div>
+        
+        <!-- Pantalla de juego -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="level-display">Nivel: <span id="level">1</span>/6</div>
+                <div class="lives-display">Vidas: <span id="lives">3</span> ❤️</div>
+                <div class="timer-display">Tiempo: <span id="timer">10</span>s</div>
+            </div>
+            
+            <div class="game-board" id="game-board">
+                <!-- Las celdas se generarán con JavaScript -->
+            </div>
+            
+            <div class="tap-mode-container">
+                <span>Modo tocar celdas:</span>
+                <label class="switch">
+                    <input type="checkbox" id="tap-mode-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="touch-controls" id="touch-controls">
+                <div class="control-btn up-btn" id="up-btn">↑</div>
+                <div class="control-btn left-btn" id="left-btn">←</div>
+                <div class="control-btn down-btn" id="down-btn">↓</div>
+                <div class="control-btn right-btn" id="right-btn">→</div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de nivel completado -->
+        <div id="level-complete-screen" class="screen">
+            <h2 class="title">¡Nivel <span id="completed-level">1</span> Completado!</h2>
+            
+            <div class="description">
+                <p>Preparando el siguiente nivel...</p>
+            </div>
+        </div>
+        
+        <!-- Pantalla de juego terminado -->
+        <div id="game-over-screen" class="screen">
+            <h2 class="title">¡Juego Terminado!</h2>
+            
+            <div class="description">
+                <p id="game-result">Has completado todos los niveles</p>
+                <p>Nivel alcanzado: <span id="final-level">1</span>/6</p>
+            </div>
+            
+            <button class="btn" id="restart-btn">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables del juego
+        let currentLevel = 1;
+        let lives = 3;
+        let timerValue = 10;
+        let timerInterval;
+        let gameBoard = [];
+        let correctPath = [];
+        let playerPosition = { x: 0, y: 0 };
+        let gameActive = false;
+        let viewMode = 'memorize'; // 'memorize' o 'play'
+        let tapMode = false;
+        
+        // Colores para cada nivel
+        const levelColors = [
+            '#4ecdc4', // Nivel 1 - Verde azulado
+            '#ff9f1c', // Nivel 2 - Naranja
+            '#ff6b6b', // Nivel 3 - Rojo
+            '#6c5ce7', // Nivel 4 - Púrpura
+            '#00cec9', // Nivel 5 - Turquesa
+            '#fdcb6e'  // Nivel 6 - Amarillo
+        ];
+        
+        // Configuración de niveles (longitud del camino)
+        const levelConfig = [
+            5,  // Nivel 1
+            7,  // Nivel 2
+            9,  // Nivel 3
+            12, // Nivel 4
+            15, // Nivel 5
+            18  // Nivel 6
+        ];
+        
+        // Elementos DOM
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const levelCompleteScreen = document.getElementById('level-complete-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        
+        const levelDisplay = document.getElementById('level');
+        const livesDisplay = document.getElementById('lives');
+        const timerDisplay = document.getElementById('timer');
+        const gameBoardElement = document.getElementById('game-board');
+        const completedLevelDisplay = document.getElementById('completed-level');
+        const finalLevelDisplay = document.getElementById('final-level');
+        const gameResultDisplay = document.getElementById('game-result');
+        const tapModeToggle = document.getElementById('tap-mode-toggle');
+        const touchControls = document.getElementById('touch-controls');
+        
+        // Event listeners
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('restart-btn').addEventListener('click', startGame);
+        document.addEventListener('keydown', handleKeyPress);
+        
+        // Controles táctiles
+        document.getElementById('up-btn').addEventListener('click', () => movePlayerByDirection('up'));
+        document.getElementById('down-btn').addEventListener('click', () => movePlayerByDirection('down'));
+        document.getElementById('left-btn').addEventListener('click', () => movePlayerByDirection('left'));
+        document.getElementById('right-btn').addEventListener('click', () => movePlayerByDirection('right'));
+        
+        // Modo tocar celdas
+        tapModeToggle.addEventListener('change', function() {
+            tapMode = this.checked;
+            touchControls.style.display = tapMode ? 'none' : 'grid';
+        });
+        
+        // Crear partículas de fondo
+        function createParticles() {
+            const background = document.querySelector('.modern-background');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 5 + 2;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 10;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                background.appendChild(particle);
+            }
+        }
+        
+        function startGame() {
+            currentLevel = 1;
+            lives = 3;
+            updateDisplays();
+            showScreen(gameScreen);
+            initializeLevel();
+        }
+        
+        function initializeLevel() {
+            // Limpiar tablero
+            gameBoardElement.innerHTML = '';
+            gameBoard = [];
+            correctPath = [];
+            
+            // Crear celdas del tablero 10x10
+            for (let y = 0; y < 10; y++) {
+                gameBoard[y] = [];
+                for (let x = 0; x < 10; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.style.left = `${x * 10}%`;
+                    cell.style.top = `${y * 10}%`;
+                    cell.style.width = '10%';
+                    cell.style.height = '10%';
+                    
+                    // Añadir evento para tocar celdas directamente
+                    cell.addEventListener('click', handleCellTap);
+                    
+                    gameBoardElement.appendChild(cell);
+                    gameBoard[y][x] = cell;
+                }
+            }
+            
+            // Generar camino correcto
+            generatePath();
+            
+            // Posición inicial del jugador
+            playerPosition = { x: correctPath[0].x, y: correctPath[0].y };
+            gameBoard[playerPosition.y][playerPosition.x].classList.add('player');
+            
+            // Modo de memorización
+            viewMode = 'memorize';
+            showPathForMemorization();
+        }
+        
+        function handleCellTap(e) {
+            if (!tapMode || !gameActive || viewMode !== 'play') return;
+            
+            const x = parseInt(e.target.dataset.x);
+            const y = parseInt(e.target.dataset.y);
+            
+            // Solo permitir movimientos a celdas adyacentes
+            const dx = Math.abs(x - playerPosition.x);
+            const dy = Math.abs(y - playerPosition.y);
+            
+            if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+                movePlayer(x, y);
+            }
+        }
+        
+        function movePlayerByDirection(direction) {
+            if (tapMode || !gameActive || viewMode !== 'play') return;
+            
+            let newX = playerPosition.x;
+            let newY = playerPosition.y;
+            
+            switch(direction) {
+                case 'up':
+                    if (newY > 0) newY--;
+                    break;
+                case 'down':
+                    if (newY < 9) newY++;
+                    break;
+                case 'left':
+                    if (newX > 0) newX--;
+                    break;
+                case 'right':
+                    if (newX < 9) newX++;
+                    break;
+            }
+            
+            movePlayer(newX, newY);
+        }
+        
+        function handleKeyPress(e) {
+            if (tapMode || !gameActive || viewMode !== 'play') return;
+            
+            let newX = playerPosition.x;
+            let newY = playerPosition.y;
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (newY > 0) newY--;
+                    break;
+                case 'ArrowDown':
+                    if (newY < 9) newY++;
+                    break;
+                case 'ArrowLeft':
+                    if (newX > 0) newX--;
+                    break;
+                case 'ArrowRight':
+                    if (newX < 9) newX++;
+                    break;
+                default:
+                    return; // Salir si no es una tecla de flecha
+            }
+            
+            movePlayer(newX, newY);
+        }
+        
+        function generatePath() {
+            const pathLength = levelConfig[currentLevel - 1];
+            let x = Math.floor(Math.random() * 10);
+            let y = Math.floor(Math.random() * 10);
+            
+            correctPath.push({ x, y });
+            
+            // Generar camino aleatorio
+            for (let i = 1; i < pathLength; i++) {
+                const directions = [];
+                
+                if (x > 0 && !isInPath(x - 1, y)) directions.push('left');
+                if (x < 9 && !isInPath(x + 1, y)) directions.push('right');
+                if (y > 0 && !isInPath(x, y - 1)) directions.push('up');
+                if (y < 9 && !isInPath(x, y + 1)) directions.push('down');
+                
+                if (directions.length === 0) {
+                    // Camino bloqueado, reiniciar generación
+                    correctPath = [];
+                    x = Math.floor(Math.random() * 10);
+                    y = Math.floor(Math.random() * 10);
+                    correctPath.push({ x, y });
+                    i = 0;
+                    continue;
+                }
+                
+                const direction = directions[Math.floor(Math.random() * directions.length)];
+                
+                switch (direction) {
+                    case 'left': x--; break;
+                    case 'right': x++; break;
+                    case 'up': y--; break;
+                    case 'down': y++; break;
+                }
+                
+                correctPath.push({ x, y });
+            }
+        }
+        
+        function isInPath(x, y) {
+            return correctPath.some(point => point.x === x && point.y === y);
+        }
+        
+        function showPathForMemorization() {
+            // Mostrar el camino completo para memorización
+            correctPath.forEach((point, index) => {
+                setTimeout(() => {
+                    gameBoard[point.y][point.x].classList.add('path');
+                    gameBoard[point.y][point.x].style.backgroundColor = levelColors[currentLevel - 1];
+                }, index * 300);
+            });
+            
+            // Ocultar el camino después de un tiempo
+            const memorizeTime = 3000 + (currentLevel * 500); // Más tiempo en niveles más altos
+            timerValue = Math.floor(memorizeTime / 1000);
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timerValue--;
+                updateTimerDisplay();
+                
+                if (timerValue <= 0) {
+                    clearInterval(timerInterval);
+                    hidePathAndStartPlayMode();
+                }
+            }, 1000);
+            
+            // También ocultar después del tiempo calculado
+            setTimeout(() => {
+                clearInterval(timerInterval);
+                hidePathAndStartPlayMode();
+            }, memorizeTime);
+        }
+        
+        function hidePathAndStartPlayMode() {
+            // Ocultar el camino
+            correctPath.forEach(point => {
+                gameBoard[point.y][point.x].classList.remove('path');
+                gameBoard[point.y][point.x].style.backgroundColor = '';
+            });
+            
+            // Cambiar a modo de juego
+            viewMode = 'play';
+            
+            // Reiniciar temporizador para el modo de juego
+            timerValue = 30; // 30 segundos para completar el nivel
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timerValue--;
+                updateTimerDisplay();
+                
+                if (timerValue <= 0) {
+                    // Tiempo agotado
+                    loseLife();
+                }
+            }, 1000);
+        }
+        
+        function movePlayer(x, y) {
+            // Quitar la clase de jugador de la posición actual
+            gameBoard[playerPosition.y][playerPosition.x].classList.remove('player');
+            
+            // Verificar si el movimiento es válido
+            const isCorrectMove = isInPath(x, y);
+            
+            if (isCorrectMove) {
+                // Movimiento correcto
+                gameBoard[y][x].classList.add('correct');
+                gameBoard[y][x].style.backgroundColor = levelColors[currentLevel - 1];
+                
+                // Verificar si completó el camino
+                if (x === correctPath[correctPath.length - 1].x && 
+                    y === correctPath[correctPath.length - 1].y) {
+                    levelComplete();
+                    return;
+                }
+            } else {
+                // Movimiento incorrecto
+                gameBoard[y][x].classList.add('wrong');
+                loseLife();
+                return;
+            }
+            
+            // Actualizar posición del jugador
+            playerPosition = { x, y };
+            gameBoard[y][x].classList.add('player');
+        }
+        
+        function loseLife() {
+            lives--;
+            updateDisplays();
+            
+            if (lives <= 0) {
+                // Game over
+                gameOver(false);
+            } else {
+                // Reiniciar nivel
+                clearInterval(timerInterval);
+                initializeLevel();
+            }
+        }
+        
+        function levelComplete() {
+            clearInterval(timerInterval);
+            
+            if (currentLevel >= 6) {
+                // Todos los niveles completados
+                gameOver(true);
+            } else {
+                // Mostrar pantalla de nivel completado
+                completedLevelDisplay.textContent = currentLevel;
+                showScreen(levelCompleteScreen);
+                
+                // Avanzar al siguiente nivel después de un delay
+                setTimeout(() => {
+                    currentLevel++;
+                    updateDisplays();
+                    showScreen(gameScreen);
+                    initializeLevel();
+                }, 3000);
+            }
+        }
+        
+        function gameOver(victory) {
+            finalLevelDisplay.textContent = currentLevel;
+            
+            if (victory) {
+                gameResultDisplay.textContent = '¡Felicidades! Has completado todos los niveles.';
+            } else {
+                gameResultDisplay.textContent = '¡Has agotado todas tus vidas!';
+            }
+            
+            showScreen(gameOverScreen);
+            gameActive = false;
+        }
+        
+        function updateDisplays() {
+            levelDisplay.textContent = currentLevel;
+            livesDisplay.textContent = lives;
+        }
+        
+        function updateTimerDisplay() {
+            timerDisplay.textContent = timerValue;
+        }
+        
+        function showScreen(screen) {
+            // Ocultar todas las pantallas
+            startScreen.classList.remove('active');
+            gameScreen.classList.remove('active');
+            levelCompleteScreen.classList.remove('active');
+            gameOverScreen.classList.remove('active');
+            
+            // Mostrar la pantalla solicitada
+            screen.classList.add('active');
+            
+            // Activar el juego si es la pantalla de juego
+            gameActive = (screen === gameScreen);
+        }
+        
+        // Inicializar
+        window.onload = function() {
+            createParticles();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Viva: Chernóbil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a, #0a1a2a);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4ecdc4;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #4ecdc4, #2a8f88);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .game-screen {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        /* Pantalla de inicio */
+        #start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .start-title {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #ffd166;
+        }
+        
+        .start-description {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            color: #c5c5c5;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4ecdc4, #2a8f88);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Pantalla de trivia */
+        .trivia-container {
+            background: rgba(30, 40, 50, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .question-number {
+            color: #ffd166;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 24px;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .selected {
+            background: rgba(78, 205, 196, 0.3);
+            border: 2px solid #4ecdc4;
+        }
+        
+        .correct {
+            background: rgba(80, 200, 120, 0.3);
+            border: 2px solid #50c878;
+        }
+        
+        .incorrect {
+            background: rgba(239, 99, 81, 0.3);
+            border: 2px solid #ef6351;
+        }
+        
+        /* Modal informativo */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #2c3e50, #1a2a3a);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            animation: modalAppear 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 24px;
+            color: #ffd166;
+        }
+        
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .modal-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        
+        .modal-text {
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 17px;
+            color: #e0e0e0;
+        }
+        
+        .modal-close {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Pantalla de resultados */
+        #results-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .results-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ffd166;
+        }
+        
+        .score-text {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .score-value {
+            font-size: 72px;
+            color: #4ecdc4;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .restart-btn {
+            margin-top: 30px;
+        }
+        
+        /* Efectos de partículas */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .start-title {
+                font-size: 32px;
+            }
+            
+            .question-text {
+                font-size: 20px;
+            }
+            
+            .trivia-container {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 85vh;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">Historia Viva</div>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <!-- Pantalla de inicio -->
+        <div id="start-screen" class="game-screen active">
+            <h1 class="start-title">El Accidente de Chernóbil</h1>
+            <p class="start-description">
+                Adéntrate en uno de los eventos más significativos de la historia moderna. 
+                Aprende sobre el desastre nuclear de Chernóbil a través de una experiencia 
+                interactiva que combina trivia educativa con narrativa histórica.
+            </p>
+            <button class="btn" id="start-btn">Comenzar el Viaje</button>
+        </div>
+        
+        <!-- Pantalla de trivia -->
+        <div id="trivia-screen" class="game-screen">
+            <div class="trivia-container">
+                <div class="question-number" id="question-number">Pregunta 1 de 5</div>
+                <h2 class="question-text" id="question-text">¿En qué año ocurrió el accidente de Chernóbil?</h2>
+                <div class="options-container" id="options-container">
+                    <!-- Las opciones se generarán con JavaScript -->
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" id="next-btn" disabled>Siguiente</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de resultados -->
+        <div id="results-screen" class="game-screen">
+            <h2 class="results-title">¡Has completado el viaje!</h2>
+            <p class="score-text">Tu puntuación final:</p>
+            <div class="score-value" id="final-score">0/5</div>
+            <p class="modal-text">
+                El accidente de Chernóbil sigue siendo una lección poderosa sobre los riesgos 
+                de la energía nuclear y la importancia de los protocolos de seguridad. 
+                La zona de exclusión permanece como un recordatorio de los eventos de 1986.
+            </p>
+            <button class="btn restart-btn" id="restart-btn">Jugar de Nuevo</button>
+        </div>
+    </div>
+    
+    <!-- Modal informativo -->
+    <div class="modal" id="info-modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-header">Contexto Histórico</div>
+            <div class="modal-body">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Chernobyl_radiation_map_1996.svg/1200px-Chernobyl_radiation_map_1996.svg.png" alt="Mapa de radiación" class="modal-image" id="modal-image">
+                <p class="modal-text" id="modal-text">
+                    El accidente de Chernóbil ocurrió el 26 de abril de 1986 en la central nuclear 
+                    Vladímir Ilich Lenin, ubicada en el norte de Ucrania. Durante una prueba de 
+                    seguridad, una explosión masiva liberó material radiactivo a la atmósfera, 
+                    contaminando grandes áreas de Ucrania, Bielorrusia y Rusia.
+                </p>
+            </div>
+            <div class="modal-close">
+                <button class="btn" id="modal-close-btn">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos del juego - Información detallada (8 modales)
+        const informationScreens = [
+            {
+                title: "Antecedentes de Chernóbil",
+                image: "img/chernobyl/chernobyl1.png",
+                text: `La central nuclear de Chernóbil fue construida durante la era soviética en la década de 1970, como parte de un ambicioso programa de energía nuclear. Ubicada a 18 km de la ciudad de Chernóbil y a 3 km de Prípiat, la central contaba con cuatro reactores RBMK-1000, un diseño soviético único que utilizaba grafito como moderador y agua ligera como refrigerante.
+
+El reactor RBMK tenía una característica peligrosa: a bajas potencias, podía volverse inestable y experimentar un aumento masivo de reactividad. Esta característica, combinada con deficiencias en el diseño de las barras de control y la falta de un edificio de contención adecuado, creaba un riesgo significativo.
+
+Para 1986, Chernóbil era una de las centrales nucleares más grandes de la Unión Soviética, suministrando energía a gran parte de Ucrania. Sin embargo, los operadores no estaban completamente informados sobre las características peligrosas del reactor, y la cultura de seguridad priorizaba la producción sobre la precaución.`
+            },
+            {
+                title: "Contexto Político de la Era Soviética",
+                image: "img/chernobyl/chernobyl2.png",
+                text: `La década de 1980 en la Unión Soviética estuvo marcada por una creciente competencia tecnológica con Occidente y una economía que comenzaba a mostrar signos de estancamiento. El programa nuclear soviético era una fuente de orgullo nacional y una demostración del poder tecnológico del país.
+
+En este contexto, existía una fuerte presión para cumplir con los objetivos de producción y demostrar la superioridad de la tecnología soviética. Esta mentalidad contribuyó a una cultura donde se priorizaba el cumplimiento de metas sobre las consideraciones de seguridad.
+
+La falta de transparencia y la burocracia soviéticas también jugaron un papel crucial. Los informes de problemas potenciales a menudo eran suprimidos o ignorados, y existía una tendencia a subestimar los riesgos para evitar admitir debilidades ante los superiores y ante el mundo exterior.
+
+Esta combinación de factores creó un ambiente propicio para el accidente, donde las advertencias sobre los defectos de diseño del reactor RBMK fueron minimizadas y la capacitación de los operadores resultó insuficiente para manejar situaciones de emergencia.`
+            },
+            {
+                title: "La Prueba del Reactor N°4",
+                image: "img/chernobyl/chernobyl3.png",
+                text: `La fatídica prueba programada para el 26 de abril de 1986 tenía como objetivo verificar si las turbinas, durante una pérdida de energía, podrían generar suficiente electricidad para operar las bombas de refrigeración de emergencia hasta que se activaran los generadores diésel.
+
+Esta prueba ya se había intentado anteriormente sin éxito. Para esta ocasión, se preparó un nuevo procedimiento que requería desactivar varios sistemas de seguridad. El turno de noche, menos experimentado, fue encargado de realizar la prueba, a pesar de que originalmente estaba programada para el día.
+
+Los operadores redujeron la potencia del reactor a niveles muy bajos, alrededor de 200 MW térmicos, mucho menos de lo planeado (700-1000 MW). A estas bajas potencias, el reactor se volvió inestable debido al envenenamiento por xenón, un subproducto de la fisión nuclear que absorbe neutrones y reduce la reactividad.
+
+En un intento por aumentar la potencia, los operadores retiraron casi todas las barras de control, violando múltiples protocolos de seguridad. El reactor se encontraba en un estado extremadamente peligroso e inestable.`
+            },
+            {
+                title: "Diseño del Reactor RBMK",
+                image: "img/chernobyl/chernobyl4.png",
+                text: `El reactor RBMK (Reaktor Bolshoy Moshchnosti Kanalnyy, que significa "reactor de alta potencia de tipo canal") era un diseño soviético único que difería significativamente de los reactores occidentales.
+
+Características clave del diseño RBMK:
+- Utilizaba grafito como moderador y agua ligera como refrigerante
+- Carecía de un edificio de contención robusto como los reactores occidentales
+- Tenía un coeficiente de vacío positivo: a medida que se formaba vapor en el refrigerante, la reactividad aumentaba
+- Las barras de control tenían puntas de grafito que inicialmente desplazaban el refrigerante, aumentando temporalmente la reactividad
+
+Este diseño hacía que el reactor fuera inherentemente inestable a bajas potencias. Cuando los operadores redujeron la potencia para la prueba, el reactor entró en un régimen operativo peligroso donde un aumento de vapor podía conducir a un rápido incremento de la potencia.
+
+La combinación de estas características de diseño con errores operativos durante la prueba creó las condiciones para el desastre. Los operadores no comprendían completamente estos comportamientos peligrosos del reactor, en parte porque esta información no se compartía ampliamente.`
+            },
+            {
+                title: "La Explosión y sus Consecuencias Inmediatas",
+                image: "img/chernobyl/chernobyl5.png",
+                text: `A la 1:23:04 a.m. del 26 de abril, los operadores iniciaron la prueba cerrando la alimentación de vapor a las turbinas. Sin el flujo de refrigerante, la potencia del reactor comenzó a aumentar rápidamente.
+
+A la 1:23:40, el operador presionó el botón de parada de emergencia (AZ-5), que debía insertar todas las barras de control para apagar el reactor. Sin embargo, debido a un defecto de diseño, las puntas de grafito de las barras desplazaron inicialmente el refrigerante, causando un aumento dramático de la reactividad.
+
+En menos de tres segundos, la potencia del reactor aumentó a más de 100 veces su capacidad normal. El combustible nuclear se sobrecalentó y rompió las tuberías de refrigeración. El contacto entre el combustible sobrecalentado y el agua produjo una explosión de vapor que destrozó el techo del reactor de 2000 toneladas.
+
+Una segunda explosión, posiblemente nuclear, expulsó fragmentos de material radiactivo a la atmósfera. El grafito del moderador se incendió, creando un incendio que ardió durante 10 días y liberó enormes cantidades de material radiactivo a la atmósfera.
+
+La explosión fue tan poderosa que esparció escombros radiactivos sobre el edificio adyacente y creó columnas de humo radiactivo que se elevaron a un kilómetro de altura. Los bomberos locales, sin equipo de protección, acudieron a apagar el incendio, exponiéndose a dosis letales de radiación.`
+            },
+            {
+                title: "Primera Respuesta y Heroísmo",
+                image: "img/chernobyl/chernobyl6.png",
+                text: `La respuesta inicial al desastre estuvo marcada por una combinación de heroísmo y falta de preparación. Los bomberos de Prípiat llegaron primeros a la escena, sin saber que luchaban contra un incendio radiactivo.
+
+Muchos de estos primeros respondedores sufrieron el síndrome de irradiación aguda y murieron en las semanas siguientes. Su valentía evitó que el incendio se propagara a otros reactores, lo que habría multiplicado la magnitud del desastre.
+
+En los días siguientes, se movilizaron helicópteros para arrojar miles de toneladas de materiales como arena, plomo y boro sobre el reactor en llamas. Estos "liquidadores" trabajaron en turnos breves para limitar su exposición a la radiación, pero muchos recibieron dosis peligrosamente altas.
+
+La evacuación de la población circundante comenzó 36 horas después del accidente. A los residentes de Prípiat se les dijo que llevaran solo lo esencial, ya que regresarían en tres días. La mayoría nunca volvería a sus hogares.
+
+La respuesta soviética inicial se caracterizó por el secretismo. Las autoridades ocultaron la verdadera magnitud del desastre, tanto al público como al mundo exterior, retrasando la implementación de medidas protectoras completas.`
+            },
+            {
+                title: "La Evacuación de Prípiat",
+                image: "img/chernobyl/chernobyl7.png",
+                text: `Prípiat, la ciudad más cercana a la central nuclear, albergaba a unos 49,000 habitantes, principalmente trabajadores de la planta y sus familias. Inicialmente, las autoridades soviéticas ocultaron la gravedad del accidente.
+
+No fue hasta 36 horas después del accidente, el 27 de abril, que comenzó la evacuación. Los residentes fueron informados que era una "medida temporal" de tres días y se les dijo que llevaran solo lo esencial: documentos, dinero y ropa de abrigo.
+
+La evacuación se realizó con 1,200 autobuses en una caravana de 25 km de largo. Los residentes abandonaron sus pertenencias, mascotas y recuerdos, muchos sin saber que nunca regresarían.
+
+En los días siguientes, se estableció una zona de exclusión de 30 km alrededor de la planta, desplazando a más de 116,000 personas de 189 comunidades. La evacuación masiva fue uno de los traslados de población más grandes en la historia relacionada con un accidente industrial.
+
+Prípiat se convirtió en una "ciudad fantasma", un testimonio congelado en el tiempo de la vida soviética de los años 80, con edificios de apartamentos, escuelas, hospitales y parques abandonados para siempre.`
+            },
+            {
+                title: "El Sarcófago y la Contención",
+                image: "img/chernobyl/chernobyl8.png",
+                text: `Inmediatamente después del accidente, se enfrentó el desafío monumental de contener la radiación. Los "liquidadores" - aproximadamente 600,000 trabajadores entre bomberos, soldados y civiles - fueron sentados para limpiar y contener el desastre.
+
+Entre mayo y noviembre de 1986, se construyó una estructura de contención masiva conocida como el "sarcófago". Bajo condiciones extremas de radiación, los trabajadores construyeron un enorme recinto de concreto y acero para encapsular el reactor destruido.
+
+El sarcófago original fue diseñado para durar 20-30 años, pero comenzó a deteriorarse mucho antes. En 2016, se completó una nueva estructura de confinamiento seguro (NSC), la mayor estructura terrestre móvil jamás construida. Esta gigantesca cúpula de acero de 36,000 toneladas, 108 metros de altura y 257 metros de ancho, fue deslizada sobre el sarcófago original para aislar el reactor durante los próximos 100 años.
+
+La NSC permite el desmantelamiento seguro del sarcófago original y la eventual eliminación de los materiales radiactivos. El proyecto, financiado por 45 países y costando más de 2,100 millones de euros, representa uno de los esfuerzos de cooperación internacional más significativos en la historia de la energía nuclear.`
+            }
+        ];
+
+        // Preguntas de trivia
+        const questions = [
+            {
+                question: "¿En qué año ocurrió el accidente de Chernóbil?",
+                options: ["1976", "1986", "1996", "2006"],
+                correct: 1
+            },
+            {
+                question: "¿Qué país albergaba la central nuclear de Chernóbil?",
+                options: ["Rusia", "Ucrania", "Bielorrusia", "Polonia"],
+                correct: 1
+            },
+            {
+                question: "¿Qué escala se utilizó para medir la gravedad del accidente?",
+                options: ["Escala Richter", "Escala INES", "Escala Fujita", "Escala Beaufort"],
+                correct: 1
+            },
+            {
+                question: "¿Cómo se llamaba la ciudad cercana que fue evacuada?",
+                options: ["Kiev", "Prípiat", "Minsk", "Chernóbil"],
+                correct: 1
+            },
+            {
+                question: "¿Qué estructura se construyó para contener la radiación?",
+                options: ["Una pirámide de acero", "Un muro de hormigón", "Un sarcófago", "Una cúpula geodésica"],
+                correct: 2
+            }
+        ];
+
+        // Variables del juego
+        let currentInfoScreen = 0;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        
+        // Elementos DOM
+        const startScreen = document.getElementById('start-screen');
+        const triviaScreen = document.getElementById('trivia-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const progressBar = document.getElementById('progress-bar');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const finalScore = document.getElementById('final-score');
+        
+        const infoModal = document.getElementById('info-modal');
+        const modalHeader = document.getElementById('modal-header');
+        const modalImage = document.getElementById('modal-image');
+        const modalText = document.getElementById('modal-text');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        
+        // Inicializar el juego
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('restart-btn').addEventListener('click', startGame);
+        nextBtn.addEventListener('click', nextQuestion);
+        modalCloseBtn.addEventListener('click', closeModal);
+        
+        function startGame() {
+            currentInfoScreen = 0;
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            updateProgressBar();
+            showScreen(startScreen);
+            showInformation(0);
+        }
+        
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionNumber.textContent = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+            questionText.textContent = question.question;
+            
+            // Limpiar opciones anteriores
+            optionsContainer.innerHTML = '';
+            
+            // Agregar nuevas opciones
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reiniciar estado del botón
+            nextBtn.disabled = true;
+        }
+        
+        function selectOption(optionIndex) {
+            // Deshabilitar todas las opciones
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Marcar la opción seleccionada
+            options[optionIndex].classList.add('selected');
+            
+            // Habilitar el botón de siguiente
+            nextBtn.disabled = false;
+            
+            // Guardar la respuesta
+            userAnswers[currentQuestionIndex] = optionIndex;
+        }
+        
+        function nextQuestion() {
+            // Verificar respuesta
+            const correctAnswer = questions[currentQuestionIndex].correct;
+            const userAnswer = userAnswers[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            if (userAnswer === correctAnswer) {
+                score++;
+                options[userAnswer].classList.add('correct');
+            } else {
+                options[userAnswer].classList.add('incorrect');
+                options[correctAnswer].classList.add('correct');
+            }
+            
+            // Deshabilitar opciones
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Esperar un momento y luego avanzar
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    updateProgressBar();
+                    // Después de una pregunta, mostrar los siguientes 2 modales
+                    showInformation(currentInfoScreen + 1);
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+        
+        function showInformation(infoIndex) {
+            if (infoIndex >= informationScreens.length) {
+                // Si no hay más información, mostrar la pregunta si es necesario
+                if (currentQuestionIndex < questions.length) {
+                    showScreen(triviaScreen);
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+                return;
+            }
+            
+            currentInfoScreen = infoIndex;
+            const info = informationScreens[infoIndex];
+            modalHeader.textContent = info.title;
+            modalImage.src = info.image;
+            modalText.textContent = info.text;
+            infoModal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            infoModal.style.display = 'none';
+            
+            // Cada 2 modales, mostrar una pregunta
+            if ((currentInfoScreen + 1) % 2 === 0 && currentQuestionIndex < questions.length) {
+                showScreen(triviaScreen);
+                loadQuestion();
+            } else {
+                // Mostrar la siguiente pantalla de información
+                showInformation(currentInfoScreen + 1);
+            }
+        }
+        
+        function showResults() {
+            finalScore.textContent = `${score}/${questions.length}`;
+            showScreen(resultsScreen);
+        }
+        
+        function showScreen(screen) {
+            // Ocultar todas las pantallas
+            startScreen.classList.remove('active');
+            triviaScreen.classList.remove('active');
+            resultsScreen.classList.remove('active');
+            
+            // Mostrar la pantalla solicitada
+            screen.classList.add('active');
+        }
+        
+        function updateProgressBar() {
+            const totalScreens = informationScreens.length + questions.length;
+            const completedScreens = currentInfoScreen + currentQuestionIndex;
+            const progress = (completedScreens / totalScreens) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        // Efectos de partículas de fondo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Tamaño y posición aleatoria
+                const size = Math.random() * 15 + 5;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                
+                // Animación
+                const animationDuration = Math.random() * 10 + 10;
+                particle.style.animation = `float ${animationDuration}s infinite ease-in-out`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Añadir keyframes para la animación
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+                    25% { transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px) rotate(${Math.random() * 10 - 5}deg); }
+                    50% { transform: translate(${Math.random() * 30 - 15}px, ${Math.random() * 30 - 15}px) rotate(${Math.random() * 10 - 5}deg); }
+                    75% { transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px) rotate(${Math.random() * 10 - 5}deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Inicializar
+        window.onload = function() {
+            createParticles();
+        };
+    </script>
+</body>
+</html>

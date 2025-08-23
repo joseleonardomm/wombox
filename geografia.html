@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTrivia - Desafío Geográfico</title>
+    <style>
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #0a2417;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Fondo de bosque */
+        .forest-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .forest-layer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to top, #0c351f, #1a4b2d);
+            clip-path: polygon(0 100%, 100% 100%, 100% 30%, 90% 40%, 80% 20%, 70% 50%, 60% 25%, 50% 60%, 40% 30%, 30% 70%, 20% 40%, 10% 80%, 0 50%);
+        }
+        
+        .forest-back {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, #0a2a18, #143d25);
+            clip-path: polygon(0 100%, 100% 100%, 100% 40%, 90% 50%, 80% 30%, 70% 60%, 60% 35%, 50% 70%, 40% 40%, 30% 80%, 20% 50%, 10% 90%, 0 60%);
+            opacity: 0.8;
+        }
+        
+        .tree {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            height: 120px;
+            background: #3d2816;
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .tree:after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 80px;
+            background: #1e5630;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            border-radius: 50% 50% 0 0;
+        }
+        
+        .bush {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            height: 20px;
+            background: #1e5630;
+            border-radius: 50%;
+        }
+        
+        .sunbeam {
+            position: absolute;
+            top: 0;
+            left: 30%;
+            width: 150px;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 200, 0.2), transparent);
+            transform: rotate(30deg);
+            filter: blur(5px);
+            animation: sunbeam 8s infinite ease-in-out;
+        }
+        
+        @keyframes sunbeam {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        .leaf {
+            position: absolute;
+            background: #2a7d47;
+            border-radius: 50% 0;
+            animation: leafFall linear infinite;
+        }
+        
+        @keyframes leafFall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(5px);
+            animation: cloudFloat 30s infinite linear;
+        }
+        
+        @keyframes cloudFloat {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            z-index: 1;
+            background: rgba(26, 40, 30, 0.85);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-display, .level-display, .question-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .score-display {
+            color: #4ecdc4;
+        }
+        
+        .level-display {
+            color: #ffd166;
+        }
+        
+        .question-display {
+            color: #ff9f1c;
+        }
+        
+        .game-mode {
+            margin: 15px 0;
+            font-size: 24px;
+            color: #9ee67a;
+            text-shadow: 0 0 5px rgba(158, 230, 122, 0.5);
+        }
+        
+        .question-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .question-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .question-text {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #fff;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70px;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .correct {
+            background: rgba(46, 204, 113, 0.3);
+            border: 2px solid #2ecc71;
+        }
+        
+        .incorrect {
+            background: rgba(231, 76, 60, 0.3);
+            border: 2px solid #e74c3c;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #2a8f88);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .screen {
+            display: none;
+            width: 100%;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4ecdc4, #2a8f88);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #9ee67a;
+            text-shadow: 0 0 10px rgba(158, 230, 122, 0.5);
+        }
+        
+        .description {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+            line-height: 1.6;
+        }
+        
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .mode {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mode:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .mode h3 {
+            color: #9ee67a;
+            margin-bottom: 10px;
+        }
+        
+        .mode p {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        .results-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .final-score {
+            font-size: 72px;
+            color: #4ecdc4;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .flag-image {
+            width: 200px;
+            height: 120px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 0 auto 20px;
+            display: block;
+        }
+        
+        .silhouette-image {
+            width: 200px;
+            height: 120px;
+            object-fit: contain;
+            margin: 0 auto 20px;
+            display: block;
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Animaciones */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-modes {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-text {
+                font-size: 20px;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+            
+            .game-header {
+                justify-content: center;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .image-container {
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            
+            .image-container {
+                height: 180px;
+            }
+            
+            .score-display, .level-display, .question-display {
+                padding: 8px 15px;
+                font-size: 16px;
+            }
+            
+            .game-mode {
+                font-size: 20px;
+            }
+            
+            .final-score {
+                font-size: 48px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option {
+                padding: 12px;
+                font-size: 16px;
+                min-height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo de bosque -->
+    <div class="forest-background" id="forest-background"></div>
+    
+    <div class="container">
+        <!-- Pantalla de inicio -->
+        <div id="start-screen" class="screen active">
+            <h1 class="title">GeoTrivia</h1>
+            <p class="description">
+                Pon a prueba tus conocimientos geográficos con 4 modos de juego diferentes.<br>
+                ¡Completa los 6 niveles respondiendo 12 preguntas en cada uno!
+            </p>
+            
+            <div class="instructions">
+                <h3>Modos de juego:</h3>
+                <div class="game-modes">
+                    <div class="mode" data-mode="photo">
+                        <h3>📍 ¿Dónde fue tomada?</h3>
+                        <p>Adivina el país donde fue tomada una foto</p>
+                    </div>
+                    <div class="mode" data-mode="capital">
+                        <h3>🏛️ Capital del país</h3>
+                        <p>Selecciona la capital correcta del país mostrado</p>
+                    </div>
+                    <div class="mode" data-mode="silhouette">
+                        <h3>🔺 Silueta del país</h3>
+                        <p>Identifica el país por su forma</p>
+                    </div>
+                    <div class="mode" data-mode="flag">
+                        <h3>🎌 Bandera del país</h3>
+                        <p>Adivina a qué país pertenece la bandera</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botón de inicio aleatorio eliminado -->
+        </div>
+        
+        <!-- Pantalla de juego -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="score-display">Puntos: <span id="score">0</span></div>
+                <div class="level-display">Nivel: <span id="level">1</span>/6</div>
+                <div class="question-display">Pregunta: <span id="question">1</span>/12</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="game-mode" id="game-mode">Modo: 📍 ¿Dónde fue tomada?</div>
+            
+            <div class="question-container">
+                <div class="image-container">
+                    <img id="question-image" class="question-image" src="" alt="Imagen de pregunta">
+                </div>
+                <div class="question-text" id="question-text">¿En qué país fue tomada esta foto?</div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Las opciones se generarán con JavaScript -->
+                </div>
+                
+                <button class="btn" id="next-btn" disabled>Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de resultados -->
+        <div id="results-screen" class="screen">
+            <h2 class="title">¡Nivel <span id="completed-level">1</span> Completado!</h2>
+            
+            <div class="results-container">
+                <p>Preguntas correctas:</p>
+                <div class="final-score" id="final-score">0/12</div>
+                <p>Puntuación total: <span id="total-score">0</span> puntos</p>
+                <p>Modo: <span id="result-mode">📍 ¿Dónde fue tomada?</span></p>
+            </div>
+            
+            <button class="btn" id="next-level-btn">Siguiente Nivel</button>
+            <button class="btn btn-danger" id="restart-btn">Volver al Inicio</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables del juego
+        let currentLevel = 1;
+        let currentQuestion = 1;
+        let score = 0;
+        let correctAnswers = 0;
+        let currentMode = '';
+        let gameActive = false;
+        
+        // Preguntas para cada modo (ejemplos)
+        const questions = {
+            photo: [
+                {
+                    image: "img/paises/francia.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Francia",
+                    options: ["Francia", "Italia", "España", "Alemania"]
+                },
+                {
+                    image: "img/paises/estados-unidos.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Estados Unidos",
+                    options: ["Estados Unidos", "Canadá", "Reino Unido", "Australia"]
+                },
+                {
+                    image: "img/paises/italia.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Italia",
+                    options: ["Italia", "Grecia", "España", "Turquía"]
+                },
+                {
+                    image: "img/paises/peru.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Perú",
+                    options: ["Perú", "México", "Colombia", "Chile"]
+                },{
+                    image: "img/paises/mexico.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "México",
+                    options: ["México", "Perú", "Puerto Rico", "Colombia"]
+                },
+                {
+                    image: "img/paises/brasil.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Brasil",
+                    options: ["Costa Rica", "México", "Japón", "Brasil"]
+                },
+                {
+                    image: "img/paises/venezuela.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Venezuela",
+                    options: ["Ecuador", "Venezuela", "Colombia", "Bolivia"]
+                },
+                {
+                    image: "img/paises/inglaterra.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Inglaterra",
+                    options: ["Noruega", "República Checa", "Países Bajos", "Inglaterra"]
+                },{
+                    image: "img/paises/dinamarca.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Dinamarca",
+                    options: ["Noruega", "Italia", "Dinamarca", "Turquía"]
+                },
+                {
+                    image: "img/paises/hungria.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Hungría",
+                    options: ["Hungría", "Canadá", "Islandia", "Noruega"]
+                },
+                {
+                    image: "img/paises/japon.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Japón",
+                    options: ["Corea del Sur", "China", "Japón", "Rusia"]
+                },
+                {
+                    image: "img/paises/austria.jpg",
+                    question: "¿En qué país fue tomada esta foto?",
+                    correctAnswer: "Austria",
+                    options: ["Alemania", "Austria", "Albania", "Rumania"]
+                }
+            ],
+            capital: [
+                {
+                    image: "img/banderas/francia-bandera.jpg",
+                    question: "¿Cuál es la capital de Francia?",
+                    correctAnswer: "París",
+                    options: ["París", "Lyon", "Marsella", "Burdeos"]
+                },
+                {
+                    image: "img/banderas/eeuu-bandera.jpg",
+                    question: "¿Cuál es la capital de Estados Unidos?",
+                    correctAnswer: "Washington D.C.",
+                    options: ["Washington D.C.", "Nueva York", "Los Ángeles", "Chicago"]
+                },
+                {
+                    image: "img/banderas/italia-bandera.jpg",
+                    question: "¿Cuál es la capital de Italia?",
+                    correctAnswer: "Roma",
+                    options: ["Roma", "Milán", "Nápoles", "Venecia"]
+                },
+                {
+                    image: "img/banderas/peru-bandera.jpg",
+                    question: "¿Cuál es la capital de Perú?",
+                    correctAnswer: "Lima",
+                    options: ["Lima", "Cuzco", "Arequipa", "Trujillo"]
+                },
+                {
+                    image: "img/banderas/corea-sur-bandera.jpg",
+                    question: "¿Cuál es la capital de Corea del Sur?",
+                    correctAnswer: "Seúl",
+                    options: ["Tokyo", "Hong Kong", "Seúl", "Teherán"]
+                },
+                {
+                    image: "img/banderas/cuba-bandera.jpg",
+                    question: "¿Cuál es la capital de Cuba?",
+                    correctAnswer: "La Habana",
+                    options: ["La Asunción", "La Habana", "San José", "Tucumán"]
+                },
+                {
+                    image: "img/banderas/puerto-rico-bandera.jpg",
+                    question: "¿Cuál es la capital de Puerto Rico?",
+                    correctAnswer: "San Juan",
+                    options: ["Santo Domingo", "San Salvador", "San Juan", "Lara"]
+                },
+                {
+                    image: "img/banderas/argentina-bandera.jpg",
+                    question: "¿Cuál es la capital de Argentina?",
+                    correctAnswer: "Buenos Aires",
+                    options: ["Mendoza", "Bogotá", "Arequipa", "Buenos Aires"]
+                },
+                {
+                    image: "img/banderas/egipto-bandera.jpg",
+                    question: "¿Cuál es la capital de Egipto?",
+                    correctAnswer: "El Cairo",
+                    options: ["El Cairo", "Estambul", "Rabat", "Ciudad del Cabo"]
+                },
+                {
+                    image: "img/banderas/alemania-bandera.jpg",
+                    question: "¿Cuál es la capital de Alemania?",
+                    correctAnswer: "Berlín",
+                    options: ["Munich", "Núremberg", "Berlín", "Zurich"]
+                },
+                {
+                    image: "img/banderas/holanda-bandera.jpg",
+                    question: "¿Cuál es la capital de Países Bajos?",
+                    correctAnswer: "Ámsterdam",
+                    options: ["Ámsterdam", "Budapest", "Nápoles", "Viena"]
+                },
+                {
+                    image: "img/banderas/austria-bandera.jpg",
+                    question: "¿Cuál es la capital de Autria?",
+                    correctAnswer: "Viena",
+                    options: ["Viena", "Praga", "Estocolmo", "Dublín"]
+                }
+            ],
+            silhouette: [
+                {
+                    image: "img/silueta/rusia-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Rusia",
+                    options: ["Francia", "Rusia", "Italia", "Alemania"]
+                },
+                {
+                    image: "img/silueta/eeuu-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Estados Unidos",
+                    options: ["Estados Unidos", "Canadá", "México", "Australia"]
+                },
+                {
+                    image: "img/silueta/venezuela-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Venezuela",
+                    options: ["Venezuela", "México", "Colombia", "Perú"]
+                },
+                {
+                    image: "img/silueta/iran-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Irán",
+                    options: ["Irak", "Qatar", "Siria", "Irán"]
+                },
+                {
+                    image: "img/silueta/canada-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Cánada",
+                    options: ["Rusia", "Cánada", "China", "Turquía"]
+                },
+                {
+                    image: "img/silueta/chile-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Chile",
+                    options: ["Chile", "Uruguay", "Italia", "Paraguay"]
+                },
+                {
+                    image: "img/silueta/argentina-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Argentina",
+                    options: ["Noruega", "Argentina", "España", "Turquía"]
+                },
+                {
+                    image: "img/silueta/mexico-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "México",
+                    options: ["Perú", "México", "Colombia", "Ecuador"]
+                },
+                {
+                    image: "img/silueta/egipto-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Egipto",
+                    options: ["Marruecos", "Sudán", "Egipto", "Siria"]
+                },
+                {
+                    image: "img/silueta/arabia-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Arabia Saudita",
+                    options: ["Arabia Saudita", "Irak", "Jordania", "Australia"]
+                },
+                {
+                    image: "img/silueta/japon-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "Japón",
+                    options: ["Corea del Norte", "Corea del Sur", "Tailandia", "Japón"]
+                },
+                {
+                    image: "img/silueta/china-silueta.jpg",
+                    question: "¿A qué país corresponde esta silueta?",
+                    correctAnswer: "China",
+                    options: ["China", "Bolivia", "Alemania", "Sudáfrica"]
+                }
+            ],
+            flag: [
+                {
+                    image: "img/banderas/inglaterra-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Inglaterra",
+                    options: ["Francia", "Países Bajos", "Inglaterra", "Croacia"]
+                },
+                {
+                    image: "img/banderas/eeuu-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Estados Unidos",
+                    options: ["Estados Unidos", "Reino Unido", "Australia", "Liberia"]
+                },
+                {
+                    image: "img/banderas/italia-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Italia",
+                    options: ["Italia", "México", "Irlanda", "Hungría"]
+                },
+                {
+                    image: "img/banderas/qatar-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Qatar",
+                    options: ["Irán", "Irak", "Qatar", "Líbano"]
+                },
+                {
+                    image: "img/banderas/ghana-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Ghana",
+                    options: ["Senegal", "Ghana", "Costa de Marfil", "Camerún"]
+                },
+                {
+                    image: "img/banderas/australia-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Australia",
+                    options: ["Nueva Zelanda", "Gran Bretaña", "Australia", "Escocia"]
+                },
+                {
+                    image: "img/banderas/arabia-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Arabia Saudita",
+                    options: ["Arabia Saudita", "Irak", "Siria", "Líbano"]
+                },
+                {
+                    image: "img/banderas/senegal-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Senegal",
+                    options: ["Sudáfrica", "Ghana", "Nueva Guínea", "Senegal"]
+                },
+                {
+                    image: "img/banderas/taiwan-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Taiwán",
+                    options: ["Vietnam", "Tailandia", "Taiwán", "Mongolia"]
+                },
+                {
+                    image: "img/banderas/brasil-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Brasil",
+                    options: ["Portugal", "Bolivia", "Brasil", "Paraguay"]
+                },
+                {
+                    image: "img/banderas/marruecos-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Marruecos",
+                    options: ["Turquía", "Egipto", "Marruecos", "Túñez"]
+                },
+                {
+                    image: "img/banderas/ecuador-bandera.jpg",
+                    question: "¿A qué país pertenece esta bandera?",
+                    correctAnswer: "Ecuador",
+                    options: ["Colombia", "Rumania", "Venezuela", "Ecuador"]
+                }
+            ]
+        };
+
+        // Seguimiento de preguntas utilizadas por modo
+        const usedQuestions = {
+            photo: new Set(),
+            capital: new Set(),
+            silhouette: new Set(),
+            flag: new Set()
+        };
+        
+        // Modos de juego con emojis
+        const modeTitles = {
+            photo: "📍 ¿Dónde fue tomada?",
+            capital: "🏛️ Capital del país",
+            silhouette: "🔺 Silueta del país",
+            flag: "🎌 Bandera del país"
+        };
+        
+        // Elementos DOM
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        
+        const scoreDisplay = document.getElementById('score');
+        const levelDisplay = document.getElementById('level');
+        const questionDisplay = document.getElementById('question');
+        const progressBar = document.getElementById('progress-bar');
+        const gameModeDisplay = document.getElementById('game-mode');
+        const questionImage = document.getElementById('question-image');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const finalScore = document.getElementById('final-score');
+        const totalScoreDisplay = document.getElementById('total-score');
+        const resultModeDisplay = document.getElementById('result-mode');
+        const completedLevelDisplay = document.getElementById('completed-level');
+        
+        // Event listeners
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('next-level-btn').addEventListener('click', nextLevel);
+        document.getElementById('restart-btn').addEventListener('click', restartGame);
+        
+        // Selección de modos
+        document.querySelectorAll('.mode').forEach(mode => {
+            mode.addEventListener('click', () => {
+                const modeType = mode.getAttribute('data-mode');
+                startGame(modeType);
+            });
+        });
+        
+        // Crear fondo de bosque
+        function createForestBackground() {
+            const forestBackground = document.getElementById('forest-background');
+            
+            // Crear capas de bosque
+            const forestBack = document.createElement('div');
+            forestBack.classList.add('forest-back');
+            forestBackground.appendChild(forestBack);
+            
+            const forestLayer = document.createElement('div');
+            forestLayer.classList.add('forest-layer');
+            forestBackground.appendChild(forestLayer);
+            
+            // Crear árboles
+            for (let i = 0; i < 15; i++) {
+                const tree = document.createElement('div');
+                tree.classList.add('tree');
+                
+                const position = Math.random() * 100;
+                const height = Math.random() * 40 + 100;
+                
+                tree.style.left = `${position}%`;
+                tree.style.height = `${height}px`;
+                
+                forestBackground.appendChild(tree);
+            }
+            
+            // Crear arbustos
+            for (let i = 0; i < 20; i++) {
+                const bush = document.createElement('div');
+                bush.classList.add('bush');
+                
+                const position = Math.random() * 100;
+                const size = Math.random() * 30 + 20;
+                
+                bush.style.left = `${position}%`;
+                bush.style.width = `${size}px`;
+                bush.style.height = `${size * 0.5}px`;
+                
+                forestBackground.appendChild(bush);
+            }
+            
+            // Crear rayos de sol
+            const sunbeam = document.createElement('div');
+            sunbeam.classList.add('sunbeam');
+            forestBackground.appendChild(sunbeam);
+            
+            // Crear hojas cayendo
+            for (let i = 0; i < 15; i++) {
+                const leaf = document.createElement('div');
+                leaf.classList.add('leaf');
+                
+                const size = Math.random() * 15 + 5;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 10;
+                const duration = Math.random() * 10 + 10;
+                
+                leaf.style.width = `${size}px`;
+                leaf.style.height = `${size}px`;
+                leaf.style.left = `${left}%`;
+                leaf.style.animationDelay = `${delay}s`;
+                leaf.style.animationDuration = `${duration}s`;
+                
+                forestBackground.appendChild(leaf);
+            }
+            
+            // Crear nubes
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.classList.add('cloud');
+                
+                const size = Math.random() * 100 + 50;
+                const posY = Math.random() * 30;
+                const delay = Math.random() * 20;
+                
+                cloud.style.width = `${size}px`;
+                cloud.style.height = `${size / 2}px`;
+                cloud.style.top = `${posY}%`;
+                cloud.style.left = `${-size}px`;
+                cloud.style.animationDelay = `${delay}s`;
+                
+                forestBackground.appendChild(cloud);
+            }
+        }
+        
+        function startGame(mode) {
+            currentLevel = 1;
+            currentQuestion = 1;
+            score = 0;
+            correctAnswers = 0;
+            
+            // Reiniciar preguntas utilizadas para el modo seleccionado
+            usedQuestions[mode].clear();
+            
+            // Establecer el modo seleccionado
+            currentMode = mode;
+            
+            updateDisplays();
+            showScreen(gameScreen);
+            loadQuestion();
+            gameActive = true;
+        }
+        
+        function loadQuestion() {
+            // Obtener preguntas disponibles (no utilizadas)
+            const modeQuestions = questions[currentMode];
+            const availableQuestions = modeQuestions.filter((_, index) => !usedQuestions[currentMode].has(index));
+            
+            // Si no hay preguntas disponibles, reiniciar el conjunto (solo debería pasar si hay menos de 12 preguntas)
+            if (availableQuestions.length === 0) {
+                usedQuestions[currentMode].clear();
+                availableQuestions.push(...modeQuestions);
+            }
+            
+            // Seleccionar pregunta aleatoria de las disponibles
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const questionData = availableQuestions[randomIndex];
+            
+            // Encontrar el índice original de la pregunta para marcarla como usada
+            const originalIndex = modeQuestions.findIndex(q => 
+                q.correctAnswer === questionData.correctAnswer && 
+                q.question === questionData.question
+            );
+            
+            if (originalIndex !== -1) {
+                usedQuestions[currentMode].add(originalIndex);
+            }
+            
+            // Actualizar UI
+            gameModeDisplay.textContent = `Modo: ${modeTitles[currentMode]}`;
+            
+            // Cargar imagen - ahora usa nombres de archivo basados en el país
+            questionImage.src = questionData.image;
+            questionImage.alt = `Imagen de ${questionData.correctAnswer}`;
+            
+            // Manejar errores de carga de imagen
+            questionImage.onerror = function() {
+                this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23333'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='white'%3EImagen no encontrada%3C/text%3E%3C/svg%3E";
+            };
+            
+            questionText.textContent = questionData.question;
+            
+            // Ajustar clases según el modo
+            if (currentMode === 'silhouette') {
+                questionImage.classList.add('silhouette-image');
+                questionImage.classList.remove('flag-image');
+            } else if (currentMode === 'flag') {
+                questionImage.classList.add('flag-image');
+                questionImage.classList.remove('silhouette-image');
+            } else {
+                questionImage.classList.remove('silhouette-image', 'flag-image');
+            }
+            
+            // Limpiar opciones anteriores
+            optionsContainer.innerHTML = '';
+            
+            // Mezclar opciones
+            const shuffledOptions = shuffleArray([...questionData.options]);
+            
+            // Agregar nuevas opciones
+            shuffledOptions.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(option, questionData.correctAnswer));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reiniciar estado del botón
+            nextBtn.disabled = true;
+            
+            updateDisplays();
+        }
+        
+        function selectOption(selectedOption, correctAnswer) {
+            if (!gameActive) return;
+            
+            const options = document.querySelectorAll('.option');
+            
+            // Deshabilitar todas las opciones
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Marcar respuesta correcta/incorrecta
+            options.forEach(option => {
+                if (option.textContent === correctAnswer) {
+                    option.classList.add('correct');
+                }
+                
+                if (option.textContent === selectedOption && selectedOption !== correctAnswer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Verificar respuesta
+            if (selectedOption === correctAnswer) {
+                score += currentLevel * 10;
+                correctAnswers++;
+            }
+            
+            // Habilitar el botón de siguiente
+            nextBtn.disabled = false;
+            
+            updateDisplays();
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion > 12) {
+                levelComplete();
+            } else {
+                loadQuestion();
+            }
+        }
+        
+        function nextLevel() {
+            currentLevel++;
+            currentQuestion = 1;
+            
+            if (currentLevel > 6) {
+                // Juego completado
+                showScreen(startScreen);
+            } else {
+                // Mantener el mismo modo para el siguiente nivel
+                showScreen(gameScreen);
+                loadQuestion();
+            }
+        }
+        
+        function levelComplete() {
+            completedLevelDisplay.textContent = currentLevel;
+            finalScore.textContent = `${correctAnswers}/12`;
+            totalScoreDisplay.textContent = score;
+            resultModeDisplay.textContent = modeTitles[currentMode];
+            
+            showScreen(resultsScreen);
+        }
+        
+        function restartGame() {
+            showScreen(startScreen);
+        }
+        
+        function updateDisplays() {
+            scoreDisplay.textContent = score;
+            levelDisplay.textContent = currentLevel;
+            questionDisplay.textContent = currentQuestion;
+            progressBar.style.width = `${(currentQuestion / 12) * 100}%`;
+        }
+        
+        function showScreen(screen) {
+            // Ocultar todas las pantallas
+            startScreen.classList.remove('active');
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.remove('active');
+            
+            // Mostrar la pantalla solicitada
+            screen.classList.add('active');
+        }
+        
+        // Función para mezclar array (algoritmo Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Inicializar
+        window.onload = function() {
+            createForestBackground();
+        };
+    </script>
+</body>
+</html>
