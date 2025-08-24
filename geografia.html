@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoTrivia - Desafío Geográfico</title>
     <style>
- * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -384,6 +384,40 @@
             filter: brightness(0) invert(1);
         }
         
+        /* Estilo para el modo deshabilitado */
+        .mode-disabled {
+            position: relative;
+            cursor: not-allowed !important;
+            opacity: 0.7;
+        }
+        
+        .mode-disabled:hover {
+            transform: none !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .mode-disabled::after {
+            content: "Próximamente";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #ffd166;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mode-disabled:hover::after {
+            opacity: 1;
+        }
+        
         /* Animaciones */
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -485,7 +519,7 @@
                         <h3>🏛️ Capital del país</h3>
                         <p>Selecciona la capital correcta del país mostrado</p>
                     </div>
-                    <div class="mode" data-mode="silhouette">
+                    <div class="mode mode-disabled" data-mode="silhouette">
                         <h3>🔺 Silueta del país</h3>
                         <p>Identifica el país por su forma</p>
                     </div>
@@ -893,6 +927,11 @@
         // Selección de modos
         document.querySelectorAll('.mode').forEach(mode => {
             mode.addEventListener('click', () => {
+                // Verificar si el modo está deshabilitado
+                if (mode.classList.contains('mode-disabled')) {
+                    return; // No hacer nada si está deshabilitado
+                }
+                
                 const modeType = mode.getAttribute('data-mode');
                 startGame(modeType);
             });
