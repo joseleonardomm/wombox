@@ -335,6 +335,53 @@
             line-height: 1.4;
         }
         
+        /* Estilos para historias próximamente */
+        .story-card.coming-soon {
+            position: relative;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .story-card.coming-soon::after {
+            content: "Próximamente";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffd166;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 2;
+        }
+        
+        .story-card.coming-soon::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        
+        .story-card.coming-soon:hover::after {
+            content: "⌛ Próximamente";
+            background: rgba(52, 152, 219, 0.9);
+        }
+        
+        .story-card.coming-soon .story-image {
+            filter: grayscale(70%) blur(1px);
+        }
+        
+        .story-card.coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
         /* Responsive */
         @media (max-width: 900px) {
             .games-menu {
@@ -554,7 +601,7 @@
                 <div class="stories-grid">
                     <!-- Historia de Chernóbil -->
                     <div class="story-card" data-story="chernobyl">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Chernobyl_NPP_Site_2017.jpg/800px-Chernobyl_NPP_Site_2017.jpg" alt="Chernóbil" class="story-image">
+                        <img src="img/portada-chernobyl2.png">
                         <div class="story-content">
                             <h3 class="story-title">El Desastre de Chernóbil</h3>
                             <p class="story-desc">Abril de 1986 - El peor accidente nuclear de la historia que conmocionó al mundo.</p>
@@ -563,7 +610,7 @@
                     
                     <!-- Historias futuras (próximamente) -->
                     <div class="story-card coming-soon">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/D-Day_Invasion.jpg/800px-D-Day_Invasion.jpg" alt="Segunda Guerra Mundial" class="story-image">
+                        <img src="img/portada-diad.png">
                         <div class="story-content">
                             <h3 class="story-title">El Desembarco de Normandía</h3>
                             <p class="story-desc">Junio de 1944 - La operación militar que cambió el curso de la Segunda Guerra Mundial.</p>
@@ -571,7 +618,7 @@
                     </div>
                     
                     <div class="story-card coming-soon">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Moon_Landing_-_GPN-2000-001210.jpg/800px-Moon_Landing_-_GPN-2000-001210.jpg" alt="Llegada a la Luna" class="story-image">
+                        <img src="img/portada-luna.png">
                         <div class="story-content">
                             <h3 class="story-title">La Llegada a la Luna</h3>
                             <p class="story-desc">Julio de 1969 - El pequeño paso para el hombre que se convirtió en un gran salto para la humanidad.</p>
