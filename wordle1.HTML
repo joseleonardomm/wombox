@@ -19,6 +19,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 20px;
             position: relative;
             overflow-x: hidden;
@@ -46,23 +47,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
         
         .titulo-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            width: 100%;
         }
         
         .playstation-logo {
             width: 40px;
             height: 40px;
-            margin-right: 10px;
+            margin-right: 15px;
         }
         
         h1 {
-            margin: 20px 0;
+            margin: 0;
             font-size: 2.5rem;
             text-align: center;
             color: #fff;
@@ -71,47 +74,49 @@
         
         .stats {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 15px;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .stat {
             background-color: rgba(30, 30, 60, 0.8);
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             flex: 1;
-            margin: 0 5px;
+            max-width: 130px;
             box-shadow: 0 0 10px rgba(61, 123, 255, 0.3);
         }
         
         .acertijo {
             background-color: rgba(30, 30, 60, 0.8);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
             text-align: center;
             width: 100%;
             box-shadow: 0 0 15px rgba(61, 123, 255, 0.5);
-            min-height: 70px;
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.1rem;
         }
         
         .tablero {
             display: grid;
             grid-template-rows: repeat(7, 1fr);
-            gap: 8px;
+            gap: 10px;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .fila {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 10px;
         }
         
         .letra {
@@ -133,6 +138,7 @@
         .teclado {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 8px;
             width: 100%;
             margin-top: 20px;
@@ -142,10 +148,11 @@
             display: flex;
             justify-content: center;
             gap: 6px;
+            width: 100%;
         }
         
         .tecla {
-            min-width: 30px;
+            min-width: 32px;
             height: 50px;
             display: flex;
             align-items: center;
@@ -158,6 +165,8 @@
             font-size: 1rem;
             cursor: pointer;
             transition: background-color 0.2s;
+            flex: 1;
+            max-width: 45px;
         }
         
         .tecla:hover {
@@ -165,7 +174,8 @@
         }
         
         .tecla-grande {
-            min-width: 60px;
+            min-width: 65px;
+            flex: 1.5;
         }
         
         .correcta {
@@ -205,23 +215,26 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: rgba(30, 30, 60, 0.95);
-            padding: 20px;
+            padding: 30px;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 0 20px rgba(61, 123, 255, 0.8);
             z-index: 100;
             display: none;
+            width: 90%;
+            max-width: 400px;
         }
         
         .mensaje button {
-            margin-top: 15px;
-            padding: 10px 20px;
+            margin-top: 20px;
+            padding: 12px 24px;
             background-color: #3d7bff;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 1rem;
         }
         
         .intentos {
@@ -231,25 +244,27 @@
         }
         
         .boton-reinicio {
-            margin-top: 15px;
-            padding: 10px 20px;
+            margin-top: 25px;
+            padding: 12px 24px;
             background-color: #3d7bff;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 1rem;
         }
         
         @media (max-width: 500px) {
             .tecla {
-                min-width: 25px;
+                min-width: 28px;
                 height: 45px;
                 font-size: 0.9rem;
+                max-width: 40px;
             }
             
             .tecla-grande {
-                min-width: 50px;
+                min-width: 55px;
             }
             
             h1 {
@@ -262,11 +277,19 @@
             
             .stats {
                 flex-direction: column;
+                align-items: center;
                 gap: 10px;
             }
             
             .stat {
                 margin: 0;
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .acertijo {
+                padding: 15px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -345,56 +368,36 @@
         // Base de datos de acertijos y palabras (todas de 5 letras)
         const todosAcertijos = [
             {
-                pista: "Lo tienes que poner al revés para que funcione",
-                palabra: "SACOS"
+                pista: "Dientes sin boca, metal que obedece; en puertas y candados, siempre aparece.",
+                palabra: "LLAVE"
             },
             {
-                pista: "Se hace sin manos y se rompe sin pies",
-                palabra: "HUEVO"
+                pista: "Vigilo en la altura, cargo sin protesta; mi cuello es bandera de calma andina y fiesta.",
+                palabra: "LLAMA"
             },
             {
-                pista: "Blanco por dentro, verde por fuera. Si quieres que te lo diga, espera",
-                palabra: "PERAS"
+                pista: "Entre agujeros guardo el sabor; me rallo, me fundo y alegro el fogón.",
+                palabra: "QUESO"
             },
             {
-                pista: "Tiene ciudades pero no casas, tiene montañas pero no árboles, tiene agua pero no peces",
-                palabra: "MAPAS"
+                pista: "Pequeño bigote, oído fino; corro en silencio por mi camino.",
+                palabra: "RATON"
             },
             {
                 pista: "Tiene agujas y no sabe coser, tiene números y no sabe leer",
                 palabra: "RELOJ"
             },
             {
-                pista: "Blanco es, la gallina lo pone, con aceite se fríe y con pan se come",
-                palabra: "HUEVO"
+                pista: "Entre puentes y museos veo pasar al Sena, una torre de hierro me señala la escena. Soy moda y luz de noche, susurro en mi país; si piensas en Francia, me llamas en cinco: ¿quién es?",
+                palabra: "PARIS"
             },
             {
-                pista: "Oro parece, plata no es, el que no lo adivine bien tonto es",
-                palabra: "PLATA"
+                pista: "Me usan para escribir, aunque no tengo voz. Soy de tinta o de mina, ¿ya sabes quién soy?",
+                palabra: "LAPIZ"
             },
             {
-                pista: "Redondo redondo, barril sin fondo, ¿qué es?",
-                palabra: "ANILL"
-            },
-            {
-                pista: "Sin pies ni cabeza, y con cuello y sombrero",
-                palabra: "HONGO"
-            },
-            {
-                pista: "Va con la gente al mercado y sin embargo no se moja",
-                palabra: "SOMBR"
-            },
-            {
-                pista: "Del cielo baje y en el suelo caí, sin ser ave ni tener alas",
-                palabra: "LLUVI"
-            },
-            {
-                pista: "Tiene dientes y no come, tiene cabeza y no es hombre",
-                palabra: "AJOSS"
-            },
-            {
-                pista: "Blanco fue mi nacimiento, verde mi crecimiento, rojo mi vivir y negro mi fallecimiento",
-                palabra: "UVASS"
+                pista: "Vuelo sin tener alas, lloro sin tener ojos, y si me buscas, en el cielo me alojas.",
+                palabra: "NUBES"
             }
         ];
         
@@ -563,26 +566,50 @@
                 palabraIntento += fila[i].textContent;
             }
             
-            // Verificar cada letra
+            // Crear arrays para el resultado
+            let resultado = new Array(5).fill('ausente');
+            let letrasObjetivo = palabraActual.split('');
+            let letrasIntento = palabraIntento.split('');
+            
+            // Primera pasada: encontrar letras correctas (verde)
+            for (let i = 0; i < 5; i++) {
+                if (letrasIntento[i] === letrasObjetivo[i]) {
+                    resultado[i] = 'correcta';
+                    letrasObjetivo[i] = null; // Marcamos como usada
+                }
+            }
+            
+            // Segunda pasada: encontrar letras presentes pero en posición incorrecta (amarillo)
+            for (let i = 0; i < 5; i++) {
+                if (resultado[i] === 'correcta') continue;
+                
+                const index = letrasObjetivo.indexOf(letrasIntento[i]);
+                if (index !== -1) {
+                    resultado[i] = 'presente';
+                    letrasObjetivo[index] = null; // Marcamos como usada
+                }
+            }
+            
+            // Aplicar los resultados con animación
             for (let i = 0; i < 5; i++) {
                 const letra = fila[i].textContent;
-                let estado = "ausente";
-                
-                if (palabraActual[i] === letra) {
-                    estado = "correcta";
-                } else if (palabraActual.includes(letra)) {
-                    estado = "presente";
-                }
                 
                 // Aplicar animación y color después de un delay
                 setTimeout(() => {
-                    fila[i].classList.add("animacion", estado);
+                    fila[i].classList.add("animacion", resultado[i]);
                     
                     // Actualizar teclado virtual
                     const tecla = document.querySelector(`.tecla[data-tecla="${letra}"]`);
                     if (!tecla.classList.contains("correcta")) {
-                        tecla.classList.remove("presente", "ausente");
-                        tecla.classList.add(estado);
+                        if (resultado[i] === 'correcta') {
+                            tecla.classList.remove("presente", "ausente");
+                            tecla.classList.add("correcta");
+                        } else if (resultado[i] === 'presente' && !tecla.classList.contains("correcta")) {
+                            tecla.classList.remove("ausente");
+                            tecla.classList.add("presente");
+                        } else if (resultado[i] === 'ausente' && !tecla.classList.contains("correcta") && !tecla.classList.contains("presente")) {
+                            tecla.classList.add("ausente");
+                        }
                     }
                 }, i * 300);
             }
