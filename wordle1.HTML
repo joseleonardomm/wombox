@@ -265,6 +265,101 @@
             width: 0;
         }
         
+        /* Modal de reglas */
+        .modal-reglas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(12, 20, 69, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .contenido-modal {
+            background: linear-gradient(to bottom, #1a1a2e, #0c1445);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(61, 123, 255, 0.8);
+            border: 2px solid #3d7bff;
+            text-align: center;
+        }
+        
+        .contenido-modal h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px #3d7bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .reglas-lista {
+            text-align: left;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+        
+        .reglas-lista li {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .ejemplos {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .ejemplo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ejemplo-letra {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 6px;
+        }
+        
+        .ejemplo-texto {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .boton-empezar {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: #3d7bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .boton-empezar:hover {
+            background-color: #2a5bc9;
+            transform: scale(1.05);
+        }
+        
         @media (max-width: 500px) {
             .tecla {
                 min-width: 28px;
@@ -301,10 +396,71 @@
                 padding: 15px;
                 font-size: 1rem;
             }
+            
+            .contenido-modal {
+                padding: 20px;
+            }
+            
+            .contenido-modal h2 {
+                font-size: 1.7rem;
+            }
+            
+            .reglas-lista {
+                padding: 0 10px;
+            }
+            
+            .ejemplo-letra {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Modal de reglas -->
+    <div class="modal-reglas" id="modal-reglas">
+        <div class="contenido-modal">
+            <h2>
+                <svg class="playstation-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M65.6 27.2L45.4 37.5l-7.3-4.2v38.5l7.3 4.2 20.2-10.3 7.3-4.2V31.4l-7.3-4.2zm-40.2 0L5.2 37.5 0 41v27.3l5.2 3.5 20.2 10.3 7.3 4.2V31.4l-7.3-4.2zM71.9 80l-7.3-4.2V47.9l7.3-4.2 15.6 7.9 5.2 3.5v27.3l-5.2 3.5L71.9 80z" fill="#fff"/>
+                </svg>
+                WORLDE PLAYSTATION
+            </h2>
+            
+            <p>Adivina la palabra de 5 letras en 7 intentos.</p>
+            
+            <div class="reglas-lista">
+                <ol>
+                    <li>Cada intento debe ser una palabra válida de 5 letras.</li>
+                    <li>Después de cada intento, el color de las letras cambiará para mostrar qué tan cerca estás de acertar la palabra.</li>
+                    <li>Resuelve el acertijo para obtener una pista sobre la palabra.</li>
+                </ol>
+            </div>
+            
+            <h3>Ejemplos</h3>
+            
+            <div class="ejemplos">
+                <div class="ejemplo">
+                    <div class="ejemplo-letra correcta">L</div>
+                    <div class="ejemplo-texto">La letra <strong>L</strong> está en la palabra y en la posición correcta.</div>
+                </div>
+                
+                <div class="ejemplo">
+                    <div class="ejemplo-letra presente">L</div>
+                    <div class="ejemplo-texto">La letra <strong>L</strong> está en la palabra pero en la posición incorrecta.</div>
+                </div>
+                
+                <div class="ejemplo">
+                    <div class="ejemplo-letra ausente">L</div>
+                    <div class="ejemplo-texto">La letra <strong>L</strong> no está en la palabra.</div>
+                </div>
+            </div>
+            
+            <button class="boton-empezar" id="empezar-btn">¡Empezar a jugar!</button>
+        </div>
+    </div>
+    
     <!-- Campo de entrada oculto para teclado móvil -->
     <input type="text" class="input-movil" id="input-movil" maxlength="1" />
     
@@ -437,9 +593,14 @@
         const contadorAcertijos = document.getElementById("contador-acertijos");
         const contadorResueltos = document.getElementById("contador-resueltos");
         const inputMovil = document.getElementById("input-movil");
+        const modalReglas = document.getElementById("modal-reglas");
+        const empezarBtn = document.getElementById("empezar-btn");
         
         // Inicializar el juego
         function inicializarJuego() {
+            // Ocultar modal de reglas
+            modalReglas.style.display = "none";
+            
             // Reiniciar acertijos disponibles
             acertijosDisponibles = [...todosAcertijos];
             acertijosMostrados = 0;
@@ -693,8 +854,13 @@
         // Configurar botón para reiniciar juego
         reiniciarBtn.addEventListener("click", inicializarJuego);
         
-        // Iniciar el juego
-        inicializarJuego();
+        // Configurar botón para empezar a jugar
+        empezarBtn.addEventListener("click", inicializarJuego);
+        
+        // Mostrar modal de reglas al cargar la página
+        window.addEventListener('load', () => {
+            modalReglas.style.display = "flex";
+        });
     </script>
 </body>
 </html>
