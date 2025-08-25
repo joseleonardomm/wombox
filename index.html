@@ -526,7 +526,7 @@
         <header>
             <div class="logo-container">
                 <!-- Reemplaza con la URL de tu logo de Wombox Studios -->
-                <img src="https://placehold.co/300x100/00c8ff/ffffff?text=Wombox+Studios" alt="Wombox Studios" class="logo">
+                <img src="img/wombox-logo.png" alt="Wombox Studios" class="logo">
                 <div class="version">Versión de Prueba</div>
             </div>
             
@@ -577,6 +577,16 @@
                 <div class="game-info">
                     <h3 class="game-title">Memoriza el Camino</h3>
                     <p class="game-desc">Observa, memoriza y repite. Entrena tu memoria visual con este desafío de patrones.</p>
+                </div>
+            </div>
+            
+            <!-- NUEVO JUEGO: Wordle -->
+            <div class="game-item" data-game="wordle">
+                <div class="game-badge">Nuevo</div>
+                <img src="img/wordle-portada.jpg" alt="Wordle" class="game-cover">
+                <div class="game-info">
+                    <h3 class="game-title">Wordle</h3>
+                    <p class="game-desc">Adivina la palabra oculta en 7 intentos con acertijos.</p>
                 </div>
             </div>
         </div>
@@ -688,6 +698,10 @@
                     case 'memory':
                         // Abrir juego de memoria
                         window.location.href = 'memoria.html';
+                        break;
+                    case 'wordle':
+                        // Abrir juego Wordle
+                        window.location.href = 'wordle1.html';
                         break;
                 }
             });
