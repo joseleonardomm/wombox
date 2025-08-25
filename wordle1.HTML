@@ -133,6 +133,7 @@
             color: white;
             text-transform: uppercase;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .teclado {
@@ -255,6 +256,15 @@
             font-size: 1rem;
         }
         
+        /* Campo de entrada oculto para teclado móvil */
+        .input-movil {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            width: 0;
+        }
+        
         @media (max-width: 500px) {
             .tecla {
                 min-width: 28px;
@@ -295,6 +305,9 @@
     </style>
 </head>
 <body>
+    <!-- Campo de entrada oculto para teclado móvil -->
+    <input type="text" class="input-movil" id="input-movil" maxlength="1" />
+    
     <div class="container">
         <div class="titulo-container">
             <svg class="playstation-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -423,6 +436,7 @@
         const contadorIntentos = document.getElementById("contador-intentos");
         const contadorAcertijos = document.getElementById("contador-acertijos");
         const contadorResueltos = document.getElementById("contador-resueltos");
+        const inputMovil = document.getElementById("input-movil");
         
         // Inicializar el juego
         function inicializarJuego() {
@@ -485,6 +499,14 @@
                     letra.className = "letra";
                     letra.dataset.fila = i;
                     letra.dataset.col = j;
+                    
+                    // Agregar evento para abrir teclado en móviles
+                    letra.addEventListener('click', () => {
+                        if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
+                            inputMovil.focus();
+                        }
+                    });
+                    
                     fila.appendChild(letra);
                 }
                 
@@ -518,6 +540,9 @@
             
             // Configurar event listener para el teclado físico
             document.addEventListener("keydown", manejarTeclado);
+            
+            // Configurar event listener para el input móvil
+            inputMovil.addEventListener('input', manejarInputMovil);
         }
         
         // Manejar eventos del teclado físico
@@ -531,6 +556,19 @@
             } else if (/^[A-Za-zñÑ]$/.test(e.key)) {
                 agregarLetra(e.key.toUpperCase());
             }
+        }
+        
+        // Manejar entrada desde el teclado móvil
+        function manejarInputMovil(e) {
+            if (juegoTerminado) return;
+            
+            const letra = e.data;
+            if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
+                agregarLetra(letra.toUpperCase());
+            }
+            
+            // Limpiar el input después de usarlo
+            inputMovil.value = '';
         }
         
         // Agregar una letra al tablero
