@@ -8,580 +8,571 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
 
-html, body {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-}
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-body {
-    background: linear-gradient(to bottom, #0c1445, #1a1a2e);
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow-x: hidden;
-    position: relative;
-}
+        body {
+            background: linear-gradient(to bottom, #0c1445, #1a1a2e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px),
-        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
-        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
-    background-size: 550px 550px, 350px 350px, 250px 250px;
-    background-position: 0 0, 40px 60px, 130px 270px;
-    z-index: -1;
-}
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+            z-index: -1;
+        }
 
-.container {
-    max-width: 500px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    -webkit-overflow-scrolling: touch;
-}
+        .container {
+            max-width: 500px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            -webkit-overflow-scrolling: touch;
+        }
 
-.titulo-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    width: 100%;
-}
+        .titulo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
 
-.playstation-logo {
-    width: 40px;
-    height: 40px;
-    margin-right: 15px;
-}
+        .playstation-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
 
-h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    text-align: center;
-    color: #fff;
-    text-shadow: 0 0 10px #3d7bff, 0 0 20px #3d7bff;
-}
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px #3d7bff, 0 0 20px #3d7bff;
+        }
 
-.stats {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
 
-.stat {
-    background-color: rgba(30, 30, 60, 0.8);
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-    flex: 1;
-    min-width: 100px;
-    max-width: 130px;
-    box-shadow: 0 0 10px rgba(61, 123, 255, 0.3);
-}
+        .stat {
+            background-color: rgba(30, 30, 60, 0.8);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+            max-width: 130px;
+            box-shadow: 0 0 10px rgba(61, 123, 255, 0.3);
+        }
 
-.acertijo {
-    background-color: rgba(30, 30, 60, 0.8);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 25px;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 0 15px rgba(61, 123, 255, 0.5);
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    -webkit-user-select: none;
-    user-select: none;
-}
+        .acertijo {
+            background-color: rgba(30, 30, 60, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(61, 123, 255, 0.5);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            -webkit-user-select: none;
+            user-select: none;
+        }
 
-.tablero {
-    display: grid;
-    grid-template-rows: repeat(7, 1fr);
-    gap: 10px;
-    width: 100%;
-    margin-bottom: 25px;
-    touch-action: manipulation;
-}
+        .tablero {
+            display: grid;
+            grid-template-rows: repeat(7, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 25px;
+            touch-action: manipulation;
+        }
 
-.fila {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-}
+        .fila {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
 
-.letra {
-    width: 100%;
-    aspect-ratio: 1/1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    background-color: rgba(50, 50, 80, 0.6);
-    border: 2px solid #3d7bff;
-    border-radius: 8px;
-    color: white;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
-    touch-action: manipulation;
-}
+        .letra {
+            width: 100%;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            background-color: rgba(50, 50, 80, 0.6);
+            border: 2px solid #3d7bff;
+            border-radius: 8px;
+            color: white;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
 
-.teclado {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    margin-top: 20px;
-    touch-action: manipulation;
-}
+        .teclado {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 20px;
+            touch-action: manipulation;
+        }
 
-.fila-teclado {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-}
+        .fila-teclado {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
 
-.tecla {
-    min-width: 32px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(61, 123, 255, 0.3);
-    border: none;
-    border-radius: 6px;
-    color: white;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    flex: 1;
-    max-width: 45px;
-    -webkit-user-select: none;
-    user-select: none;
-    touch-action: manipulation;
-}
+        .tecla {
+            min-width: 32px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(61, 123, 255, 0.3);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+            max-width: 45px;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
 
-.tecla:hover {
-    background-color: rgba(61, 123, 255, 0.5);
-}
+        .tecla:hover {
+            background-color: rgba(61, 123, 255, 0.5);
+        }
 
-.tecla-grande {
-    min-width: 65px;
-    flex: 1.5;
-}
+        .tecla-grande {
+            min-width: 65px;
+            flex: 1.5;
+        }
 
-.correcta {
-    background-color: #2ecc71;
-    border-color: #2ecc71;
-}
+        .correcta {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+        }
 
-.presente {
-    background-color: #f1c40f;
-    border-color: #f1c40f;
-}
+        .presente {
+            background-color: #f1c40f;
+            border-color: #f1c40f;
+        }
 
-.ausente {
-    background-color: #7f8c8d;
-    border-color: #7f8c8d;
-}
+        .ausente {
+            background-color: #7f8c8d;
+            border-color: #7f8c8d;
+        }
 
-.animacion {
-    -webkit-animation: flip 0.5s ease forwards;
-    animation: flip 0.5s ease forwards;
-}
+        .animacion {
+            -webkit-animation: flip 0.5s ease forwards;
+            animation: flip 0.5s ease forwards;
+        }
 
-@-webkit-keyframes flip {
-    0% {
-        -webkit-transform: scaleY(1);
-        transform: scaleY(1);
-    }
-    50% {
-        -webkit-transform: scaleY(0);
-        transform: scaleY(0);
-    }
-    100% {
-        -webkit-transform: scaleY(1);
-        transform: scaleY(1);
-    }
-}
+        @-webkit-keyframes flip {
+            0% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+            50% {
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0);
+            }
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
 
-@keyframes flip {
-    0% {
-        -webkit-transform: scaleY(1);
-        transform: scaleY(1);
-    }
-    50% {
-        -webkit-transform: scaleY(0);
-        transform: scaleY(0);
-    }
-    100% {
-        -webkit-transform: scaleY(1);
-        transform: scaleY(1);
-    }
-}
+        @keyframes flip {
+            0% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+            50% {
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0);
+            }
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
 
-.mensaje {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(30, 30, 60, 0.95);
-    padding: 30px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(61, 123, 255, 0.8);
-    z-index: 100;
-    display: none;
-    width: 90%;
-    max-width: 400px;
-    -webkit-overflow-scrolling: touch;
-}
+        .mensaje {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(30, 30, 60, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(61, 123, 255, 0.8);
+            z-index: 100;
+            display: none;
+            width: 90%;
+            max-width: 400px;
+            -webkit-overflow-scrolling: touch;
+        }
 
-.mensaje button {
-    margin-top: 20px;
-    padding: 12px 24px;
-    background-color: #3d7bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-}
+        .mensaje button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #3d7bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
 
-.intentos {
-    margin-top: 10px;
-    font-size: 1.2rem;
-    text-align: center;
-}
+        .intentos {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
 
-.boton-reinicio {
-    margin-top: 25px;
-    padding: 12px 24px;
-    background-color: #3d7bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-}
+        .boton-reinicio {
+            margin-top: 25px;
+            padding: 12px 24px;
+            background-color: #3d7bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
 
-/* Campo de entrada para teclado móvil - mejorado para iOS/Android */
-.input-movil {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    opacity: 1;
-    background: transparent;
-    border: none;
-    color: transparent;
-    font-size: 16px;
-    z-index: 999;
-    transform: translateY(100%);
-    pointer-events: none;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-user-modify: read-write-plaintext-only;
-}
+        /* Campo de entrada para teclado móvil - MEJORADO */
+        .input-movil {
+            position: fixed;
+            bottom: -100px; /* Mover completamente fuera de pantalla */
+            left: 0;
+            width: 100%;
+            height: 60px;
+            opacity: 0;
+            background: transparent;
+            border: none;
+            color: transparent;
+            font-size: 16px;
+            z-index: 999;
+            pointer-events: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
 
-.input-movil:focus {
-    outline: none;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-}
+        .input-movil:focus {
+            outline: none;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
 
-/* Modal de reglas - scroll mejorado */
-.modal-reglas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(12, 20, 69, 0.95);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
+        /* Modal de reglas - scroll mejorado */
+        .modal-reglas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(12, 20, 69, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-.contenido-modal {
-    background: linear-gradient(to bottom, #1a1a2e, #0c1445);
-    border-radius: 15px;
-    padding: 30px;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 0 30px rgba(61, 123, 255, 0.8);
-    border: 2px solid #3d7bff;
-    text-align: center;
-    margin: 20px 0;
-    max-height: 90vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
+        .contenido-modal {
+            background: linear-gradient(to bottom, #1a1a2e, #0c1445);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(61, 123, 255, 0.8);
+            border: 2px solid #3d7bff;
+            text-align: center;
+            margin: 20px 0;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-.contenido-modal h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #fff;
-    text-shadow: 0 0 10px #3d7bff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
+        .contenido-modal h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px #3d7bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-.reglas-lista {
-    text-align: left;
-    margin: 20px 0;
-    padding: 0 20px;
-}
+        .reglas-lista {
+            text-align: left;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
 
-.reglas-lista li {
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
+        .reglas-lista li {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
 
-.ejemplos {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: 25px 0;
-}
+        .ejemplos {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
 
-.ejemplo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        .ejemplo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.ejemplo-letra {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    border-radius: 6px;
-}
+        .ejemplo-letra {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 6px;
+        }
 
-.ejemplo-texto {
-    flex: 1;
-    text-align: left;
-}
+        .ejemplo-texto {
+            flex: 1;
+            text-align: left;
+        }
 
-.boton-empezar {
-    margin-top: 20px;
-    padding: 12px 30px;
-    background-color: #3d7bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-}
+        .boton-empezar {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: #3d7bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
 
-.boton-empezar:hover {
-    background-color: #2a5bc9;
-    transform: scale(1.05);
-}
+        .boton-empezar:hover {
+            background-color: #2a5bc9;
+            transform: scale(1.05);
+        }
 
-/* Botón para abrir teclado manualmente */
-.abrir-teclado {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #3d7bff;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 900;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    touch-action: manipulation;
-}
+        /* Botón para abrir teclado manualmente */
+        .abrir-teclado {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #3d7bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 900;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
+        }
 
-/* Mejoras específicas para iOS */
-@supports (-webkit-touch-callout: none) {
-    body {
-        height: -webkit-fill-available;
-    }
-    
-    .modal-reglas {
-        position: absolute;
-        height: -webkit-fill-available;
-    }
-    
-    .input-movil {
-        font-size: 16px !important; /* Forzar tamaño para iOS */
-    }
-}
+        /* Mejoras específicas para iOS */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                height: -webkit-fill-available;
+            }
+            
+            .modal-reglas {
+                position: absolute;
+                height: -webkit-fill-available;
+            }
+            
+            .input-movil {
+                font-size: 16px !important;
+            }
+        }
 
-/* Mejoras para scroll suave en iOS */
-.scroll-container {
-    -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
-}
+        /* Prevenir zoom en dispositivos móviles */
+        @media (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+            
+            .stats {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 10px;
+            }
+            
+            .stat {
+                min-width: 110px;
+                flex-shrink: 0;
+            }
+        }
 
-/* Prevenir zoom en dispositivos móviles */
-@media (max-width: 768px) {
-    input, select, textarea {
-        font-size: 16px !important; /* Prevenir zoom en iOS */
-    }
-    
-    .stats {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 10px;
-    }
-    
-    .stat {
-        min-width: 110px;
-        flex-shrink: 0;
-    }
-}
+        @media (max-width: 500px) {
+            .tecla {
+                min-width: 28px;
+                height: 45px;
+                font-size: 0.9rem;
+                max-width: 40px;
+            }
+            
+            .tecla-grande {
+                min-width: 55px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .letra {
+                font-size: 1.5rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: nowrap;
+                overflow-x: visible;
+            }
+            
+            .stat {
+                margin: 0;
+                width: 100%;
+                max-width: 200px;
+                min-width: auto;
+            }
+            
+            .acertijo {
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            .contenido-modal {
+                padding: 20px;
+                max-height: 85vh;
+            }
+            
+            .contenido-modal h2 {
+                font-size: 1.7rem;
+            }
+            
+            .reglas-lista {
+                padding: 0 10px;
+            }
+            
+            .ejemplo-letra {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .input-movil {
+                height: 50px;
+                font-size: 16px !important;
+            }
+            
+            .abrir-teclado {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
 
-@media (max-width: 500px) {
-    .tecla {
-        min-width: 28px;
-        height: 45px;
-        font-size: 0.9rem;
-        max-width: 40px;
-    }
-    
-    .tecla-grande {
-        min-width: 55px;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    .letra {
-        font-size: 1.5rem;
-    }
-    
-    .stats {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: nowrap;
-        overflow-x: visible;
-    }
-    
-    .stat {
-        margin: 0;
-        width: 100%;
-        max-width: 200px;
-        min-width: auto;
-    }
-    
-    .acertijo {
-        padding: 15px;
-        font-size: 1rem;
-    }
-    
-    .contenido-modal {
-        padding: 20px;
-        max-height: 85vh;
-    }
-    
-    .contenido-modal h2 {
-        font-size: 1.7rem;
-    }
-    
-    .reglas-lista {
-        padding: 0 10px;
-    }
-    
-    .ejemplo-letra {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
-    }
-    
-    .input-movil {
-        height: 50px;
-        font-size: 16px !important;
-    }
-    
-    .abrir-teclado {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-        bottom: 15px;
-        right: 15px;
-    }
-}
-
-/* Corrección para dispositivos muy pequeños */
-@media (max-width: 350px) {
-    .tecla {
-        min-width: 25px;
-        height: 40px;
-        font-size: 0.8rem;
-        max-width: 35px;
-    }
-    
-    .tecla-grande {
-        min-width: 45px;
-    }
-    
-    .letra {
-        font-size: 1.3rem;
-    }
-}
+        @media (max-width: 350px) {
+            .tecla {
+                min-width: 25px;
+                height: 40px;
+                font-size: 0.8rem;
+                max-width: 35px;
+            }
+            
+            .tecla-grande {
+                min-width: 45px;
+            }
+            
+            .letra {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -705,448 +696,459 @@ h1 {
 
     <script>
         // Base de datos de acertijos y palabras (todas de 5 letras)
-        const todosAcertijos = [
-            {
-                pista: "Dientes sin boca, metal que obedece; en puertas y candados, siempre aparece.",
-                palabra: "LLAVE"
-            },
-            {
-                pista: "Vigilo en la altura, cargo sin protesta; mi cuello es bandera de calma andina y fiesta.",
-                palabra: "LLAMA"
-            },
-            {
-                pista: "Entre agujeros guardo el sabor; me rallo, me fundo y alegro el fogón.",
-                palabra: "QUESO"
-            },
-            {
-                pista: "Pequeño bigote, oído fino; corro en silencio por mi camino.",
-                palabra: "RATON"
-            },
-            {
-                pista: "Tiene agujas y no sabe coser, tiene números y no sabe leer",
-                palabra: "RELOJ"
-            },
-            {
-                pista: "Entre puentes y museos veo pasar al Sena, una torre de hierro me señala la escena. Soy moda y luz de noche, susurro en mi país; si piensas en Francia, me llamas en cinco: ¿quién es?",
-                palabra: "PARIS"
-            },
-            {
-                pista: "Me usan para escribir, aunque no tengo voz. Soy de tinta o de mina, ¿ya sabes quién soy?",
-                palabra: "LAPIZ"
-            },
-            {
-                pista: "Vuelo sin tener alas, lloro sin tener ojos, y si me buscas, en el cielo me alojas.",
-                palabra: "NUBES"
+const todosAcertijos = [
+    {
+        pista: "Dientes sin boca, metal que obedece; en puertas y candados, siempre aparece.",
+        palabra: "LLAVE"
+    },
+    {
+        pista: "Vigilo en la altura, cargo sin protesta; mi cuello es bandera de calma andina y fiesta.",
+        palabra: "LLAMA"
+    },
+    {
+        pista: "Entre agujeros guardo el sabor; me rallo, me fundo y alegro el fogón.",
+        palabra: "QUESO"
+    },
+    {
+        pista: "Pequeño bigote, oído fino; corro en silencio por mi camino.",
+        palabra: "RATON"
+    },
+    {
+        pista: "Tiene agujas y no sabe coser, tiene números y no sabe leer",
+        palabra: "RELOJ"
+    },
+    {
+        pista: "Entre puentes y museos veo pasar al Sena, una torre de hierro me señala la escena. Soy moda y luz de noche, susurro en mi país; si piensas en Francia, me llamas en cinco: ¿quién es?",
+        palabra: "PARIS"
+    },
+    {
+        pista: "Me usan para escribir, aunque no tengo voz. Soy de tinta o de mina, ¿ya sabes quién soy?",
+        palabra: "LAPIZ"
+    },
+    {
+        pista: "Vuelo sin tener alas, lloro sin tener ojos, y si me buscas, en el cielo me alojas.",
+        palabra: "NUBES"
+    }
+];
+
+// Variables de estado del juego
+let acertijosDisponibles = [];
+let acertijoActual = null;
+let palabraActual = "";
+let intentoActual = 0;
+let posicionActual = 0;
+let juegoTerminado = false;
+let acertijosMostrados = 0;
+let acertijosResueltos = 0;
+let tecladoAbierto = false;
+
+// Elementos DOM
+const tablero = document.getElementById("tablero");
+const acertijoElement = document.getElementById("acertijo");
+const tecladoElement = document.getElementById("teclado");
+const mensaje = document.getElementById("mensaje");
+const mensajeTitulo = document.getElementById("mensaje-titulo");
+const mensajeTexto = document.getElementById("mensaje-texto");
+const siguienteBtn = document.getElementById("siguiente-btn");
+const reiniciarBtn = document.getElementById("reiniciar-btn");
+const contadorIntentos = document.getElementById("contador-intentos");
+const contadorAcertijos = document.getElementById("contador-acertijos");
+const contadorResueltos = document.getElementById("contador-resueltos");
+const inputMovil = document.getElementById("input-movil");
+const modalReglas = document.getElementById("modal-reglas");
+const empezarBtn = document.getElementById("empezar-btn");
+const abrirTecladoBtn = document.getElementById("abrir-teclado");
+
+// Inicializar el juego
+function inicializarJuego() {
+    // Ocultar modal de reglas
+    modalReglas.style.display = "none";
+    
+    // Reiniciar acertijos disponibles
+    acertijosDisponibles = [...todosAcertijos];
+    acertijosMostrados = 0;
+    acertijosResueltos = 0;
+    
+    // Actualizar contadores
+    contadorAcertijos.textContent = acertijosMostrados;
+    contadorResueltos.textContent = acertijosResueltos;
+    
+    // Seleccionar siguiente acertijo
+    seleccionarSiguienteAcertijo();
+}
+
+// Seleccionar un acertijo que no se haya mostrado
+function seleccionarSiguienteAcertijo() {
+    if (acertijosDisponibles.length === 0) {
+        // Si no hay más acertijos disponibles
+        juegoTerminado = true;
+        mensajeTitulo.textContent = "¡Felicidades!";
+        mensajeTexto.textContent = "Has completado todos los acertijos. ¡Juego terminado!";
+        siguienteBtn.style.display = "none";
+        mensaje.style.display = "block";
+        return;
+    }
+    
+    // Seleccionar un acertijo aleatorio de los disponibles
+    const indiceAleatorio = Math.floor(Math.random() * acertijosDisponibles.length);
+    acertijoActual = acertijosDisponibles[indiceAleatorio];
+    palabraActual = acertijoActual.palabra;
+    
+    // Eliminar el acertijo de los disponibles
+    acertijosDisponibles.splice(indiceAleatorio, 1);
+    
+    // Mostrar el acertijo
+    acertijoElement.textContent = acertijoActual.pista;
+    
+    // Reiniciar variables
+    intentoActual = 0;
+    posicionActual = 0;
+    juegoTerminado = false;
+    contadorIntentos.textContent = "Intentos: 0/7";
+    
+    // Incrementar contador de acertijos mostrados
+    acertijosMostrados++;
+    contadorAcertijos.textContent = acertijosMostrados;
+    
+    // Limpiar el tablero
+    tablero.innerHTML = "";
+    
+    // Crear las filas y letras
+    for (let i = 0; i < 7; i++) {
+        const fila = document.createElement("div");
+        fila.className = "fila";
+        
+        for (let j = 0; j < 5; j++) {
+            const letra = document.createElement("div");
+            letra.className = "letra";
+            letra.dataset.fila = i;
+            letra.dataset.col = j;
+            
+            // Agregar evento para abrir teclado en móviles
+            letra.addEventListener('click', () => {
+                if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
+                    abrirTeclado();
+                }
+            });
+            
+            // Añadir event listener táctil para iOS
+            letra.addEventListener('touchstart', (e) => {
+                if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
+                    abrirTeclado();
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            fila.appendChild(letra);
+        }
+        
+        tablero.appendChild(fila);
+    }
+    
+    // Reiniciar teclado
+    document.querySelectorAll('.tecla').forEach(tecla => {
+        tecla.classList.remove('correcta', 'presente', 'ausente');
+    });
+    
+    // Ocultar mensaje
+    mensaje.style.display = "none";
+    
+    // Configurar event listeners para el teclado virtual
+    document.querySelectorAll(".tecla").forEach(tecla => {
+        tecla.addEventListener("click", () => {
+            if (juegoTerminado) return;
+            
+            const letra = tecla.dataset.tecla;
+            
+            if (letra === "ENTER") {
+                comprobarPalabra();
+            } else if (letra === "DELETE") {
+                eliminarLetra();
+            } else {
+                agregarLetra(letra);
             }
-        ];
+        });
         
-        // Variables de estado del juego
-        let acertijosDisponibles = [];
-        let acertijoActual = null;
-        let palabraActual = "";
-        let intentoActual = 0;
-        let posicionActual = 0;
-        let juegoTerminado = false;
-        let acertijosMostrados = 0;
-        let acertijosResueltos = 0;
-        let tecladoAbierto = false;
-        
-        // Elementos DOM
-        const tablero = document.getElementById("tablero");
-        const acertijoElement = document.getElementById("acertijo");
-        const tecladoElement = document.getElementById("teclado");
-        const mensaje = document.getElementById("mensaje");
-        const mensajeTitulo = document.getElementById("mensaje-titulo");
-        const mensajeTexto = document.getElementById("mensaje-texto");
-        const siguienteBtn = document.getElementById("siguiente-btn");
-        const reiniciarBtn = document.getElementById("reiniciar-btn");
-        const contadorIntentos = document.getElementById("contador-intentos");
-        const contadorAcertijos = document.getElementById("contador-acertijos");
-        const contadorResueltos = document.getElementById("contador-resueltos");
-        const inputMovil = document.getElementById("input-movil");
-        const modalReglas = document.getElementById("modal-reglas");
-        const empezarBtn = document.getElementById("empezar-btn");
-        const abrirTecladoBtn = document.getElementById("abrir-teclado");
-        
-        // Inicializar el juego
-        function inicializarJuego() {
-            // Ocultar modal de reglas
-            modalReglas.style.display = "none";
+        // Añadir event listener táctil para iOS
+        tecla.addEventListener("touchstart", function(e) {
+            if (juegoTerminado) return;
             
-            // Reiniciar acertijos disponibles
-            acertijosDisponibles = [...todosAcertijos];
-            acertijosMostrados = 0;
-            acertijosResueltos = 0;
+            const letra = this.dataset.tecla;
             
-            // Actualizar contadores
-            contadorAcertijos.textContent = acertijosMostrados;
+            if (letra === "ENTER") {
+                comprobarPalabra();
+            } else if (letra === "DELETE") {
+                eliminarLetra();
+            } else {
+                agregarLetra(letra);
+            }
+            
+            e.preventDefault();
+        }, { passive: false });
+    });
+    
+    // Configurar event listener para el teclado físico
+    document.addEventListener("keydown", manejarTeclado);
+    
+    // Configurar event listener para el input móvil
+    inputMovil.addEventListener('input', manejarInputMovil);
+    
+    // Mostrar botón para abrir teclado en móviles
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        abrirTecladoBtn.style.display = 'flex';
+    }
+}
+
+// Función para abrir el teclado
+function abrirTeclado() {
+    inputMovil.focus();
+    setTimeout(() => {
+        inputMovil.click();
+        inputMovil.focus();
+    }, 100);
+    tecladoAbierto = true;
+    abrirTecladoBtn.style.display = 'none';
+}
+
+// Función para cerrar el teclado
+function cerrarTeclado() {
+    inputMovil.blur();
+    tecladoAbierto = false;
+    
+    // Mostrar botón para abrir teclado
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        setTimeout(() => {
+            abrirTecladoBtn.style.display = 'flex';
+        }, 300);
+    }
+}
+
+// Manejar eventos del teclado físico
+function manejarTeclado(e) {
+    if (juegoTerminado) return;
+    
+    if (e.key === "Enter") {
+        comprobarPalabra();
+    } else if (e.key === "Backspace") {
+        eliminarLetra();
+    } else if (/^[A-Za-zñÑ]$/.test(e.key)) {
+        agregarLetra(e.key.toUpperCase());
+    }
+}
+
+// Manejar entrada desde el teclado móvil
+function manejarInputMovil(e) {
+    if (juegoTerminado) return;
+    
+    const letra = e.target.value;
+    if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
+        agregarLetra(letra.toUpperCase());
+        e.target.value = '';
+    }
+}
+
+// Agregar una letra al tablero
+function agregarLetra(letra) {
+    if (posicionActual < 5 && intentoActual < 7) {
+        const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
+        casilla.textContent = letra;
+        posicionActual++;
+    }
+}
+
+// Eliminar una letra del tablero
+function eliminarLetra() {
+    if (posicionActual > 0) {
+        posicionActual--;
+        const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
+        casilla.textContent = "";
+    }
+}
+
+// Comprobar si la palabra es correcta
+function comprobarPalabra() {
+    if (posicionActual !== 5) {
+        // Mostrar mensaje de alerta mejorado para iOS
+        const alerta = document.createElement('div');
+        alerta.textContent = "¡Completa la palabra antes de enviar!";
+        alerta.style.position = 'fixed';
+        alerta.style.top = '50%';
+        alerta.style.left = '50%';
+        alerta.style.transform = 'translate(-50%, -50%)';
+        alerta.style.backgroundColor = 'rgba(30, 30, 60, 0.95)';
+        alerta.style.padding = '20px';
+        alerta.style.borderRadius = '8px';
+        alerta.style.zIndex = '1000';
+        alerta.style.color = 'white';
+        alerta.style.fontWeight = 'bold';
+        document.body.appendChild(alerta);
+        
+        setTimeout(() => {
+            document.body.removeChild(alerta);
+        }, 1500);
+        return;
+    }
+    
+    const fila = document.querySelectorAll(`.fila:nth-child(${intentoActual + 1}) .letra`);
+    let palabraIntento = "";
+    
+    // Obtener la palabra del intento actual
+    for (let i = 0; i < 5; i++) {
+        palabraIntento += fila[i].textContent;
+    }
+    
+    // Crear arrays para el resultado
+    let resultado = new Array(5).fill('ausente');
+    let letrasObjetivo = palabraActual.split('');
+    let letrasIntento = palabraIntento.split('');
+    
+    // Primera pasada: encontrar letras correctas (verde)
+    for (let i = 0; i < 5; i++) {
+        if (letrasIntento[i] === letrasObjetivo[i]) {
+            resultado[i] = 'correcta';
+            letrasObjetivo[i] = null; // Marcamos como usada
+        }
+    }
+    
+    // Segunda pasada: encontrar letras presentes pero en posición incorrecta (amarillo)
+    for (let i = 0; i < 5; i++) {
+        if (resultado[i] === 'correcta') continue;
+        
+        const index = letrasObjetivo.indexOf(letrasIntento[i]);
+        if (index !== -1) {
+            resultado[i] = 'presente';
+            letrasObjetivo[index] = null; // Marcamos como usada
+        }
+    }
+    
+    // Aplicar los resultados con animación
+    for (let i = 0; i < 5; i++) {
+        const letra = fila[i].textContent;
+        
+        // Aplicar animación y color después de un delay
+        setTimeout(() => {
+            fila[i].classList.add("animacion", resultado[i]);
+            
+            // Actualizar teclado virtual
+            const tecla = document.querySelector(`.tecla[data-tecla="${letra}"]`);
+            if (!tecla.classList.contains("correcta")) {
+                if (resultado[i] === 'correcta') {
+                    tecla.classList.remove("presente", "ausente");
+                    tecla.classList.add("correcta");
+                } else if (resultado[i] === 'presente' && !tecla.classList.contains("correcta")) {
+                    tecla.classList.remove("ausente");
+                    tecla.classList.add("presente");
+                } else if (resultado[i] === 'ausente' && !tecla.classList.contains("correcta") && !tecla.classList.contains("presente")) {
+                    tecla.classList.add("ausente");
+                }
+            }
+        }, i * 300);
+    }
+    
+    // Actualizar contador de intentos
+    intentoActual++;
+    contadorIntentos.textContent = `Intentos: ${intentoActual}/7`;
+    
+    // Comprobar si ganó o perdió
+    if (palabraIntento === palabraActual) {
+        setTimeout(() => {
+            juegoTerminado = true;
+            acertijosResueltos++;
             contadorResueltos.textContent = acertijosResueltos;
             
-            // Seleccionar siguiente acertijo
-            seleccionarSiguienteAcertijo();
-        }
-        
-        // Seleccionar un acertijo que no se haya mostrado
-        function seleccionarSiguienteAcertijo() {
-            if (acertijosDisponibles.length === 0) {
-                // Si no hay más acertijos disponibles
-                juegoTerminado = true;
-                mensajeTitulo.textContent = "¡Felicidades!";
-                mensajeTexto.textContent = "Has completado todos los acertijos. ¡Juego terminado!";
-                siguienteBtn.style.display = "none";
-                mensaje.style.display = "block";
-                return;
-            }
+            mensajeTitulo.textContent = "¡Felicidades!";
+            mensajeTexto.textContent = `Has acertado la palabra "${palabraActual}" en ${intentoActual} intento${intentoActual > 1 ? 's' : ''}.`;
+            siguienteBtn.style.display = "block";
+            mensaje.style.display = "block";
             
-            // Seleccionar un acertijo aleatorio de los disponibles
-            const indiceAleatorio = Math.floor(Math.random() * acertijosDisponibles.length);
-            acertijoActual = acertijosDisponibles[indiceAleatorio];
-            palabraActual = acertijoActual.palabra;
+            // Cerrar teclado
+            cerrarTeclado();
+        }, 2000);
+    } else if (intentoActual === 7) {
+        setTimeout(() => {
+            juegoTerminado = true;
+            mensajeTitulo.textContent = "¡Game Over!";
+            mensajeTexto.textContent = `La palabra era "${palabraActual}". ¡Inténtalo de nuevo!`;
+            siguienteBtn.style.display = "block";
+            mensaje.style.display = "block";
             
-            // Eliminar el acertijo de los disponibles
-            acertijosDisponibles.splice(indiceAleatorio, 1);
-            
-            // Mostrar el acertijo
-            acertijoElement.textContent = acertijoActual.pista;
-            
-            // Reiniciar variables
-            intentoActual = 0;
+            // Cerrar teclado
+            cerrarTeclado();
+        }, 2000);
+    } else {
+        // Preparar para el siguiente intento
+        setTimeout(() => {
             posicionActual = 0;
-            juegoTerminado = false;
-            contadorIntentos.textContent = "Intentos: 0/7";
-            
-            // Incrementar contador de acertijos mostrados
-            acertijosMostrados++;
-            contadorAcertijos.textContent = acertijosMostrados;
-            
-            // Limpiar el tablero
-            tablero.innerHTML = "";
-            
-            // Crear las filas y letras
-            for (let i = 0; i < 7; i++) {
-                const fila = document.createElement("div");
-                fila.className = "fila";
-                
-                for (let j = 0; j < 5; j++) {
-                    const letra = document.createElement("div");
-                    letra.className = "letra";
-                    letra.dataset.fila = i;
-                    letra.dataset.col = j;
-                    
-                    // Agregar evento para abrir teclado en móviles
-                    letra.addEventListener('click', () => {
-                        if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
-                            abrirTeclado();
-                        }
-                    });
-                    
-                    // Añadir event listener táctil para iOS
-                    letra.addEventListener('touchstart', (e) => {
-                        if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
-                            abrirTeclado();
-                            e.preventDefault();
-                        }
-                    }, { passive: false });
-                    
-                    fila.appendChild(letra);
-                }
-                
-                tablero.appendChild(fila);
-            }
-            
-            // Reiniciar teclado
-            document.querySelectorAll('.tecla').forEach(tecla => {
-                tecla.classList.remove('correcta', 'presente', 'ausente');
-            });
-            
-            // Ocultar mensaje
-            mensaje.style.display = "none";
-            
-            // Configurar event listeners para el teclado virtual
-            document.querySelectorAll(".tecla").forEach(tecla => {
-                tecla.addEventListener("click", () => {
-                    if (juegoTerminado) return;
-                    
-                    const letra = tecla.dataset.tecla;
-                    
-                    if (letra === "ENTER") {
-                        comprobarPalabra();
-                    } else if (letra === "DELETE") {
-                        eliminarLetra();
-                    } else {
-                        agregarLetra(letra);
-                    }
-                });
-                
-                // Añadir event listener táctil para iOS
-                tecla.addEventListener("touchstart", function(e) {
-                    if (juegoTerminado) return;
-                    
-                    const letra = this.dataset.tecla;
-                    
-                    if (letra === "ENTER") {
-                        comprobarPalabra();
-                    } else if (letra === "DELETE") {
-                        eliminarLetra();
-                    } else {
-                        agregarLetra(letra);
-                    }
-                    
-                    e.preventDefault();
-                }, { passive: false });
-            });
-            
-            // Configurar event listener para el teclado físico
-            document.addEventListener("keydown", manejarTeclado);
-            
-            // Configurar event listener para el input móvil
-            inputMovil.addEventListener('input', manejarInputMovil);
-            
-            // Mostrar botón para abrir teclado en móviles
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                abrirTecladoBtn.style.display = 'flex';
-            }
-        }
-        
-        // Función para abrir el teclado
-        function abrirTeclado() {
-            inputMovil.focus();
-            // Forzar el teclado en iOS
-            setTimeout(() => {
-                inputMovil.click();
-                inputMovil.focus();
-            }, 100);
-            
-            tecladoAbierto = true;
-            
-            // Ocultar botón cuando el teclado está abierto
-            abrirTecladoBtn.style.display = 'none';
-        }
-        
-        // Función para cerrar el teclado
-        function cerrarTeclado() {
-            inputMovil.blur();
-            tecladoAbierto = false;
-            
-            // Mostrar botón para abrir teclado
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                setTimeout(() => {
-                    abrirTecladoBtn.style.display = 'flex';
-                }, 300);
-            }
-        }
-        
-        // Manejar eventos del teclado físico
-        function manejarTeclado(e) {
-            if (juegoTerminado) return;
-            
-            if (e.key === "Enter") {
-                comprobarPalabra();
-            } else if (e.key === "Backspace") {
-                eliminarLetra();
-            } else if (/^[A-Za-zñÑ]$/.test(e.key)) {
-                agregarLetra(e.key.toUpperCase());
-            }
-        }
-        
-        // Manejar entrada desde el teclado móvil
-        function manejarInputMovil(e) {
-            if (juegoTerminado) return;
-            
-            const letra = e.target.value;
-            if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
-                agregarLetra(letra.toUpperCase());
-                e.target.value = '';
-            }
-        }
-        
-        // Agregar una letra al tablero
-        function agregarLetra(letra) {
-            if (posicionActual < 5 && intentoActual < 7) {
-                const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
-                casilla.textContent = letra;
-                posicionActual++;
-            }
-        }
-        
-        // Eliminar una letra del tablero
-        function eliminarLetra() {
-            if (posicionActual > 0) {
-                posicionActual--;
-                const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
-                casilla.textContent = "";
-            }
-        }
-        
-        // Comprobar si la palabra es correcta
-        function comprobarPalabra() {
-            if (posicionActual !== 5) {
-                // Mostrar mensaje de alerta mejorado para iOS
-                const alerta = document.createElement('div');
-                alerta.textContent = "¡Completa la palabra antes de enviar!";
-                alerta.style.position = 'fixed';
-                alerta.style.top = '50%';
-                alerta.style.left = '50%';
-                alerta.style.transform = 'translate(-50%, -50%)';
-                alerta.style.backgroundColor = 'rgba(30, 30, 60, 0.95)';
-                alerta.style.padding = '20px';
-                alerta.style.borderRadius = '8px';
-                alerta.style.zIndex = '1000';
-                alerta.style.color = 'white';
-                alerta.style.fontWeight = 'bold';
-                document.body.appendChild(alerta);
-                
-                setTimeout(() => {
-                    document.body.removeChild(alerta);
-                }, 1500);
-                return;
-            }
-            
-            const fila = document.querySelectorAll(`.fila:nth-child(${intentoActual + 1}) .letra`);
-            let palabraIntento = "";
-            
-            // Obtener la palabra del intento actual
-            for (let i = 0; i < 5; i++) {
-                palabraIntento += fila[i].textContent;
-            }
-            
-            // Crear arrays para el resultado
-            let resultado = new Array(5).fill('ausente');
-            let letrasObjetivo = palabraActual.split('');
-            let letrasIntento = palabraIntento.split('');
-            
-            // Primera pasada: encontrar letras correctas (verde)
-            for (let i = 0; i < 5; i++) {
-                if (letrasIntento[i] === letrasObjetivo[i]) {
-                    resultado[i] = 'correcta';
-                    letrasObjetivo[i] = null; // Marcamos como usada
-                }
-            }
-            
-            // Segunda pasada: encontrar letras presentes pero en posición incorrecta (amarillo)
-            for (let i = 0; i < 5; i++) {
-                if (resultado[i] === 'correcta') continue;
-                
-                const index = letrasObjetivo.indexOf(letrasIntento[i]);
-                if (index !== -1) {
-                    resultado[i] = 'presente';
-                    letrasObjetivo[index] = null; // Marcamos como usada
-                }
-            }
-            
-            // Aplicar los resultados con animación
-            for (let i = 0; i < 5; i++) {
-                const letra = fila[i].textContent;
-                
-                // Aplicar animación y color después de un delay
-                setTimeout(() => {
-                    fila[i].classList.add("animacion", resultado[i]);
-                    
-                    // Actualizar teclado virtual
-                    const tecla = document.querySelector(`.tecla[data-tecla="${letra}"]`);
-                    if (!tecla.classList.contains("correcta")) {
-                        if (resultado[i] === 'correcta') {
-                            tecla.classList.remove("presente", "ausente");
-                            tecla.classList.add("correcta");
-                        } else if (resultado[i] === 'presente' && !tecla.classList.contains("correcta")) {
-                            tecla.classList.remove("ausente");
-                            tecla.classList.add("presente");
-                        } else if (resultado[i] === 'ausente' && !tecla.classList.contains("correcta") && !tecla.classList.contains("presente")) {
-                            tecla.classList.add("ausente");
-                        }
-                    }
-                }, i * 300);
-            }
-            
-            // Actualizar contador de intentos
-            intentoActual++;
-            contadorIntentos.textContent = `Intentos: ${intentoActual}/7`;
-            
-            // Comprobar si ganó o perdió
-            if (palabraIntento === palabraActual) {
-                setTimeout(() => {
-                    juegoTerminado = true;
-                    acertijosResueltos++;
-                    contadorResueltos.textContent = acertijosResueltos;
-                    
-                    mensajeTitulo.textContent = "¡Felicidades!";
-                    mensajeTexto.textContent = `Has acertado la palabra "${palabraActual}" en ${intentoActual} intento${intentoActual > 1 ? 's' : ''}.`;
-                    siguienteBtn.style.display = "block";
-                    mensaje.style.display = "block";
-                    
-                    // Cerrar teclado
-                    cerrarTeclado();
-                }, 2000);
-            } else if (intentoActual === 7) {
-                setTimeout(() => {
-                    juegoTerminado = true;
-                    mensajeTitulo.textContent = "¡Game Over!";
-                    mensajeTexto.textContent = `La palabra era "${palabraActual}". ¡Inténtalo de nuevo!`;
-                    siguienteBtn.style.display = "block";
-                    mensaje.style.display = "block";
-                    
-                    // Cerrar teclado
-                    cerrarTeclado();
-                }, 2000);
-            } else {
-                // Preparar para el siguiente intento
-                setTimeout(() => {
-                    posicionActual = 0;
-                }, 2000);
-            }
-        }
-        
-        // Configurar botón para siguiente acertijo
-        siguienteBtn.addEventListener("click", () => {
-            mensaje.style.display = "none";
-            seleccionarSiguienteAcertijo();
-        });
-        
-        // Configurar botón para reiniciar juego
-        reiniciarBtn.addEventListener("click", inicializarJuego);
-        
-        // Configurar botón para empezar a jugar
-        empezarBtn.addEventListener("click", inicializarJuego);
-        
-        // Configurar botón para abrir teclado
-        abrirTecladoBtn.addEventListener("click", abrirTeclado);
-        
-        // Detectar cuando el teclado se cierra
-        window.addEventListener('resize', function() {
-            // Si la altura de la ventana cambia (teclado se cierra)
-            if (tecladoAbierto && window.innerHeight > window.outerHeight * 0.8) {
-                cerrarTeclado();
-            }
-        });
-        
-        // Cerrar teclado al tocar fuera
-        document.addEventListener('click', function(e) {
-            if (tecladoAbierto && !e.target.classList.contains('letra') && 
-                !e.target.classList.contains('tecla') && 
-                e.target !== inputMovil && 
-                e.target !== abrirTecladoBtn) {
-                cerrarTeclado();
-            }
-        });
-        
-        // Mostrar modal de reglas al cargar la página
-        window.addEventListener('load', () => {
-            modalReglas.style.display = "flex";
-        });
+        }, 2000);
+    }
+}
 
-        // Prevenir zoom en elementos interactivos en iOS
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+// Configurar botón para siguiente acertijo
+siguienteBtn.addEventListener("click", () => {
+    mensaje.style.display = "none";
+    seleccionarSiguienteAcertijo();
+});
 
-        // Prevenir scroll no deseado en iOS
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.classList.contains('tecla') || e.target.classList.contains('letra')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+// Configurar botón para reiniciar juego
+reiniciarBtn.addEventListener("click", inicializarJuego);
+
+// Configurar botón para empezar a jugar
+empezarBtn.addEventListener("click", inicializarJuego);
+
+// Configurar botón para abrir teclado
+abrirTecladoBtn.addEventListener("click", abrirTeclado);
+
+// Detectar cuando el teclado se cierra
+let initialHeight = window.innerHeight;
+window.addEventListener('resize', function() {
+    // Si la altura de la ventana vuelve a su estado original (teclado se cierra)
+    if (tecladoAbierto && window.innerHeight >= initialHeight) {
+        cerrarTeclado();
+    }
+});
+
+// Cerrar teclado al tocar fuera
+document.addEventListener('click', function(e) {
+    if (tecladoAbierto && !e.target.classList.contains('letra') && 
+        !e.target.classList.contains('tecla') && 
+        e.target !== inputMovil && 
+        e.target !== abrirTecladoBtn) {
+        cerrarTeclado();
+    }
+});
+
+// Mostrar modal de reglas al cargar la página
+window.addEventListener('load', () => {
+    initialHeight = window.innerHeight;
+    modalReglas.style.display = "flex";
+});
+
+// Prevenir zoom en elementos interactivos en iOS
+document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+// Prevenir scroll no deseado en iOS
+document.addEventListener('touchmove', function(e) {
+    if (e.target.classList.contains('tecla') || e.target.classList.contains('letra')) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+// Prevenir comportamiento por defecto en el input móvil
+inputMovil.addEventListener('touchstart', function(e) {
+    e.stopPropagation();
+}, { passive: false });
+
+// Mejorar el enfoque en el input móvil
+inputMovil.addEventListener('focus', function() {
+    this.setAttribute('readonly', 'readonly');
+    setTimeout(() => {
+        this.removeAttribute('readonly');
+    }, 100);
+});
     </script>
 </body>
 </html>
