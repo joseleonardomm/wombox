@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Wordle</title>
     <meta name="theme-color" content="#0c1445">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,6 +12,12 @@
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow: auto;
         }
         
         body {
@@ -25,7 +31,6 @@
             padding: 20px;
             position: relative;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
         }
         
         body::before {
@@ -106,6 +111,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         .tablero {
@@ -114,6 +121,7 @@
             gap: 10px;
             width: 100%;
             margin-bottom: 25px;
+            touch-action: manipulation;
         }
         
         .fila {
@@ -139,7 +147,7 @@
             cursor: pointer;
             -webkit-user-select: none;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         .teclado {
@@ -149,6 +157,7 @@
             gap: 8px;
             width: 100%;
             margin-top: 20px;
+            touch-action: manipulation;
         }
         
         .fila-teclado {
@@ -176,7 +185,7 @@
             max-width: 45px;
             -webkit-user-select: none;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         .tecla:hover {
@@ -284,13 +293,25 @@
             font-size: 1rem;
         }
         
-        /* Campo de entrada oculto para teclado móvil */
+        /* Campo de entrada para teclado móvil - ahora visible pero fuera de pantalla */
         .input-movil {
-            position: absolute;
-            opacity: 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            opacity: 1;
+            background: transparent;
+            border: none;
+            color: transparent;
+            font-size: 16px; /* Tamaño mínimo para iOS */
+            z-index: 999;
+            transform: translateY(100%);
             pointer-events: none;
-            height: 0;
-            width: 0;
+        }
+        
+        .input-movil:focus {
+            outline: none;
         }
         
         /* Modal de reglas */
@@ -306,6 +327,7 @@
             justify-content: center;
             z-index: 1000;
             padding: 20px;
+            overflow-y: auto;
         }
         
         .contenido-modal {
@@ -317,6 +339,7 @@
             box-shadow: 0 0 30px rgba(61, 123, 255, 0.8);
             border: 2px solid #3d7bff;
             text-align: center;
+            margin: 20px 0;
         }
         
         .contenido-modal h2 {
@@ -388,6 +411,25 @@
             transform: scale(1.05);
         }
         
+        /* Botón para abrir teclado manualmente */
+        .abrir-teclado {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #3d7bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 900;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
         @media (max-width: 500px) {
             .tecla {
                 min-width: 28px;
@@ -442,6 +484,11 @@
                 height: 35px;
                 font-size: 1rem;
             }
+            
+            .input-movil {
+                height: 50px;
+                font-size: 16px; /* Tamaño mínimo para iOS */
+            }
         }
     </style>
 </head>
@@ -489,8 +536,11 @@
         </div>
     </div>
     
-    <!-- Campo de entrada oculto para teclado móvil -->
+    <!-- Campo de entrada para teclado móvil - ahora visible pero fuera de pantalla -->
     <input type="text" class="input-movil" id="input-movil" maxlength="1" />
+    
+    <!-- Botón flotante para abrir teclado -->
+    <div class="abrir-teclado" id="abrir-teclado" style="display: none;">⌨️</div>
     
     <div class="container">
         <div class="titulo-container">
@@ -607,11 +657,12 @@
         let juegoTerminado = false;
         let acertijosMostrados = 0;
         let acertijosResueltos = 0;
+        let tecladoAbierto = false;
         
         // Elementos DOM
         const tablero = document.getElementById("tablero");
         const acertijoElement = document.getElementById("acertijo");
-        const teclado = document.getElementById("teclado");
+        const tecladoElement = document.getElementById("teclado");
         const mensaje = document.getElementById("mensaje");
         const mensajeTitulo = document.getElementById("mensaje-titulo");
         const mensajeTexto = document.getElementById("mensaje-texto");
@@ -623,6 +674,7 @@
         const inputMovil = document.getElementById("input-movil");
         const modalReglas = document.getElementById("modal-reglas");
         const empezarBtn = document.getElementById("empezar-btn");
+        const abrirTecladoBtn = document.getElementById("abrir-teclado");
         
         // Inicializar el juego
         function inicializarJuego() {
@@ -692,15 +744,15 @@
                     // Agregar evento para abrir teclado en móviles
                     letra.addEventListener('click', () => {
                         if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
-                            inputMovil.focus();
+                            abrirTeclado();
                         }
                     });
                     
                     // Añadir event listener táctil para iOS
                     letra.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
                         if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
-                            inputMovil.focus();
+                            abrirTeclado();
+                            e.preventDefault();
                         }
                     }, { passive: false });
                     
@@ -736,7 +788,6 @@
                 
                 // Añadir event listener táctil para iOS
                 tecla.addEventListener("touchstart", function(e) {
-                    e.preventDefault();
                     if (juegoTerminado) return;
                     
                     const letra = this.dataset.tecla;
@@ -748,6 +799,8 @@
                     } else {
                         agregarLetra(letra);
                     }
+                    
+                    e.preventDefault();
                 }, { passive: false });
             });
             
@@ -756,6 +809,39 @@
             
             // Configurar event listener para el input móvil
             inputMovil.addEventListener('input', manejarInputMovil);
+            
+            // Mostrar botón para abrir teclado en móviles
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                abrirTecladoBtn.style.display = 'flex';
+            }
+        }
+        
+        // Función para abrir el teclado
+        function abrirTeclado() {
+            inputMovil.focus();
+            // Forzar el teclado en iOS
+            setTimeout(() => {
+                inputMovil.click();
+                inputMovil.focus();
+            }, 100);
+            
+            tecladoAbierto = true;
+            
+            // Ocultar botón cuando el teclado está abierto
+            abrirTecladoBtn.style.display = 'none';
+        }
+        
+        // Función para cerrar el teclado
+        function cerrarTeclado() {
+            inputMovil.blur();
+            tecladoAbierto = false;
+            
+            // Mostrar botón para abrir teclado
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                setTimeout(() => {
+                    abrirTecladoBtn.style.display = 'flex';
+                }, 300);
+            }
         }
         
         // Manejar eventos del teclado físico
@@ -778,10 +864,8 @@
             const letra = e.target.value;
             if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
                 agregarLetra(letra.toUpperCase());
+                e.target.value = '';
             }
-            
-            // Limpiar el input después de usarlo
-            e.target.value = '';
         }
         
         // Agregar una letra al tablero
@@ -897,6 +981,9 @@
                     mensajeTexto.textContent = `Has acertado la palabra "${palabraActual}" en ${intentoActual} intento${intentoActual > 1 ? 's' : ''}.`;
                     siguienteBtn.style.display = "block";
                     mensaje.style.display = "block";
+                    
+                    // Cerrar teclado
+                    cerrarTeclado();
                 }, 2000);
             } else if (intentoActual === 7) {
                 setTimeout(() => {
@@ -905,6 +992,9 @@
                     mensajeTexto.textContent = `La palabra era "${palabraActual}". ¡Inténtalo de nuevo!`;
                     siguienteBtn.style.display = "block";
                     mensaje.style.display = "block";
+                    
+                    // Cerrar teclado
+                    cerrarTeclado();
                 }, 2000);
             } else {
                 // Preparar para el siguiente intento
@@ -925,6 +1015,27 @@
         
         // Configurar botón para empezar a jugar
         empezarBtn.addEventListener("click", inicializarJuego);
+        
+        // Configurar botón para abrir teclado
+        abrirTecladoBtn.addEventListener("click", abrirTeclado);
+        
+        // Detectar cuando el teclado se cierra
+        window.addEventListener('resize', function() {
+            // Si la altura de la ventana cambia (teclado se cierra)
+            if (tecladoAbierto && window.innerHeight > window.outerHeight * 0.8) {
+                cerrarTeclado();
+            }
+        });
+        
+        // Cerrar teclado al tocar fuera
+        document.addEventListener('click', function(e) {
+            if (tecladoAbierto && !e.target.classList.contains('letra') && 
+                !e.target.classList.contains('tecla') && 
+                e.target !== inputMovil && 
+                e.target !== abrirTecladoBtn) {
+                cerrarTeclado();
+            }
+        });
         
         // Mostrar modal de reglas al cargar la página
         window.addEventListener('load', () => {
