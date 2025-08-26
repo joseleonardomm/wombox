@@ -158,53 +158,6 @@
             touch-action: manipulation;
         }
 
-        .teclado {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            margin-top: 20px;
-            touch-action: manipulation;
-        }
-
-        .fila-teclado {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .tecla {
-            min-width: 32px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(61, 123, 255, 0.3);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            flex: 1;
-            max-width: 45px;
-            -webkit-user-select: none;
-            user-select: none;
-            touch-action: manipulation;
-        }
-
-        .tecla:hover {
-            background-color: rgba(61, 123, 255, 0.5);
-        }
-
-        .tecla-grande {
-            min-width: 65px;
-            flex: 1.5;
-        }
-
         .correcta {
             background-color: #2ecc71;
             border-color: #2ecc71;
@@ -447,6 +400,18 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             touch-action: manipulation;
         }
+        
+        /* Indicación para usuario */
+        .indicacion-teclado {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            background-color: rgba(30, 30, 60, 0.5);
+            border-radius: 8px;
+            width: 100%;
+        }
 
         /* Mejoras específicas para iOS */
         @supports (-webkit-touch-callout: none) {
@@ -485,23 +450,12 @@
         }
 
         @media (max-width: 500px) {
-            .tecla {
-                min-width: 28px;
-                height: 45px;
-                font-size: 0.9rem;
-                max-width: 40px;
-            }
-            
-            .tecla-grande {
-                min-width: 55px;
+            .letra {
+                font-size: 1.5rem;
             }
             
             h1 {
                 font-size: 2rem;
-            }
-            
-            .letra {
-                font-size: 1.5rem;
             }
             
             .stats {
@@ -555,20 +509,13 @@
                 bottom: 15px;
                 right: 15px;
             }
+            
+            .indicacion-teclado {
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 350px) {
-            .tecla {
-                min-width: 25px;
-                height: 40px;
-                font-size: 0.8rem;
-                max-width: 35px;
-            }
-            
-            .tecla-grande {
-                min-width: 45px;
-            }
-            
             .letra {
                 font-size: 1.3rem;
             }
@@ -593,6 +540,7 @@
                     <li>Cada intento debe ser una palabra válida de 5 letras.</li>
                     <li>Después de cada intento, el color de las letras cambiará para mostrar qué tan cerca estás de acertar la palabra.</li>
                     <li>Resuelve el acertijo para obtener una pista sobre la palabra.</li>
+                    <li>Usa tu teclado físico para introducir las letras.</li>
                 </ol>
             </div>
             
@@ -647,42 +595,8 @@
             <!-- Las filas y letras se generarán con JS -->
         </div>
         
-        <div class="teclado" id="teclado">
-            <div class="fila-teclado">
-                <div class="tecla" data-tecla="Q">Q</div>
-                <div class="tecla" data-tecla="W">W</div>
-                <div class="tecla" data-tecla="E">E</div>
-                <div class="tecla" data-tecla="R">R</div>
-                <div class="tecla" data-tecla="T">T</div>
-                <div class="tecla" data-tecla="Y">Y</div>
-                <div class="tecla" data-tecla="U">U</div>
-                <div class="tecla" data-tecla="I">I</div>
-                <div class="tecla" data-tecla="O">O</div>
-                <div class="tecla" data-tecla="P">P</div>
-            </div>
-            <div class="fila-teclado">
-                <div class="tecla" data-tecla="A">A</div>
-                <div class="tecla" data-tecla="S">S</div>
-                <div class="tecla" data-tecla="D">D</div>
-                <div class="tecla" data-tecla="F">F</div>
-                <div class="tecla" data-tecla="G">G</div>
-                <div class="tecla" data-tecla="H">H</div>
-                <div class="tecla" data-tecla="J">J</div>
-                <div class="tecla" data-tecla="K">K</div>
-                <div class="tecla" data-tecla="L">L</div>
-                <div class="tecla" data-tecla="Ñ">Ñ</div>
-            </div>
-            <div class="fila-teclado">
-                <div class="tecla tecla-grande" data-tecla="ENTER">ENTER</div>
-                <div class="tecla" data-tecla="Z">Z</div>
-                <div class="tecla" data-tecla="X">X</div>
-                <div class="tecla" data-tecla="C">C</div>
-                <div class="tecla" data-tecla="V">V</div>
-                <div class="tecla" data-tecla="B">B</div>
-                <div class="tecla" data-tecla="N">N</div>
-                <div class="tecla" data-tecla="M">M</div>
-                <div class="tecla tecla-grande" data-tecla="DELETE">⌫</div>
-            </div>
+        <div class="indicacion-teclado" id="indicacion-teclado">
+            Usa tu teclado físico para introducir las letras. Toca cualquier casilla para activar el teclado.
         </div>
         
         <button class="boton-reinicio" id="reiniciar-btn">Reiniciar Juego</button>
@@ -693,7 +607,6 @@
         <p id="mensaje-texto">Has acertado la palabra</p>
         <button id="siguiente-btn">Siguiente Acertijo</button>
     </div>
-
     <script>
         // Base de datos de acertijos y palabras (todas de 5 letras)
 const todosAcertijos = [
