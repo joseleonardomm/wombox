@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Wordle</title>
+    <meta name="theme-color" content="#0c1445">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * {
             box-sizing: border-box;
@@ -23,6 +25,7 @@
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body::before {
@@ -134,6 +137,9 @@
             text-transform: uppercase;
             transition: all 0.3s ease;
             cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .teclado {
@@ -168,6 +174,9 @@
             transition: background-color 0.2s;
             flex: 1;
             max-width: 45px;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .tecla:hover {
@@ -195,17 +204,36 @@
         }
         
         .animacion {
+            -webkit-animation: flip 0.5s ease forwards;
             animation: flip 0.5s ease forwards;
+        }
+        
+        @-webkit-keyframes flip {
+            0% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+            50% {
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0);
+            }
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
         }
         
         @keyframes flip {
             0% {
+                -webkit-transform: scaleY(1);
                 transform: scaleY(1);
             }
             50% {
+                -webkit-transform: scaleY(0);
                 transform: scaleY(0);
             }
             100% {
+                -webkit-transform: scaleY(1);
                 transform: scaleY(1);
             }
         }
@@ -668,6 +696,14 @@
                         }
                     });
                     
+                    // Añadir event listener táctil para iOS
+                    letra.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
+                            inputMovil.focus();
+                        }
+                    }, { passive: false });
+                    
                     fila.appendChild(letra);
                 }
                 
@@ -697,6 +733,22 @@
                         agregarLetra(letra);
                     }
                 });
+                
+                // Añadir event listener táctil para iOS
+                tecla.addEventListener("touchstart", function(e) {
+                    e.preventDefault();
+                    if (juegoTerminado) return;
+                    
+                    const letra = this.dataset.tecla;
+                    
+                    if (letra === "ENTER") {
+                        comprobarPalabra();
+                    } else if (letra === "DELETE") {
+                        eliminarLetra();
+                    } else {
+                        agregarLetra(letra);
+                    }
+                }, { passive: false });
             });
             
             // Configurar event listener para el teclado físico
@@ -723,13 +775,13 @@
         function manejarInputMovil(e) {
             if (juegoTerminado) return;
             
-            const letra = e.data;
+            const letra = e.target.value;
             if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
                 agregarLetra(letra.toUpperCase());
             }
             
             // Limpiar el input después de usarlo
-            inputMovil.value = '';
+            e.target.value = '';
         }
         
         // Agregar una letra al tablero
@@ -753,7 +805,24 @@
         // Comprobar si la palabra es correcta
         function comprobarPalabra() {
             if (posicionActual !== 5) {
-                alert("¡Completa la palabra antes de enviar!");
+                // Mostrar mensaje de alerta mejorado para iOS
+                const alerta = document.createElement('div');
+                alerta.textContent = "¡Completa la palabra antes de enviar!";
+                alerta.style.position = 'fixed';
+                alerta.style.top = '50%';
+                alerta.style.left = '50%';
+                alerta.style.transform = 'translate(-50%, -50%)';
+                alerta.style.backgroundColor = 'rgba(30, 30, 60, 0.95)';
+                alerta.style.padding = '20px';
+                alerta.style.borderRadius = '8px';
+                alerta.style.zIndex = '1000';
+                alerta.style.color = 'white';
+                alerta.style.fontWeight = 'bold';
+                document.body.appendChild(alerta);
+                
+                setTimeout(() => {
+                    document.body.removeChild(alerta);
+                }, 1500);
                 return;
             }
             
@@ -861,6 +930,20 @@
         window.addEventListener('load', () => {
             modalReglas.style.display = "flex";
         });
+
+        // Prevenir zoom en elementos interactivos en iOS
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevenir scroll no deseado en iOS
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.classList.contains('tecla') || e.target.classList.contains('letra')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
