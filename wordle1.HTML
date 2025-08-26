@@ -607,461 +607,426 @@
         <p id="mensaje-texto">Has acertado la palabra</p>
         <button id="siguiente-btn">Siguiente Acertijo</button>
     </div>
-    <script>
-        // Base de datos de acertijos y palabras (todas de 5 letras)
-const todosAcertijos = [
-    {
-        pista: "Dientes sin boca, metal que obedece; en puertas y candados, siempre aparece.",
-        palabra: "LLAVE"
-    },
-    {
-        pista: "Vigilo en la altura, cargo sin protesta; mi cuello es bandera de calma andina y fiesta.",
-        palabra: "LLAMA"
-    },
-    {
-        pista: "Entre agujeros guardo el sabor; me rallo, me fundo y alegro el fogón.",
-        palabra: "QUESO"
-    },
-    {
-        pista: "Pequeño bigote, oído fino; corro en silencio por mi camino.",
-        palabra: "RATON"
-    },
-    {
-        pista: "Tiene agujas y no sabe coser, tiene números y no sabe leer",
-        palabra: "RELOJ"
-    },
-    {
-        pista: "Entre puentes y museos veo pasar al Sena, una torre de hierro me señala la escena. Soy moda y luz de noche, susurro en mi país; si piensas en Francia, me llamas en cinco: ¿quién es?",
-        palabra: "PARIS"
-    },
-    {
-        pista: "Me usan para escribir, aunque no tengo voz. Soy de tinta o de mina, ¿ya sabes quién soy?",
-        palabra: "LAPIZ"
-    },
-    {
-        pista: "Vuelo sin tener alas, lloro sin tener ojos, y si me buscas, en el cielo me alojas.",
-        palabra: "NUBES"
-    }
-];
-
-// Variables de estado del juego
-let acertijosDisponibles = [];
-let acertijoActual = null;
-let palabraActual = "";
-let intentoActual = 0;
-let posicionActual = 0;
-let juegoTerminado = false;
-let acertijosMostrados = 0;
-let acertijosResueltos = 0;
-let tecladoAbierto = false;
-
-// Elementos DOM
-const tablero = document.getElementById("tablero");
-const acertijoElement = document.getElementById("acertijo");
-const tecladoElement = document.getElementById("teclado");
-const mensaje = document.getElementById("mensaje");
-const mensajeTitulo = document.getElementById("mensaje-titulo");
-const mensajeTexto = document.getElementById("mensaje-texto");
-const siguienteBtn = document.getElementById("siguiente-btn");
-const reiniciarBtn = document.getElementById("reiniciar-btn");
-const contadorIntentos = document.getElementById("contador-intentos");
-const contadorAcertijos = document.getElementById("contador-acertijos");
-const contadorResueltos = document.getElementById("contador-resueltos");
-const inputMovil = document.getElementById("input-movil");
-const modalReglas = document.getElementById("modal-reglas");
-const empezarBtn = document.getElementById("empezar-btn");
-const abrirTecladoBtn = document.getElementById("abrir-teclado");
-
-// Inicializar el juego
-function inicializarJuego() {
-    // Ocultar modal de reglas
-    modalReglas.style.display = "none";
-    
-    // Reiniciar acertijos disponibles
-    acertijosDisponibles = [...todosAcertijos];
-    acertijosMostrados = 0;
-    acertijosResueltos = 0;
-    
-    // Actualizar contadores
-    contadorAcertijos.textContent = acertijosMostrados;
-    contadorResueltos.textContent = acertijosResueltos;
-    
-    // Seleccionar siguiente acertijo
-    seleccionarSiguienteAcertijo();
-}
-
-// Seleccionar un acertijo que no se haya mostrado
-function seleccionarSiguienteAcertijo() {
-    if (acertijosDisponibles.length === 0) {
-        // Si no hay más acertijos disponibles
-        juegoTerminado = true;
-        mensajeTitulo.textContent = "¡Felicidades!";
-        mensajeTexto.textContent = "Has completado todos los acertijos. ¡Juego terminado!";
-        siguienteBtn.style.display = "none";
-        mensaje.style.display = "block";
-        return;
-    }
-    
-    // Seleccionar un acertijo aleatorio de los disponibles
-    const indiceAleatorio = Math.floor(Math.random() * acertijosDisponibles.length);
-    acertijoActual = acertijosDisponibles[indiceAleatorio];
-    palabraActual = acertijoActual.palabra;
-    
-    // Eliminar el acertijo de los disponibles
-    acertijosDisponibles.splice(indiceAleatorio, 1);
-    
-    // Mostrar el acertijo
-    acertijoElement.textContent = acertijoActual.pista;
-    
-    // Reiniciar variables
-    intentoActual = 0;
-    posicionActual = 0;
-    juegoTerminado = false;
-    contadorIntentos.textContent = "Intentos: 0/7";
-    
-    // Incrementar contador de acertijos mostrados
-    acertijosMostrados++;
-    contadorAcertijos.textContent = acertijosMostrados;
-    
-    // Limpiar el tablero
-    tablero.innerHTML = "";
-    
-    // Crear las filas y letras
-    for (let i = 0; i < 7; i++) {
-        const fila = document.createElement("div");
-        fila.className = "fila";
-        
-        for (let j = 0; j < 5; j++) {
-            const letra = document.createElement("div");
-            letra.className = "letra";
-            letra.dataset.fila = i;
-            letra.dataset.col = j;
-            
-            // Agregar evento para abrir teclado en móviles
-            letra.addEventListener('click', () => {
-                if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
-                    abrirTeclado();
-                }
-            });
-            
-            // Añadir event listener táctil para iOS
-            letra.addEventListener('touchstart', (e) => {
-                if (!juegoTerminado && intentoActual === i && posicionActual >= j) {
-                    abrirTeclado();
-                    e.preventDefault();
-                }
-            }, { passive: false });
-            
-            fila.appendChild(letra);
+<script>
+    // Base de datos de acertijos y palabras (todas de 5 letras)
+    const todosAcertijos = [
+        {
+            pista: "Dientes sin boca, metal que obedece; en puertas y candados, siempre aparece.",
+            palabra: "LLAVE"
+        },
+        {
+            pista: "Vigilo en la altura, cargo sin protesta; mi cuello es bandera de calma andina y fiesta.",
+            palabra: "LLAMA"
+        },
+        {
+            pista: "Entre agujeros guardo el sabor; me rallo, me fundo y alegro el fogón.",
+            palabra: "QUESO"
+        },
+        {
+            pista: "Pequeño bigote, oído fino; corro en silencio por mi camino.",
+            palabra: "RATON"
+        },
+        {
+            pista: "Tiene agujas y no sabe coser, tiene números y no sabe leer",
+            palabra: "RELOJ"
+        },
+        {
+            pista: "Entre puentes y museos veo pasar al Sena, una torre de hierro me señala la escena. Soy moda y luz de noche, susurro en mi país; si piensas en Francia, me llamas en cinco: ¿quién es?",
+            palabra: "PARIS"
+        },
+        {
+            pista: "Me usan para escribir, aunque no tengo voz. Soy de tinta o de mina, ¿ya sabes quién soy?",
+            palabra: "LAPIZ"
+        },
+        {
+            pista: "Vuelo sin tener alas, lloro sin tener ojos, y si me buscas, en el cielo me alojas.",
+            palabra: "NUBES"
         }
+    ];
+
+    // Variables de estado del juego
+    let acertijosDisponibles = [];
+    let acertijoActual = null;
+    let palabraActual = "";
+    let intentoActual = 0;
+    let posicionActual = 0;
+    let juegoTerminado = false;
+    let acertijosMostrados = 0;
+    let acertijosResueltos = 0;
+    let tecladoAbierto = false;
+
+    // Elementos DOM
+    const tablero = document.getElementById("tablero");
+    const acertijoElement = document.getElementById("acertijo");
+    const mensaje = document.getElementById("mensaje");
+    const mensajeTitulo = document.getElementById("mensaje-titulo");
+    const mensajeTexto = document.getElementById("mensaje-texto");
+    const siguienteBtn = document.getElementById("siguiente-btn");
+    const reiniciarBtn = document.getElementById("reiniciar-btn");
+    const contadorIntentos = document.getElementById("contador-intentos");
+    const contadorAcertijos = document.getElementById("contador-acertijos");
+    const contadorResueltos = document.getElementById("contador-resueltos");
+    const inputMovil = document.getElementById("input-movil");
+    const modalReglas = document.getElementById("modal-reglas");
+    const empezarBtn = document.getElementById("empezar-btn");
+    const abrirTecladoBtn = document.getElementById("abrir-teclado");
+    const indicacionTeclado = document.getElementById("indicacion-teclado");
+
+    // Inicializar el juego
+    function inicializarJuego() {
+        // Ocultar modal de reglas
+        modalReglas.style.display = "none";
         
-        tablero.appendChild(fila);
-    }
-    
-    // Reiniciar teclado
-    document.querySelectorAll('.tecla').forEach(tecla => {
-        tecla.classList.remove('correcta', 'presente', 'ausente');
-    });
-    
-    // Ocultar mensaje
-    mensaje.style.display = "none";
-    
-    // Configurar event listeners para el teclado virtual
-    document.querySelectorAll(".tecla").forEach(tecla => {
-        tecla.addEventListener("click", () => {
-            if (juegoTerminado) return;
-            
-            const letra = tecla.dataset.tecla;
-            
-            if (letra === "ENTER") {
-                comprobarPalabra();
-            } else if (letra === "DELETE") {
-                eliminarLetra();
-            } else {
-                agregarLetra(letra);
-            }
-        });
+        // Reiniciar acertijos disponibles
+        acertijosDisponibles = [...todosAcertijos];
+        acertijosMostrados = 0;
+        acertijosResueltos = 0;
         
-        // Añadir event listener táctil para iOS
-        tecla.addEventListener("touchstart", function(e) {
-            if (juegoTerminado) return;
-            
-            const letra = this.dataset.tecla;
-            
-            if (letra === "ENTER") {
-                comprobarPalabra();
-            } else if (letra === "DELETE") {
-                eliminarLetra();
-            } else {
-                agregarLetra(letra);
-            }
-            
-            e.preventDefault();
-        }, { passive: false });
-    });
-    
-    // Configurar event listener para el teclado físico
-    document.addEventListener("keydown", manejarTeclado);
-    
-    // Configurar event listener para el input móvil
-    inputMovil.addEventListener('input', manejarInputMovil);
-    
-    // Mostrar botón para abrir teclado en móviles
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        abrirTecladoBtn.style.display = 'flex';
-    }
-}
-
-// Función para abrir el teclado
-function abrirTeclado() {
-    inputMovil.focus();
-    setTimeout(() => {
-        inputMovil.click();
-        inputMovil.focus();
-    }, 100);
-    tecladoAbierto = true;
-    abrirTecladoBtn.style.display = 'none';
-}
-
-// Función para cerrar el teclado
-function cerrarTeclado() {
-    inputMovil.blur();
-    tecladoAbierto = false;
-    
-    // Mostrar botón para abrir teclado
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        setTimeout(() => {
-            abrirTecladoBtn.style.display = 'flex';
-        }, 300);
-    }
-}
-
-// Manejar eventos del teclado físico
-function manejarTeclado(e) {
-    if (juegoTerminado) return;
-    
-    if (e.key === "Enter") {
-        comprobarPalabra();
-    } else if (e.key === "Backspace") {
-        eliminarLetra();
-    } else if (/^[A-Za-zñÑ]$/.test(e.key)) {
-        agregarLetra(e.key.toUpperCase());
-    }
-}
-
-// Manejar entrada desde el teclado móvil
-function manejarInputMovil(e) {
-    if (juegoTerminado) return;
-    
-    const letra = e.target.value;
-    if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
-        agregarLetra(letra.toUpperCase());
-        e.target.value = '';
-    }
-}
-
-// Agregar una letra al tablero
-function agregarLetra(letra) {
-    if (posicionActual < 5 && intentoActual < 7) {
-        const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
-        casilla.textContent = letra;
-        posicionActual++;
-    }
-}
-
-// Eliminar una letra del tablero
-function eliminarLetra() {
-    if (posicionActual > 0) {
-        posicionActual--;
-        const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
-        casilla.textContent = "";
-    }
-}
-
-// Comprobar si la palabra es correcta
-function comprobarPalabra() {
-    if (posicionActual !== 5) {
-        // Mostrar mensaje de alerta mejorado para iOS
-        const alerta = document.createElement('div');
-        alerta.textContent = "¡Completa la palabra antes de enviar!";
-        alerta.style.position = 'fixed';
-        alerta.style.top = '50%';
-        alerta.style.left = '50%';
-        alerta.style.transform = 'translate(-50%, -50%)';
-        alerta.style.backgroundColor = 'rgba(30, 30, 60, 0.95)';
-        alerta.style.padding = '20px';
-        alerta.style.borderRadius = '8px';
-        alerta.style.zIndex = '1000';
-        alerta.style.color = 'white';
-        alerta.style.fontWeight = 'bold';
-        document.body.appendChild(alerta);
+        // Actualizar contadores
+        contadorAcertijos.textContent = acertijosMostrados;
+        contadorResueltos.textContent = acertijosResueltos;
         
-        setTimeout(() => {
-            document.body.removeChild(alerta);
-        }, 1500);
-        return;
+        // Seleccionar siguiente acertijo
+        seleccionarSiguienteAcertijo();
     }
-    
-    const fila = document.querySelectorAll(`.fila:nth-child(${intentoActual + 1}) .letra`);
-    let palabraIntento = "";
-    
-    // Obtener la palabra del intento actual
-    for (let i = 0; i < 5; i++) {
-        palabraIntento += fila[i].textContent;
-    }
-    
-    // Crear arrays para el resultado
-    let resultado = new Array(5).fill('ausente');
-    let letrasObjetivo = palabraActual.split('');
-    let letrasIntento = palabraIntento.split('');
-    
-    // Primera pasada: encontrar letras correctas (verde)
-    for (let i = 0; i < 5; i++) {
-        if (letrasIntento[i] === letrasObjetivo[i]) {
-            resultado[i] = 'correcta';
-            letrasObjetivo[i] = null; // Marcamos como usada
-        }
-    }
-    
-    // Segunda pasada: encontrar letras presentes pero en posición incorrecta (amarillo)
-    for (let i = 0; i < 5; i++) {
-        if (resultado[i] === 'correcta') continue;
-        
-        const index = letrasObjetivo.indexOf(letrasIntento[i]);
-        if (index !== -1) {
-            resultado[i] = 'presente';
-            letrasObjetivo[index] = null; // Marcamos como usada
-        }
-    }
-    
-    // Aplicar los resultados con animación
-    for (let i = 0; i < 5; i++) {
-        const letra = fila[i].textContent;
-        
-        // Aplicar animación y color después de un delay
-        setTimeout(() => {
-            fila[i].classList.add("animacion", resultado[i]);
-            
-            // Actualizar teclado virtual
-            const tecla = document.querySelector(`.tecla[data-tecla="${letra}"]`);
-            if (!tecla.classList.contains("correcta")) {
-                if (resultado[i] === 'correcta') {
-                    tecla.classList.remove("presente", "ausente");
-                    tecla.classList.add("correcta");
-                } else if (resultado[i] === 'presente' && !tecla.classList.contains("correcta")) {
-                    tecla.classList.remove("ausente");
-                    tecla.classList.add("presente");
-                } else if (resultado[i] === 'ausente' && !tecla.classList.contains("correcta") && !tecla.classList.contains("presente")) {
-                    tecla.classList.add("ausente");
-                }
-            }
-        }, i * 300);
-    }
-    
-    // Actualizar contador de intentos
-    intentoActual++;
-    contadorIntentos.textContent = `Intentos: ${intentoActual}/7`;
-    
-    // Comprobar si ganó o perdió
-    if (palabraIntento === palabraActual) {
-        setTimeout(() => {
+
+    // Seleccionar un acertijo que no se haya mostrado
+    function seleccionarSiguienteAcertijo() {
+        if (acertijosDisponibles.length === 0) {
+            // Si no hay más acertijos disponibles
             juegoTerminado = true;
-            acertijosResueltos++;
-            contadorResueltos.textContent = acertijosResueltos;
-            
             mensajeTitulo.textContent = "¡Felicidades!";
-            mensajeTexto.textContent = `Has acertado la palabra "${palabraActual}" en ${intentoActual} intento${intentoActual > 1 ? 's' : ''}.`;
-            siguienteBtn.style.display = "block";
+            mensajeTexto.textContent = "Has completado todos los acertijos. ¡Juego terminado!";
+            siguienteBtn.style.display = "none";
             mensaje.style.display = "block";
+            return;
+        }
+        
+        // Seleccionar un acertijo aleatorio de los disponibles
+        const indiceAleatorio = Math.floor(Math.random() * acertijosDisponibles.length);
+        acertijoActual = acertijosDisponibles[indiceAleatorio];
+        palabraActual = acertijoActual.palabra;
+        
+        // Eliminar el acertijo de los disponibles
+        acertijosDisponibles.splice(indiceAleatorio, 1);
+        
+        // Mostrar el acertijo
+        acertijoElement.textContent = acertijoActual.pista;
+        
+        // Reiniciar variables
+        intentoActual = 0;
+        posicionActual = 0;
+        juegoTerminado = false;
+        contadorIntentos.textContent = "Intentos: 0/7";
+        
+        // Incrementar contador de acertijos mostrados
+        acertijosMostrados++;
+        contadorAcertijos.textContent = acertijosMostrados;
+        
+        // Limpiar el tablero
+        tablero.innerHTML = "";
+        
+        // Crear las filas y letras
+        for (let i = 0; i < 7; i++) {
+            const fila = document.createElement("div");
+            fila.className = "fila";
             
-            // Cerrar teclado
-            cerrarTeclado();
-        }, 2000);
-    } else if (intentoActual === 7) {
-        setTimeout(() => {
-            juegoTerminado = true;
-            mensajeTitulo.textContent = "¡Game Over!";
-            mensajeTexto.textContent = `La palabra era "${palabraActual}". ¡Inténtalo de nuevo!`;
-            siguienteBtn.style.display = "block";
-            mensaje.style.display = "block";
+            for (let j = 0; j < 5; j++) {
+                const letra = document.createElement("div");
+                letra.className = "letra";
+                letra.dataset.fila = i;
+                letra.dataset.col = j;
+                
+                // Agregar evento para abrir teclado en móviles
+                letra.addEventListener('click', () => {
+                    if (!juegoTerminado && intentoActual === i) {
+                        abrirTeclado();
+                    }
+                });
+                
+                // Añadir event listener táctil para iOS
+                letra.addEventListener('touchstart', (e) => {
+                    if (!juegoTerminado && intentoActual === i) {
+                        abrirTeclado();
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                fila.appendChild(letra);
+            }
             
-            // Cerrar teclado
-            cerrarTeclado();
-        }, 2000);
-    } else {
-        // Preparar para el siguiente intento
+            tablero.appendChild(fila);
+        }
+        
+        // Ocultar mensaje
+        mensaje.style.display = "none";
+        
+        // Configurar event listener para el teclado físico
+        document.addEventListener("keydown", manejarTeclado);
+        
+        // Configurar event listener para el input móvil
+        inputMovil.addEventListener('input', manejarInputMovil);
+        
+        // Mostrar botón para abrir teclado en móviles
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            abrirTecladoBtn.style.display = 'flex';
+            indicacionTeclado.style.display = 'block';
+        } else {
+            abrirTecladoBtn.style.display = 'none';
+            indicacionTeclado.style.display = 'none';
+        }
+    }
+
+    // Función para abrir el teclado
+    function abrirTeclado() {
+        inputMovil.focus();
+        // Forzar la apertura del teclado en iOS
         setTimeout(() => {
-            posicionActual = 0;
-        }, 2000);
+            inputMovil.click();
+            inputMovil.focus();
+        }, 100);
+        tecladoAbierto = true;
+        abrirTecladoBtn.style.display = 'none';
     }
-}
 
-// Configurar botón para siguiente acertijo
-siguienteBtn.addEventListener("click", () => {
-    mensaje.style.display = "none";
-    seleccionarSiguienteAcertijo();
-});
-
-// Configurar botón para reiniciar juego
-reiniciarBtn.addEventListener("click", inicializarJuego);
-
-// Configurar botón para empezar a jugar
-empezarBtn.addEventListener("click", inicializarJuego);
-
-// Configurar botón para abrir teclado
-abrirTecladoBtn.addEventListener("click", abrirTeclado);
-
-// Detectar cuando el teclado se cierra
-let initialHeight = window.innerHeight;
-window.addEventListener('resize', function() {
-    // Si la altura de la ventana vuelve a su estado original (teclado se cierra)
-    if (tecladoAbierto && window.innerHeight >= initialHeight) {
-        cerrarTeclado();
+    // Función para cerrar el teclado
+    function cerrarTeclado() {
+        inputMovil.blur();
+        tecladoAbierto = false;
+        
+        // Mostrar botón para abrir teclado
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            setTimeout(() => {
+                abrirTecladoBtn.style.display = 'flex';
+            }, 300);
+        }
     }
-});
 
-// Cerrar teclado al tocar fuera
-document.addEventListener('click', function(e) {
-    if (tecladoAbierto && !e.target.classList.contains('letra') && 
-        !e.target.classList.contains('tecla') && 
-        e.target !== inputMovil && 
-        e.target !== abrirTecladoBtn) {
-        cerrarTeclado();
+    // Manejar eventos del teclado físico
+    function manejarTeclado(e) {
+        if (juegoTerminado) return;
+        
+        if (e.key === "Enter") {
+            comprobarPalabra();
+        } else if (e.key === "Backspace") {
+            eliminarLetra();
+        } else if (/^[A-Za-zñÑ]$/.test(e.key)) {
+            agregarLetra(e.key.toUpperCase());
+        }
     }
-});
 
-// Mostrar modal de reglas al cargar la página
-window.addEventListener('load', () => {
-    initialHeight = window.innerHeight;
-    modalReglas.style.display = "flex";
-});
-
-// Prevenir zoom en elementos interactivos en iOS
-document.addEventListener('touchstart', function(e) {
-    if (e.touches.length > 1) {
-        e.preventDefault();
+    // Manejar entrada desde el teclado móvil
+    function manejarInputMovil(e) {
+        if (juegoTerminado) return;
+        
+        const letra = e.target.value;
+        if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
+            agregarLetra(letra.toUpperCase());
+            e.target.value = '';
+        }
+        
+        // Si se presiona Enter en el teclado virtual móvil
+        if (letra === "\n") {
+            comprobarPalabra();
+            e.target.value = '';
+        }
     }
-}, { passive: false });
 
-// Prevenir scroll no deseado en iOS
-document.addEventListener('touchmove', function(e) {
-    if (e.target.classList.contains('tecla') || e.target.classList.contains('letra')) {
-        e.preventDefault();
+    // Agregar una letra al tablero
+    function agregarLetra(letra) {
+        if (posicionActual < 5 && intentoActual < 7) {
+            const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
+            casilla.textContent = letra;
+            posicionActual++;
+        }
     }
-}, { passive: false });
 
-// Prevenir comportamiento por defecto en el input móvil
-inputMovil.addEventListener('touchstart', function(e) {
-    e.stopPropagation();
-}, { passive: false });
+    // Eliminar una letra del tablero
+    function eliminarLetra() {
+        if (posicionActual > 0) {
+            posicionActual--;
+            const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
+            casilla.textContent = "";
+        }
+    }
 
-// Mejorar el enfoque en el input móvil
-inputMovil.addEventListener('focus', function() {
-    this.setAttribute('readonly', 'readonly');
-    setTimeout(() => {
-        this.removeAttribute('readonly');
-    }, 100);
-});
-    </script>
+    // Comprobar si la palabra es correcta
+    function comprobarPalabra() {
+        if (posicionActual !== 5) {
+            // Mostrar mensaje de alerta mejorado para iOS
+            const alerta = document.createElement('div');
+            alerta.textContent = "¡Completa la palabra antes de enviar!";
+            alerta.style.position = 'fixed';
+            alerta.style.top = '50%';
+            alerta.style.left = '50%';
+            alerta.style.transform = 'translate(-50%, -50%)';
+            alerta.style.backgroundColor = 'rgba(30, 30, 60, 0.95)';
+            alerta.style.padding = '20px';
+            alerta.style.borderRadius = '8px';
+            alerta.style.zIndex = '1000';
+            alerta.style.color = 'white';
+            alerta.style.fontWeight = 'bold';
+            document.body.appendChild(alerta);
+            
+            setTimeout(() => {
+                document.body.removeChild(alerta);
+            }, 1500);
+            return;
+        }
+        
+        const fila = document.querySelectorAll(`.fila:nth-child(${intentoActual + 1}) .letra`);
+        let palabraIntento = "";
+        
+        // Obtener la palabra del intento actual
+        for (let i = 0; i < 5; i++) {
+            palabraIntento += fila[i].textContent;
+        }
+        
+        // Crear arrays para el resultado
+        let resultado = new Array(5).fill('ausente');
+        let letrasObjetivo = palabraActual.split('');
+        let letrasIntento = palabraIntento.split('');
+        
+        // Primera pasada: encontrar letras correctas (verde)
+        for (let i = 0; i < 5; i++) {
+            if (letrasIntento[i] === letrasObjetivo[i]) {
+                resultado[i] = 'correcta';
+                letrasObjetivo[i] = null; // Marcamos como usada
+            }
+        }
+        
+        // Segunda pasada: encontrar letras presentes pero en posición incorrecta (amarillo)
+        for (let i = 0; i < 5; i++) {
+            if (resultado[i] === 'correcta') continue;
+            
+            const index = letrasObjetivo.indexOf(letrasIntento[i]);
+            if (index !== -1) {
+                resultado[i] = 'presente';
+                letrasObjetivo[index] = null; // Marcamos como usada
+            }
+        }
+        
+        // Aplicar los resultados con animación
+        for (let i = 0; i < 5; i++) {
+            const letra = fila[i].textContent;
+            
+            // Aplicar animación y color después de un delay
+            setTimeout(() => {
+                fila[i].classList.add("animacion", resultado[i]);
+            }, i * 300);
+        }
+        
+        // Actualizar contador de intentos
+        intentoActual++;
+        contadorIntentos.textContent = `Intentos: ${intentoActual}/7`;
+        
+        // Comprobar si ganó o perdió
+        if (palabraIntento === palabraActual) {
+            setTimeout(() => {
+                juegoTerminado = true;
+                acertijosResueltos++;
+                contadorResueltos.textContent = acertijosResueltos;
+                
+                mensajeTitulo.textContent = "¡Felicidades!";
+                mensajeTexto.textContent = `Has acertado la palabra "${palabraActual}" en ${intentoActual} intento${intentoActual > 1 ? 's' : ''}.`;
+                siguienteBtn.style.display = "block";
+                mensaje.style.display = "block";
+                
+                // Cerrar teclado
+                cerrarTeclado();
+            }, 2000);
+        } else if (intentoActual === 7) {
+            setTimeout(() => {
+                juegoTerminado = true;
+                mensajeTitulo.textContent = "¡Game Over!";
+                mensajeTexto.textContent = `La palabra era "${palabraActual}". ¡Inténtalo de nuevo!`;
+                siguienteBtn.style.display = "block";
+                mensaje.style.display = "block";
+                
+                // Cerrar teclado
+                cerrarTeclado();
+            }, 2000);
+        } else {
+            // Preparar para el siguiente intento
+            setTimeout(() => {
+                posicionActual = 0;
+            }, 2000);
+        }
+    }
+
+    // Configurar botón para siguiente acertijo
+    siguienteBtn.addEventListener("click", () => {
+        mensaje.style.display = "none";
+        seleccionarSiguienteAcertijo();
+    });
+
+    // Configurar botón para reiniciar juego
+    reiniciarBtn.addEventListener("click", inicializarJuego);
+
+    // Configurar botón para empezar a jugar
+    empezarBtn.addEventListener("click", inicializarJuego);
+
+    // Configurar botón para abrir teclado
+    abrirTecladoBtn.addEventListener("click", abrirTeclado);
+
+    // Detectar cuando el teclado se cierra
+    let initialHeight = window.innerHeight;
+    window.addEventListener('resize', function() {
+        // Si la altura de la ventana vuelve a su estado original (teclado se cierra)
+        if (tecladoAbierto && window.innerHeight >= initialHeight) {
+            cerrarTeclado();
+        }
+    });
+
+    // Cerrar teclado al tocar fuera
+    document.addEventListener('click', function(e) {
+        if (tecladoAbierto && !e.target.classList.contains('letra') && 
+            e.target !== inputMovil && 
+            e.target !== abrirTecladoBtn) {
+            cerrarTeclado();
+        }
+    });
+
+    // Mostrar modal de reglas al cargar la página
+    window.addEventListener('load', () => {
+        initialHeight = window.innerHeight;
+        modalReglas.style.display = "flex";
+    });
+
+    // Prevenir zoom en elementos interactivos en iOS
+    document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Prevenir scroll no deseado en iOS
+    document.addEventListener('touchmove', function(e) {
+        if (e.target.classList.contains('letra')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Prevenir comportamiento por defecto en el input móvil
+    inputMovil.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+    }, { passive: false });
+
+    // Mejorar el enfoque en el input móvil
+    inputMovil.addEventListener('focus', function() {
+        this.setAttribute('readonly', 'readonly');
+        setTimeout(() => {
+            this.removeAttribute('readonly');
+        }, 100);
+    });
+
+    // Permitir que el input móvil capture la tecla Enter
+    inputMovil.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            comprobarPalabra();
+        }
+    });
+</script>
 </body>
 </html>
