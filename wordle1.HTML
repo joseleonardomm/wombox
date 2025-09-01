@@ -270,6 +270,12 @@
             font-size: 1.2rem;
         }
 
+        .progress-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #00aaff;
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
@@ -323,6 +329,7 @@
         <div class="riddle-container">
             <div class="riddle-title">ACERTIJO:</div>
             <div class="riddle-text" id="riddle">Cargando acertijo...</div>
+            <div class="progress-info" id="progress-info">Acertijo 1 de 8</div>
         </div>
         
         <div class="board" id="board">
@@ -360,6 +367,7 @@
             <p><strong>Gris:</strong> La letra no está en la palabra.</p>
             
             <p>Toca la pantalla para abrir el teclado y usa el botón atrás para cerrarlo.</p>
+            <p>Los acertijos no se repetirán hasta que hayas jugado todos.</p>
             
             <button class="modal-button" id="start-button">¡Comenzar!</button>
         </div>
@@ -371,6 +379,7 @@
             <p id="result-message">Has adivinado la palabra correctamente.</p>
             <div class="result-word" id="result-word">PALABRA</div>
             <div class="result-stats" id="result-stats">Lo lograste en X intentos</div>
+            <div class="progress-info" id="result-progress">Acertijo X de 8</div>
             <button class="modal-button" id="play-again-button">¡Jugar de nuevo!</button>
         </div>
     </div>
@@ -417,6 +426,7 @@
             const gameContainer = document.getElementById('game-container');
             const boardElement = document.getElementById('board');
             const riddleElement = document.getElementById('riddle');
+            const progressInfo = document.getElementById('progress-info');
             const wordInput = document.getElementById('word-input');
             const enterButton = document.getElementById('enter-button');
             const deleteButton = document.getElementById('delete-button');
@@ -428,6 +438,7 @@
             const resultMessage = document.getElementById('result-message');
             const resultWord = document.getElementById('result-word');
             const resultStats = document.getElementById('result-stats');
+            const resultProgress = document.getElementById('result-progress');
             
             // Variables del juego
             let currentWord = '';
@@ -435,16 +446,34 @@
             let currentRow = 0;
             let currentCell = 0;
             let gameOver = false;
+            let usedRiddles = [];
+            let availableRiddles = [...wordDatabase];
+            let totalRiddles = wordDatabase.length;
+            let currentRiddleIndex = 0;
             
             // Inicializar el juego
             function initGame() {
-                // Seleccionar una palabra y acertijo aleatorio
-                const randomIndex = Math.floor(Math.random() * wordDatabase.length);
-                currentWord = wordDatabase[randomIndex].word.toUpperCase();
-                currentRiddle = wordDatabase[randomIndex].riddle;
+                // Reiniciar availableRiddles si están todos usados
+                if (availableRiddles.length === 0) {
+                    availableRiddles = [...wordDatabase];
+                    usedRiddles = [];
+                }
                 
-                // Mostrar el acertijo
+                // Seleccionar un acertijo aleatorio de los disponibles
+                const randomIndex = Math.floor(Math.random() * availableRiddles.length);
+                const selectedRiddle = availableRiddles[randomIndex];
+                
+                // Mover el acertijo de available a used
+                availableRiddles.splice(randomIndex, 1);
+                usedRiddles.push(selectedRiddle);
+                
+                currentWord = selectedRiddle.word.toUpperCase();
+                currentRiddle = selectedRiddle.riddle;
+                currentRiddleIndex = usedRiddles.length;
+                
+                // Mostrar el acertijo y el progreso
                 riddleElement.textContent = currentRiddle;
+                progressInfo.textContent = `Acertijo ${currentRiddleIndex} de ${totalRiddles}`;
                 
                 // Configurar el tablero según la longitud de la palabra
                 const wordLength = currentWord.length;
@@ -632,6 +661,7 @@
                 resultStats.textContent = isWin 
                     ? `Lo lograste en ${attempts} intento${attempts > 1 ? 's' : ''}` 
                     : 'La palabra era:';
+                resultProgress.textContent = `Acertijo ${currentRiddleIndex} de ${totalRiddles}`;
                 
                 resultModal.classList.remove('hidden');
             }
@@ -664,9 +694,6 @@
             });
             
             // Manejar el botón de retroceso para cerrar el teclado
-            let backButtonPressed = false;
-            
-            // Simular el comportamiento del botón de retroceso
             document.addEventListener('keydown', function(e) {
                 // Detectar la tecla Escape (usada en algunos navegadores para retroceso)
                 if (e.key === 'Escape') {
@@ -675,12 +702,6 @@
                         e.preventDefault();
                     }
                 }
-            });
-            
-            // Para dispositivos Android, podemos usar el evento backbutton de Cordova/PhoneGap
-            // Pero como es HTML puro, nos enfocamos en la tecla Escape y en hacer blur
-            document.addEventListener('touchstart', function() {
-                backButtonPressed = false;
             });
             
             // Iniciar el juego cuando se carga la página
