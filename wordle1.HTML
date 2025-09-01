@@ -2,1102 +2,765 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Wordle</title>
-    <meta name="theme-color" content="#0c1445">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wordle de Acertijos</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         body {
-            background: linear-gradient(to bottom, #0c1445, #1a1a2e);
-            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 100%);
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
             overflow-x: hidden;
-            position: relative;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
+        header {
             width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px),
-                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
-                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
-            background-size: 550px 550px, 350px 350px, 250px 250px;
-            background-position: 0 0, 40px 60px, 130px 270px;
-            z-index: -1;
-        }
-
-        .container {
             max-width: 500px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .titulo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #00ffff;
             margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .playstation-logo {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
         }
 
         h1 {
-            margin: 0;
             font-size: 2.5rem;
-            text-align: center;
-            color: #fff;
-            text-shadow: 0 0 10px #3d7bff, 0 0 20px #3d7bff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
         }
 
-        .stats {
+        .game-container {
+            width: 100%;
+            max-width: 500px;
             display: flex;
-            justify-content: center;
-            gap: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .riddle-container {
+            background: rgba(0, 30, 60, 0.8);
+            border: 2px solid #00aaff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+            width: 100%;
+        }
+
+        .riddle-title {
+            color: #00aaff;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .riddle-text {
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .board {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            grid-gap: 8px;
             width: 100%;
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
-        .stat {
-            background-color: rgba(30, 30, 60, 0.8);
+        .row {
+            display: grid;
+            grid-template-columns: repeat(var(--columns, 5), 1fr);
+            grid-gap: 8px;
+        }
+
+        .cell {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid #4a5568;
             border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-            flex: 1;
-            min-width: 100px;
-            max-width: 130px;
-            box-shadow: 0 0 10px rgba(61, 123, 255, 0.3);
-        }
-
-        .acertijo {
-            background-color: rgba(30, 30, 60, 0.8);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-            width: 100%;
-            box-shadow: 0 0 15px rgba(61, 123, 255, 0.5);
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .tablero {
-            display: grid;
-            grid-template-rows: repeat(7, 1fr);
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 25px;
-            touch-action: manipulation;
-        }
-
-        .fila {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-        }
-
-        .letra {
-            width: 100%;
-            aspect-ratio: 1/1;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
             font-weight: bold;
-            background-color: rgba(50, 50, 80, 0.6);
-            border: 2px solid #3d7bff;
-            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
             color: white;
             text-transform: uppercase;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            -webkit-user-select: none;
-            user-select: none;
-            touch-action: manipulation;
+            transition: all 0.2s ease;
         }
 
-        .correcta {
-            background-color: #2ecc71;
-            border-color: #2ecc71;
+        .cell.filled {
+            border-color: #00aaff;
+            animation: pulse 0.2s ease;
         }
 
-        .presente {
-            background-color: #f1c40f;
-            border-color: #f1c40f;
+        .cell.correct {
+            background-color: #10b981;
+            border-color: #10b981;
+            color: white;
         }
 
-        .ausente {
-            background-color: #7f8c8d;
-            border-color: #7f8c8d;
+        .cell.present {
+            background-color: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
         }
 
-        .animacion {
-            -webkit-animation: flip 0.5s ease forwards;
-            animation: flip 0.5s ease forwards;
+        .cell.absent {
+            background-color: #4a5568;
+            border-color: #4a5568;
+            color: white;
         }
 
-        @-webkit-keyframes flip {
-            0% {
-                -webkit-transform: scaleY(1);
-                transform: scaleY(1);
-            }
-            50% {
-                -webkit-transform: scaleY(0);
-                transform: scaleY(0);
-            }
-            100% {
-                -webkit-transform: scaleY(1);
-                transform: scaleY(1);
-            }
-        }
-
-        @keyframes flip {
-            0% {
-                -webkit-transform: scaleY(1);
-                transform: scaleY(1);
-            }
-            50% {
-                -webkit-transform: scaleY(0);
-                transform: scaleY(0);
-            }
-            100% {
-                -webkit-transform: scaleY(1);
-                transform: scaleY(1);
-            }
-        }
-
-        .mensaje {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(30, 30, 60, 0.95);
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(61, 123, 255, 0.8);
-            z-index: 100;
-            display: none;
-            width: 90%;
-            max-width: 400px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .mensaje button {
+        .keyboard {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
-            padding: 12px 24px;
-            background-color: #3d7bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1rem;
         }
 
-        .intentos {
-            margin-top: 10px;
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .key {
+            min-width: 10%;
+            height: 50px;
+            margin: 4px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4a5568;
+            color: white;
             font-size: 1.2rem;
-            text-align: center;
-        }
-
-        .boton-reinicio {
-            margin-top: 25px;
-            padding: 12px 24px;
-            background-color: #3d7bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            font-family: 'Orbitron', sans-serif;
         }
 
-        /* Campo de entrada para teclado móvil - MEJORADO */
-           .input-movil {
-           position: fixed;
-           top: 50%;
-           left: 50%;
-           width: 1px;
-           height: 1px;
-           opacity: 0;
-           background: transparent;
-           border: none;
-           color: transparent;
-           font-size: 16px;
-           z-index: 999;
-           pointer-events: none;
-           transform: translate(-50%, -50%);
+        .key:hover {
+            background-color: #00aaff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 170, 255, 0.4);
         }
 
-           .input-movil:focus {
-           outline: none;
-           background: transparent;
-           border: none;
-           box-shadow: none;
+        .key:active {
+            transform: translateY(0);
         }
 
-        /* Modal de reglas - scroll mejorado */
-        .modal-reglas {
+        .key.wide {
+            min-width: 15%;
+            font-size: 0.9rem;
+        }
+
+        .key.correct {
+            background-color: #10b981;
+        }
+
+        .key.present {
+            background-color: #f59e0b;
+        }
+
+        .key.absent {
+            background-color: #3a3a3c;
+        }
+
+        .keyboard-toggle {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #00aaff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: #0f1923;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+        }
+
+        .keyboard-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+        }
+
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(12, 20, 69, 0.95);
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            z-index: 100;
+            backdrop-filter: blur(5px);
         }
 
-        .contenido-modal {
-            background: linear-gradient(to bottom, #1a1a2e, #0c1445);
+        .modal-content {
+            background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 100%);
+            border: 2px solid #00ffff;
             border-radius: 15px;
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 0 30px rgba(61, 123, 255, 0.8);
-            border: 2px solid #3d7bff;
+            padding: 25px;
+            max-width: 90%;
+            width: 500px;
             text-align: center;
-            margin: 20px 0;
-            max-height: 90vh;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
         }
 
-        .contenido-modal h2 {
-            font-size: 2rem;
+        .modal h2 {
+            color: #00ffff;
             margin-bottom: 20px;
-            color: #fff;
-            text-shadow: 0 0 10px #3d7bff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-size: 1.8rem;
         }
 
-        .reglas-lista {
-            text-align: left;
-            margin: 20px 0;
-            padding: 0 20px;
-        }
-
-        .reglas-lista li {
+        .modal p {
             margin-bottom: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        .ejemplos {
+        .modal-example {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 25px 0;
+            justify-content: center;
+            margin: 15px 0;
         }
 
-        .ejemplo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .ejemplo-letra {
+        .example-cell {
             width: 40px;
             height: 40px;
+            margin: 0 5px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
-            border-radius: 6px;
         }
 
-        .ejemplo-texto {
-            flex: 1;
-            text-align: left;
-        }
-
-        .boton-empezar {
+        .modal-button {
             margin-top: 20px;
             padding: 12px 30px;
-            background-color: #3d7bff;
-            color: white;
+            background: linear-gradient(to right, #00aaff, #00ffff);
             border: none;
-            border-radius: 6px;
-            cursor: pointer;
+            border-radius: 25px;
+            color: #0f1923;
             font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-
-        .boton-empezar:hover {
-            background-color: #2a5bc9;
-            transform: scale(1.05);
-        }
-
-        /* Botón para abrir teclado manualmente */
-        .abrir-teclado {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #3d7bff;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
             cursor: pointer;
-            z-index: 900;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            touch-action: manipulation;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
         }
-        
-        /* Indicación para usuario */
-        .indicacion-teclado {
-            margin-top: 15px;
+
+        .modal-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .result-modal {
             text-align: center;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 10px;
-            background-color: rgba(30, 30, 60, 0.5);
-            border-radius: 8px;
-            width: 100%;
         }
 
-        /* Mejoras específicas para iOS */
-        @supports (-webkit-touch-callout: none) {
-            body {
-                height: -webkit-fill-available;
-            }
-            
-            .modal-reglas {
-                position: absolute;
-                height: -webkit-fill-available;
-            }
-            
-            .input-movil {
-                font-size: 16px !important;
-            }
+        .result-title {
+            color: #00ffff;
+            margin-bottom: 15px;
+            font-size: 2rem;
         }
 
-        /* Prevenir zoom en dispositivos móviles */
-        @media (max-width: 768px) {
-            input, select, textarea {
-                font-size: 16px !important;
-            }
-            
-            .stats {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 10px;
-            }
-            
-            .stat {
-                min-width: 110px;
-                flex-shrink: 0;
-            }
+        .result-word {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00aaff;
+            margin: 15px 0;
+            text-transform: uppercase;
+        }
+
+        .result-stats {
+            margin: 15px 0;
+            font-size: 1.2rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateX(0); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0); }
+        }
+
+        .flip {
+            animation: flip 0.5s ease;
         }
 
         @media (max-width: 500px) {
-            .letra {
-                font-size: 1.5rem;
-            }
-            
             h1 {
                 font-size: 2rem;
             }
             
-            .stats {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-                flex-wrap: nowrap;
-                overflow-x: visible;
+            .cell {
+                font-size: 1.5rem;
             }
             
-            .stat {
-                margin: 0;
-                width: 100%;
-                max-width: 200px;
-                min-width: auto;
-            }
-            
-            .acertijo {
-                padding: 15px;
+            .key {
+                height: 45px;
                 font-size: 1rem;
+                margin: 3px;
             }
             
-            .contenido-modal {
-                padding: 20px;
-                max-height: 85vh;
-            }
-            
-            .contenido-modal h2 {
-                font-size: 1.7rem;
-            }
-            
-            .reglas-lista {
-                padding: 0 10px;
-            }
-            
-            .ejemplo-letra {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
-            }
-            
-            .input-movil {
-                height: 50px;
-                font-size: 16px !important;
-            }
-            
-            .abrir-teclado {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .indicacion-teclado {
+            .key.wide {
                 font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 350px) {
-            .letra {
-                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Modal de reglas -->
-    <div class="modal-reglas" id="modal-reglas">
-        <div class="contenido-modal">
-            <h2>
-                <svg class="playstation-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M65.6 27.2L45.4 37.5l-7.3-4.2v38.5l7.3 4.2 20.2-10.3 7.3-4.2V31.4l-7.3-4.2zm-40.2 0L5.2 37.5 0 41v27.3l5.2 3.5 20.2 10.3 7.3 4.2V31.4l-7.3-4.2zM71.9 80l-7.3-4.2V47.9l7.3-4.2 15.6 7.9 5.2 3.5v27.3l-5.2 3.5L71.9 80z" fill="#fff"/>
-                </svg>
-                WORDLE
-            </h2>
+    <header>
+        <h1>Wordle Acertijos</h1>
+    </header>
+    
+    <div class="game-container">
+        <div class="riddle-container">
+            <div class="riddle-title">ACERTIJO:</div>
+            <div class="riddle-text" id="riddle">Cargando acertijo...</div>
+        </div>
+        
+        <div class="board" id="board">
+            <!-- Las celdas se generarán con JavaScript -->
+        </div>
+        
+        <button class="keyboard-toggle" id="keyboard-toggle">Mostrar/Ocultar Teclado</button>
+        
+        <div class="keyboard" id="keyboard">
+            <!-- El teclado se generará con JavaScript -->
+        </div>
+    </div>
+    
+    <div class="modal" id="intro-modal">
+        <div class="modal-content">
+            <h2>¡Bienvenido a Wordle Acertijos!</h2>
+            <p>Adivina la palabra basándote en el acertijo. Tienes 6 intentos.</p>
             
-            <p>Adivina la palabra de 5 letras en 7 intentos.</p>
-            
-            <div class="reglas-lista">
-                <ol>
-                    <li>Cada intento debe ser una palabra válida de 5 letras.</li>
-                    <li>Después de cada intento, el color de las letras cambiará para mostrar qué tan cerca estás de acertar la palabra.</li>
-                    <li>Resuelve el acertijo para obtener una pista sobre la palabra.</li>
-                    <li>Usa tu teclado físico para introducir las letras.</li>
-                </ol>
+            <div class="modal-example">
+                <div class="example-cell" style="background-color: #10b981;">G</div>
+                <div class="example-cell" style="background-color: #f59e0b;">A</div>
+                <div class="example-cell" style="background-color: #4a5568;">T</div>
+                <div class="example-cell" style="background-color: #4a5568;">O</div>
             </div>
             
-            <h3>Ejemplos</h3>
+            <p><strong>Verde:</strong> La letra está en la palabra y en la posición correcta.</p>
+            <p><strong>Amarillo:</strong> La letra está en la palabra pero en otra posición.</p>
+            <p><strong>Gris:</strong> La letra no está en la palabra.</p>
             
-            <div class="ejemplos">
-                <div class="ejemplo">
-                    <div class="ejemplo-letra correcta">L</div>
-                    <div class="ejemplo-texto">La letra <strong>L</strong> está en la palabra y en la posición correcta.</div>
-                </div>
-                
-                <div class="ejemplo">
-                    <div class="ejemplo-letra presente">L</div>
-                    <div class="ejemplo-texto">La letra <strong>L</strong> está en la palabra pero en la posición incorrecta.</div>
-                </div>
-                
-                <div class="ejemplo">
-                    <div class="ejemplo-letra ausente">L</div>
-                    <div class="ejemplo-texto">La letra <strong>L</strong> no está en la palabra.</div>
-                </div>
-            </div>
+            <p>¡Haz clic en el tablero para abrir el teclado!</p>
             
-            <button class="boton-empezar" id="empezar-btn">¡Empezar a jugar!</button>
+            <button class="modal-button" id="start-button">¡Comenzar!</button>
         </div>
     </div>
     
-    <!-- Campo de entrada para teclado móvil - ahora visible pero fuera de pantalla -->
-    <input type="text" class="input-movil" id="input-movil" maxlength="1" />
-    
-    <!-- Botón flotante para abrir teclado -->
-    <div class="abrir-teclado" id="abrir-teclado" style="display: none;">⌨️</div>
-    
-    <div class="container">
-        <div class="titulo-container">
-            <svg class="playstation-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M65.6 27.2L45.4 37.5l-7.3-4.2v38.5l7.3 4.2 20.2-10.3 7.3-4.2V31.4l-7.3-4.2zm-40.2 0L5.2 37.5 0 41v27.3l5.2 3.5 20.2 10.3 7.3 4.2V31.4l-7.3-4.2zM71.9 80l-7.3-4.2V47.9l7.3-4.2 15.6 7.9 5.2 3.5v27.3l-5.2 3.5L71.9 80z" fill="#fff"/>
-            </svg>
-            <h1>WORDLE</h1>
+    <div class="modal hidden" id="result-modal">
+        <div class="modal-content result-modal">
+            <h2 class="result-title" id="result-title">¡Felicidades!</h2>
+            <p id="result-message">Has adivinado la palabra correctamente.</p>
+            <div class="result-word" id="result-word">PALABRA</div>
+            <div class="result-stats" id="result-stats">Lo lograste en X intentos</div>
+            <button class="modal-button" id="play-again-button">¡Jugar de nuevo!</button>
         </div>
-        
-        <div class="stats">
-            <div class="stat">Acertijos: <span id="contador-acertijos">0</span></div>
-            <div class="stat">Resueltos: <span id="contador-resueltos">0</span></div>
-            <div class="stat">Intentos: <span id="contador-intentos">0/7</span></div>
-        </div>
-        
-        <div class="acertijo" id="acertijo">
-            <!-- El acertijo se insertará aquí -->
-        </div>
-        
-        <div class="tablero" id="tablero">
-            <!-- Las filas y letras se generarán con JS -->
-        </div>
-        
-        <div class="indicacion-teclado" id="indicacion-teclado">
-            Usa tu teclado físico para introducir las letras. Toca cualquier casilla para activar el teclado.
-        </div>
-        
-        <button class="boton-reinicio" id="reiniciar-btn">Reiniciar Juego</button>
     </div>
-    
-    <div class="mensaje" id="mensaje">
-        <h2 id="mensaje-titulo">¡Felicidades!</h2>
-        <p id="mensaje-texto">Has acertado la palabra</p>
-        <button id="siguiente-btn">Siguiente Acertijo</button>
-    </div>
-<script>
-    // Base de datos de acertijos y palabras (todas de 5 letras)
-    const todosAcertijos = [
-        {
-            pista: "Dientes sin boca, metal que obedece; en puertas y candados, siempre aparece.",
-            palabra: "LLAVE"
-        },
-        {
-            pista: "Vigilo en la altura, cargo sin protesta; mi cuello es bandera de calma andina y fiesta.",
-            palabra: "LLAMA"
-        },
-        {
-            pista: "Entre agujeros guardo el sabor; me rallo, me fundo y alegro el fogón.",
-            palabra: "QUESO"
-        },
-        {
-            pista: "Pequeño bigote, oído fino; corro en silencio por mi camino.",
-            palabra: "RATON"
-        },
-        {
-            pista: "Tiene agujas y no sabe coser, tiene números y no sabe leer",
-            palabra: "RELOJ"
-        },
-        {
-            pista: "Entre puentes y museos veo pasar al Sena, una torre de hierro me señala la escena. Soy moda y luz de noche, susurro en mi país; si piensas en Francia, me llamas en cinco: ¿quién es?",
-            palabra: "PARIS"
-        },
-        {
-            pista: "Me usan para escribir, aunque no tengo voz. Soy de tinta o de mina, ¿ya sabes quién soy?",
-            palabra: "LAPIZ"
-        },
-        {
-            pista: "Vuelo sin tener alas, lloro sin tener ojos, y si me buscas, en el cielo me alojas.",
-            palabra: "NUBES"
-        }
-    ];
 
-    // Variables de estado del juego
-    let acertijosDisponibles = [];
-    let acertijoActual = null;
-    let palabraActual = "";
-    let intentoActual = 0;
-    let posicionActual = 0;
-    let juegoTerminado = false;
-    let acertijosMostrados = 0;
-    let acertijosResueltos = 0;
-    let tecladoAbierto = false;
-
-    // Elementos DOM
-    const tablero = document.getElementById("tablero");
-    const acertijoElement = document.getElementById("acertijo");
-    const mensaje = document.getElementById("mensaje");
-    const mensajeTitulo = document.getElementById("mensaje-titulo");
-    const mensajeTexto = document.getElementById("mensaje-texto");
-    const siguienteBtn = document.getElementById("siguiente-btn");
-    const reiniciarBtn = document.getElementById("reiniciar-btn");
-    const contadorIntentos = document.getElementById("contador-intentos");
-    const contadorAcertijos = document.getElementById("contador-acertijos");
-    const contadorResueltos = document.getElementById("contador-resueltos");
-    const inputMovil = document.getElementById("input-movil");
-    const modalReglas = document.getElementById("modal-reglas");
-    const empezarBtn = document.getElementById("empezar-btn");
-    const abrirTecladoBtn = document.getElementById("abrir-teclado");
-    const indicacionTeclado = document.getElementById("indicacion-teclado");
-
-    // Inicializar el juego
-    function inicializarJuego() {
-        // Ocultar modal de reglas
-        modalReglas.style.display = "none";
-        
-        // Reiniciar acertijos disponibles
-        acertijosDisponibles = [...todosAcertijos];
-        acertijosMostrados = 0;
-        acertijosResueltos = 0;
-        
-        // Actualizar contadores
-        contadorAcertijos.textContent = acertijosMostrados;
-        contadorResueltos.textContent = acertijosResueltos;
-        
-        // Seleccionar siguiente acertijo
-        seleccionarSiguienteAcertijo();
-        
-        // Configurar el input para dispositivos móviles
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            // Añadir event listener para mantener el foco
-            document.addEventListener('touchstart', function(e) {
-                if (!juegoTerminado && !e.target.classList.contains('abrir-teclado')) {
-                    inputMovil.focus();
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Base de datos de acertijos y palabras
+            const wordDatabase = [
+                {
+                    word: "raton",
+                    riddle: "Tengo botones y una cola, pero no soy un animal. ¿Qué soy?"
+                },
+                {
+                    word: "libro",
+                    riddle: "Tengo hojas pero no soy un árbol, tengo palabras pero no hablo. ¿Qué soy?"
+                },
+                {
+                    word: "luna",
+                    riddle: "Redonda como un plato, blanca como queso, en el cielo vivo, pero no soy una estrella. ¿Qué soy?"
+                },
+                {
+                    word: "agua",
+                    riddle: "Corro sin pies, grito sin boca. ¿Qué soy?"
+                },
+                {
+                    word: "fuego",
+                    riddle: "Como animal feroz me vuelvo cuando me alimentan, y muero cuando me dan de beber. ¿Qué soy?"
+                },
+                {
+                    word: "reloj",
+                    riddle: "Siempre ando, nunca corro, marcar las horas es mi trabajo. ¿Qué soy?"
+                },
+                {
+                    word: "sombrilla",
+                    riddle: "Me abro para cubrirte, cuando la lluvia viene. ¿Qué soy?"
+                },
+                {
+                    word: "llave",
+                    riddle: "Tengo dientes pero no muerdo, abro puertas sin esfuerzo. ¿Qué soy?"
+                }
+            ];
+            
+            // Elementos del DOM
+            const boardElement = document.getElementById('board');
+            const keyboardElement = document.getElementById('keyboard');
+            const riddleElement = document.getElementById('riddle');
+            const introModal = document.getElementById('intro-modal');
+            const resultModal = document.getElementById('result-modal');
+            const startButton = document.getElementById('start-button');
+            const playAgainButton = document.getElementById('play-again-button');
+            const resultTitle = document.getElementById('result-title');
+            const resultMessage = document.getElementById('result-message');
+            const resultWord = document.getElementById('result-word');
+            const resultStats = document.getElementById('result-stats');
+            const keyboardToggle = document.getElementById('keyboard-toggle');
+            
+            // Variables del juego
+            let currentWord = '';
+            let currentRiddle = '';
+            let currentRow = 0;
+            let currentCell = 0;
+            let gameOver = false;
+            let keyboardVisible = true;
+            
+            // Inicializar el juego
+            function initGame() {
+                // Seleccionar una palabra y acertijo aleatorio
+                const randomIndex = Math.floor(Math.random() * wordDatabase.length);
+                currentWord = wordDatabase[randomIndex].word.toUpperCase();
+                currentRiddle = wordDatabase[randomIndex].riddle;
+                
+                // Mostrar el acertijo
+                riddleElement.textContent = currentRiddle;
+                
+                // Configurar el tablero según la longitud de la palabra
+                const wordLength = currentWord.length;
+                boardElement.innerHTML = '';
+                document.documentElement.style.setProperty('--columns', wordLength);
+                
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'row';
+                    
+                    for (let j = 0; j < wordLength; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = i;
+                        cell.dataset.cell = j;
+                        row.appendChild(cell);
+                    }
+                    
+                    boardElement.appendChild(row);
+                }
+                
+                // Configurar el teclado
+                setupKeyboard();
+                
+                // Reiniciar variables del juego
+                currentRow = 0;
+                currentCell = 0;
+                gameOver = false;
+                
+                // Ocultar teclado inicialmente en móviles
+                if (window.innerWidth <= 768) {
+                    keyboardVisible = false;
+                    keyboardElement.classList.add('hidden');
+                }
+            }
+            
+            // Configurar el teclado
+            function setupKeyboard() {
+                const keyboardRows = [
+                    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
+                    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫']
+                ];
+                
+                keyboardElement.innerHTML = '';
+                
+                keyboardRows.forEach(row => {
+                    const rowElement = document.createElement('div');
+                    rowElement.className = 'keyboard-row';
+                    
+                    row.forEach(key => {
+                        const keyElement = document.createElement('button');
+                        keyElement.className = 'key';
+                        keyElement.textContent = key;
+                        
+                        if (key === 'ENTER' || key === '⌫') {
+                            keyElement.classList.add('wide');
+                        }
+                        
+                        keyElement.addEventListener('click', () => handleKeyPress(key));
+                        rowElement.appendChild(keyElement);
+                    });
+                    
+                    keyboardElement.appendChild(rowElement);
+                });
+            }
+            
+            // Manejar la pulsación de teclas
+            function handleKeyPress(key) {
+                if (gameOver) return;
+                
+                const wordLength = currentWord.length;
+                
+                if (key === 'ENTER') {
+                    if (currentCell === wordLength) {
+                        checkGuess();
+                    } else {
+                        // Animación de sacudida si la palabra no está completa
+                        const currentRowElement = boardElement.children[currentRow];
+                        currentRowElement.classList.add('shake');
+                        setTimeout(() => {
+                            currentRowElement.classList.remove('shake');
+                        }, 300);
+                    }
+                } else if (key === '⌫') {
+                    if (currentCell > 0) {
+                        currentCell--;
+                        const cell = boardElement.children[currentRow].children[currentCell];
+                        cell.textContent = '';
+                        cell.classList.remove('filled');
+                    }
+                } else if (currentCell < wordLength) {
+                    const cell = boardElement.children[currentRow].children[currentCell];
+                    cell.textContent = key;
+                    cell.classList.add('filled');
+                    currentCell++;
+                }
+            }
+            
+            // Verificar la suposición actual
+            function checkGuess() {
+                const wordLength = currentWord.length;
+                const row = boardElement.children[currentRow];
+                let guess = '';
+                
+                // Obtener la palabra intentada
+                for (let i = 0; i < wordLength; i++) {
+                    guess += row.children[i].textContent;
+                }
+                
+                // Verificar si la palabra es correcta
+                if (guess === currentWord) {
+                    // Todas las letras son correctas
+                    for (let i = 0; i < wordLength; i++) {
+                        setTimeout(() => {
+                            const cell = row.children[i];
+                            cell.classList.add('correct');
+                            updateKeyboardKey(guess[i], 'correct');
+                        }, i * 200);
+                    }
+                    
+                    setTimeout(() => {
+                        showResult(true, currentRow + 1);
+                    }, wordLength * 200);
+                    
+                    gameOver = true;
+                    return;
+                }
+                
+                // Verificar cada letra
+                const correctLetters = [];
+                const presentLetters = [];
+                
+                // Primera pasada: encontrar letras correctas
+                for (let i = 0; i < wordLength; i++) {
+                    if (guess[i] === currentWord[i]) {
+                        correctLetters.push(i);
+                    }
+                }
+                
+                // Segunda pasada: encontrar letras presentes pero en posición incorrecta
+                for (let i = 0; i < wordLength; i++) {
+                    if (correctLetters.includes(i)) continue;
+                    
+                    if (currentWord.includes(guess[i])) {
+                        // Contar cuántas veces aparece la letra en la palabra objetivo
+                        const targetCount = countLetter(currentWord, guess[i]);
+                        
+                        // Contar cuántas veces ya hemos marcado esta letra como correcta o presente
+                        const alreadyMarked = correctLetters.filter(idx => guess[idx] === guess[i]).length +
+                                              presentLetters.filter(idx => guess[idx] === guess[i]).length;
+                        
+                        // Si todavía hay más instancias de esta letra por marcar
+                        if (alreadyMarked < targetCount) {
+                            presentLetters.push(i);
+                        }
+                    }
+                }
+                
+                // Aplicar colores a las celdas
+                for (let i = 0; i < wordLength; i++) {
+                    setTimeout(() => {
+                        const cell = row.children[i];
+                        
+                        if (correctLetters.includes(i)) {
+                            cell.classList.add('correct');
+                            updateKeyboardKey(guess[i], 'correct');
+                        } else if (presentLetters.includes(i)) {
+                            cell.classList.add('present');
+                            updateKeyboardKey(guess[i], 'present');
+                        } else {
+                            cell.classList.add('absent');
+                            updateKeyboardKey(guess[i], 'absent');
+                        }
+                        
+                        cell.classList.add('flip');
+                    }, i * 200);
+                }
+                
+                // Preparar para el siguiente intento
+                currentRow++;
+                currentCell = 0;
+                
+                // Verificar si se agotaron los intentos
+                if (currentRow === 6) {
+                    setTimeout(() => {
+                        showResult(false, 0);
+                    }, wordLength * 200);
+                    gameOver = true;
+                }
+            }
+            
+            // Contar cuántas veces aparece una letra en una palabra
+            function countLetter(word, letter) {
+                let count = 0;
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] === letter) {
+                        count++;
+                    }
+                }
+                return count;
+            }
+            
+            // Actualizar el color de una tecla en el teclado
+            function updateKeyboardKey(key, status) {
+                const keys = keyboardElement.querySelectorAll('.key');
+                
+                keys.forEach(k => {
+                    if (k.textContent === key) {
+                        // Solo actualizar si no es correcta ya (para mantener el color más importante)
+                        if (!k.classList.contains('correct')) {
+                            if (status === 'correct') {
+                                k.classList.remove('present');
+                                k.classList.add('correct');
+                            } else if (status === 'present' && !k.classList.contains('correct')) {
+                                k.classList.add('present');
+                            } else if (status === 'absent' && 
+                                      !k.classList.contains('correct') && 
+                                      !k.classList.contains('present')) {
+                                k.classList.add('absent');
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Mostrar el resultado del juego
+            function showResult(isWin, attempts) {
+                resultTitle.textContent = isWin ? '¡Felicidades!' : '¡Game Over!';
+                resultMessage.textContent = isWin 
+                    ? `Has adivinado la palabra correctamente.` 
+                    : `No has adivinado la palabra.`;
+                resultWord.textContent = currentWord;
+                resultStats.textContent = isWin 
+                    ? `Lo lograste en ${attempts} intento${attempts > 1 ? 's' : ''}` 
+                    : 'La palabra era:';
+                
+                resultModal.classList.remove('hidden');
+            }
+            
+            // Event Listeners
+            startButton.addEventListener('click', () => {
+                introModal.classList.add('hidden');
+                initGame();
+            });
+            
+            playAgainButton.addEventListener('click', () => {
+                resultModal.classList.add('hidden');
+                initGame();
+            });
+            
+            keyboardToggle.addEventListener('click', () => {
+                keyboardVisible = !keyboardVisible;
+                if (keyboardVisible) {
+                    keyboardElement.classList.remove('hidden');
+                } else {
+                    keyboardElement.classList.add('hidden');
                 }
             });
             
-            // Mostrar instrucciones táctiles
-            indicacionTeclado.innerHTML = 'Toca cualquier casilla para activar el teclado. <br>Si no funciona, usa el botón ⌨️ en la esquina.';
-        }
-    }
-
-    // Seleccionar un acertijo que no se haya mostrado
-    function seleccionarSiguienteAcertijo() {
-        if (acertijosDisponibles.length === 0) {
-            // Si no hay más acertijos disponibles
-            juegoTerminado = true;
-            mensajeTitulo.textContent = "¡Felicidades!";
-            mensajeTexto.textContent = "Has completado todos los acertijos. ¡Juego terminado!";
-            siguienteBtn.style.display = "none";
-            mensaje.style.display = "block";
-            return;
-        }
-        
-        // Seleccionar un acertijo aleatorio de los disponibles
-        const indiceAleatorio = Math.floor(Math.random() * acertijosDisponibles.length);
-        acertijoActual = acertijosDisponibles[indiceAleatorio];
-        palabraActual = acertijoActual.palabra;
-        
-        // Eliminar el acertijo de los disponibles
-        acertijosDisponibles.splice(indiceAleatorio, 1);
-        
-        // Mostrar el acertijo
-        acertijoElement.textContent = acertijoActual.pista;
-        
-        // Reiniciar variables
-        intentoActual = 0;
-        posicionActual = 0;
-        juegoTerminado = false;
-        contadorIntentos.textContent = "Intentos: 0/7";
-        
-        // Incrementar contador de acertijos mostrados
-        acertijosMostrados++;
-        contadorAcertijos.textContent = acertijosMostrados;
-        
-        // Limpiar el tablero
-        tablero.innerHTML = "";
-        
-        // Crear las filas y letras
-        for (let i = 0; i < 7; i++) {
-            const fila = document.createElement("div");
-            fila.className = "fila";
+            // Permitir hacer clic en las celdas para enfocar (útil para móviles)
+            boardElement.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    keyboardVisible = true;
+                    keyboardElement.classList.remove('hidden');
+                }
+            });
             
-            for (let j = 0; j < 5; j++) {
-                const letra = document.createElement("div");
-                letra.className = "letra";
-                letra.dataset.fila = i;
-                letra.dataset.col = j;
+            // También permitir entrada de teclado físico
+            document.addEventListener('keydown', (e) => {
+                if (gameOver) return;
                 
-                // Agregar evento para abrir teclado en móviles
-                letra.addEventListener('click', (e) => {
-                    if (!juegoTerminado && intentoActual === i) {
-                        abrirTeclado();
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                });
+                const key = e.key.toUpperCase();
                 
-                // Añadir event listener táctil para iOS
-                letra.addEventListener('touchstart', (e) => {
-                    if (!juegoTerminado && intentoActual === i) {
-                        abrirTeclado();
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                }, { passive: false });
-                
-                letra.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }, { passive: false });
-                
-                fila.appendChild(letra);
-            }
+                if (key === 'ENTER') {
+                    handleKeyPress('ENTER');
+                } else if (key === 'BACKSPACE') {
+                    handleKeyPress('⌫');
+                } else if (/^[A-ZÑ]$/.test(key)) {
+                    handleKeyPress(key);
+                }
+            });
             
-            tablero.appendChild(fila);
-        }
-        
-        // Ocultar mensaje
-        mensaje.style.display = "none";
-        
-        // Configurar event listener para el teclado físico
-        document.addEventListener("keydown", manejarTeclado);
-        
-        // Configurar event listener para el input móvil
-        inputMovil.addEventListener('input', manejarInputMovil);
-        
-        // Mostrar botón para abrir teclado en móviles
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            abrirTecladoBtn.style.display = 'flex';
-            indicacionTeclado.style.display = 'block';
-        } else {
-            abrirTecladoBtn.style.display = 'none';
-            indicacionTeclado.style.display = 'none';
-        }
-    }
-
-    // Función para abrir el teclado
-    function abrirTeclado() {
-        // Enfocar y hacer clic en el input para abrir el teclado
-        setTimeout(() => {
-            inputMovil.focus();
-            inputMovil.click();
-            
-            // Forzar el enfoque en iOS
-            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                inputMovil.style.opacity = '0.01';
-                setTimeout(() => {
-                    inputMovil.style.opacity = '0';
-                }, 100);
-                
-                // Pequeño hack para iOS
-                const tempInput = document.createElement('input');
-                tempInput.style.position = 'absolute';
-                tempInput.style.top = '0';
-                tempInput.style.left = '0';
-                tempInput.style.opacity = '0';
-                tempInput.style.height = '0';
-                tempInput.style.width = '0';
-                document.body.appendChild(tempInput);
-                tempInput.focus();
-                
-                setTimeout(() => {
-                    document.body.removeChild(tempInput);
-                    inputMovil.focus();
-                }, 100);
-            }
-        }, 50);
-        tecladoAbierto = true;
-        abrirTecladoBtn.style.display = 'none';
-    }
-
-    // Función para cerrar el teclado
-    function cerrarTeclado() {
-        inputMovil.blur();
-        tecladoAbierto = false;
-        
-        // Mostrar botón para abrir teclado
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            setTimeout(() => {
-                abrirTecladoBtn.style.display = 'flex';
-            }, 300);
-        }
-    }
-
-    // Manejar eventos del teclado físico
-    function manejarTeclado(e) {
-        if (juegoTerminado) return;
-        
-        if (e.key === "Enter") {
-            comprobarPalabra();
-        } else if (e.key === "Backspace") {
-            eliminarLetra();
-        } else if (/^[A-Za-zñÑ]$/.test(e.key)) {
-            agregarLetra(e.key.toUpperCase());
-        }
-    }
-
-    // Manejar entrada desde el teclado móvil
-    function manejarInputMovil(e) {
-        if (juegoTerminado) return;
-        
-        const letra = e.target.value;
-        if (letra && /^[A-Za-zñÑ]$/i.test(letra)) {
-            agregarLetra(letra.toUpperCase());
-            e.target.value = '';
-        }
-        
-        // Si se presiona Enter en el teclado virtual móvil
-        if (letra === "\n") {
-            comprobarPalabra();
-            e.target.value = '';
-        }
-        
-        // Forzar mantener el foco
-        if (!juegoTerminado) {
-            setTimeout(() => {
-                inputMovil.focus();
-            }, 50);
-        }
-    }
-
-    // Agregar una letra al tablero
-    function agregarLetra(letra) {
-        if (posicionActual < 5 && intentoActual < 7) {
-            const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
-            casilla.textContent = letra;
-            posicionActual++;
-        }
-    }
-
-    // Eliminar una letra del tablero
-    function eliminarLetra() {
-        if (posicionActual > 0) {
-            posicionActual--;
-            const casilla = document.querySelector(`.letra[data-fila="${intentoActual}"][data-col="${posicionActual}"]`);
-            casilla.textContent = "";
-        }
-    }
-
-    // Comprobar si la palabra es correcta
-    function comprobarPalabra() {
-        if (posicionActual !== 5) {
-            // Mostrar mensaje de alerta mejorado para iOS
-            const alerta = document.createElement('div');
-            alerta.textContent = "¡Completa la palabra antes de enviar!";
-            alerta.style.position = 'fixed';
-            alerta.style.top = '50%';
-            alerta.style.left = '50%';
-            alerta.style.transform = 'translate(-50%, -50%)';
-            alerta.style.backgroundColor = 'rgba(30, 30, 60, 0.95)';
-            alerta.style.padding = '20px';
-            alerta.style.borderRadius = '8px';
-            alerta.style.zIndex = '1000';
-            alerta.style.color = 'white';
-            alerta.style.fontWeight = 'bold';
-            document.body.appendChild(alerta);
-            
-            setTimeout(() => {
-                document.body.removeChild(alerta);
-            }, 1500);
-            return;
-        }
-        
-        const fila = document.querySelectorAll(`.fila:nth-child(${intentoActual + 1}) .letra`);
-        let palabraIntento = "";
-        
-        // Obtener la palabra del intento actual
-        for (let i = 0; i < 5; i++) {
-            palabraIntento += fila[i].textContent;
-        }
-        
-        // Crear arrays para el resultado
-        let resultado = new Array(5).fill('ausente');
-        let letrasObjetivo = palabraActual.split('');
-        let letrasIntento = palabraIntento.split('');
-        
-        // Primera pasada: encontrar letras correctas (verde)
-        for (let i = 0; i < 5; i++) {
-            if (letrasIntento[i] === letrasObjetivo[i]) {
-                resultado[i] = 'correcta';
-                letrasObjetivo[i] = null; // Marcamos como usada
-            }
-        }
-        
-        // Segunda pasada: encontrar letras presentes pero en posición incorrecta (amarillo)
-        for (let i = 0; i < 5; i++) {
-            if (resultado[i] === 'correcta') continue;
-            
-            const index = letrasObjetivo.indexOf(letrasIntento[i]);
-            if (index !== -1) {
-                resultado[i] = 'presente';
-                letrasObjetivo[index] = null; // Marcamos como usada
-            }
-        }
-        
-        // Aplicar los resultados con animación
-        for (let i = 0; i < 5; i++) {
-            const letra = fila[i].textContent;
-            
-            // Aplicar animación y color después de un delay
-            setTimeout(() => {
-                fila[i].classList.add("animacion", resultado[i]);
-            }, i * 300);
-        }
-        
-        // Actualizar contador de intentos
-        intentoActual++;
-        contadorIntentos.textContent = `Intentos: ${intentoActual}/7`;
-        
-        // Comprobar si ganó o perdió
-        if (palabraIntento === palabraActual) {
-            setTimeout(() => {
-                juegoTerminado = true;
-                acertijosResueltos++;
-                contadorResueltos.textContent = acertijosResueltos;
-                
-                mensajeTitulo.textContent = "¡Felicidades!";
-                mensajeTexto.textContent = `Has acertado la palabra "${palabraActual}" en ${intentoActual} intento${intentoActual > 1 ? 's' : ''}.`;
-                siguienteBtn.style.display = "block";
-                mensaje.style.display = "block";
-                
-                // Cerrar teclado
-                cerrarTeclado();
-            }, 2000);
-        } else if (intentoActual === 7) {
-            setTimeout(() => {
-                juegoTerminado = true;
-                mensajeTitulo.textContent = "¡Game Over!";
-                mensajeTexto.textContent = `La palabra era "${palabraActual}". ¡Inténtalo de nuevo!`;
-                siguienteBtn.style.display = "block";
-                mensaje.style.display = "block";
-                
-                // Cerrar teclado
-                cerrarTeclado();
-            }, 2000);
-        } else {
-            // Preparar para el siguiente intento
-            setTimeout(() => {
-                posicionActual = 0;
-            }, 2000);
-        }
-    }
-
-    // Configurar botón para siguiente acertijo
-    siguienteBtn.addEventListener("click", () => {
-        mensaje.style.display = "none";
-        seleccionarSiguienteAcertijo();
-    });
-
-    // Configurar botón para reiniciar juego
-    reiniciarBtn.addEventListener("click", inicializarJuego);
-
-    // Configurar botón para empezar a jugar
-    empezarBtn.addEventListener("click", inicializarJuego);
-
-    // Configurar botón para abrir teclado
-    abrirTecladoBtn.addEventListener("click", abrirTeclado);
-
-    // Detectar cuando el teclado se cierra
-    let initialHeight = window.innerHeight;
-    window.addEventListener('resize', function() {
-        // Si la altura de la ventana vuelve a su estado original (teclado se cierra)
-        if (tecladoAbierto && window.innerHeight >= initialHeight) {
-            cerrarTeclado();
-        }
-        // Actualizar la altura inicial
-        initialHeight = window.innerHeight;
-    });
-
-    // Cerrar teclado al tocar fuera
-    document.addEventListener('click', function(e) {
-        if (tecladoAbierto && !e.target.classList.contains('letra') && 
-            e.target !== inputMovil && 
-            e.target !== abrirTecladoBtn) {
-            cerrarTeclado();
-        }
-    });
-
-    // Mostrar modal de reglas al cargar la página
-    window.addEventListener('load', () => {
-        initialHeight = window.innerHeight;
-        modalReglas.style.display = "flex";
-    });
-
-    // Prevenir zoom en elementos interactivos en iOS
-    document.addEventListener('touchstart', function(e) {
-        if (e.touches.length > 1) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-
-    // Prevenir scroll no deseado en iOS
-    document.addEventListener('touchmove', function(e) {
-        if (e.target.classList.contains('letra')) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-
-    // Prevenir comportamiento por defecto en el input móvil
-    inputMovil.addEventListener('touchstart', function(e) {
-        e.stopPropagation();
-    }, { passive: false });
-
-    // Mejorar el enfoque en el input móvil
-    inputMovil.addEventListener('focus', function() {
-        this.setAttribute('readonly', 'readonly');
-        setTimeout(() => {
-            this.removeAttribute('readonly');
-        }, 100);
-    });
-
-    // Permitir que el input móvil capture la tecla Enter
-    inputMovil.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            comprobarPalabra();
-        }
-    });
-
-    // Solución alternativa para dispositivos móviles
-    document.addEventListener('touchstart', function(e) {
-        if (!juegoTerminado && e.target.classList.contains('letra')) {
-            // Enfocar inmediatamente el input
-            setTimeout(() => {
-                inputMovil.focus();
-            }, 10);
-        }
-    });
-
-    // Mantener el foco en el input mientras se juega
-    inputMovil.addEventListener('blur', function() {
-        if (!juegoTerminado && tecladoAbierto) {
-            setTimeout(() => {
-                inputMovil.focus();
-            }, 10);
-        }
-    });
-</script>
+            // Iniciar el juego cuando se carga la página
+            introModal.classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>
