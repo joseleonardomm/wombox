@@ -139,6 +139,7 @@
             margin-top: 20px;
             width: 100%;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .game-button {
@@ -161,6 +162,13 @@
 
         .game-button.secondary {
             background: linear-gradient(to right, #4a5568, #718096);
+        }
+
+        .keyboard-hint {
+            margin-top: 15px;
+            color: #00aaff;
+            text-align: center;
+            font-size: 0.9rem;
         }
 
         .modal {
@@ -311,7 +319,7 @@
         <h1>Wordle Acertijos</h1>
     </header>
     
-    <div class="game-container">
+    <div class="game-container" id="game-container">
         <div class="riddle-container">
             <div class="riddle-title">ACERTIJO:</div>
             <div class="riddle-text" id="riddle">Cargando acertijo...</div>
@@ -323,6 +331,11 @@
         
         <!-- Campo de entrada oculto para el teclado nativo -->
         <input type="text" class="input-field" id="word-input" inputmode="text" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
+        
+        <div class="keyboard-hint">
+            Toca la pantalla para abrir el teclado<br>
+            Usa el botón atrás para cerrarlo
+        </div>
         
         <div class="buttons-container">
             <button class="game-button" id="enter-button">ENTER</button>
@@ -346,7 +359,7 @@
             <p><strong>Amarillo:</strong> La letra está en la palabra pero en otra posición.</p>
             <p><strong>Gris:</strong> La letra no está en la palabra.</p>
             
-            <p>¡Haz clic en el tablero para abrir el teclado!</p>
+            <p>Toca la pantalla para abrir el teclado y usa el botón atrás para cerrarlo.</p>
             
             <button class="modal-button" id="start-button">¡Comenzar!</button>
         </div>
@@ -401,6 +414,7 @@
             ];
             
             // Elementos del DOM
+            const gameContainer = document.getElementById('game-container');
             const boardElement = document.getElementById('board');
             const riddleElement = document.getElementById('riddle');
             const wordInput = document.getElementById('word-input');
@@ -446,12 +460,6 @@
                         cell.className = 'cell';
                         cell.dataset.row = i;
                         cell.dataset.cell = j;
-                        // Permitir hacer clic en las celdas para enfocar el input
-                        cell.addEventListener('click', () => {
-                            if (!gameOver) {
-                                wordInput.focus();
-                            }
-                        });
                         row.appendChild(cell);
                     }
                     
@@ -464,28 +472,15 @@
                 gameOver = false;
                 wordInput.value = '';
                 
-                // Enfocar el input para mostrar el teclado
-                setTimeout(() => {
-                    wordInput.focus();
-                }, 300);
+                // Actualizar el tablero
+                updateBoard();
             }
             
-            // Manejar la entrada de texto
-            function handleInput() {
-                if (gameOver) return;
-                
+            // Actualizar el tablero
+            function updateBoard() {
                 const wordLength = currentWord.length;
-                const inputText = wordInput.value.toUpperCase().replace(/[^A-ZÑ]/g, '');
-                wordInput.value = inputText;
+                const currentText = wordInput.value.toUpperCase();
                 
-                // Limitar la longitud de la entrada
-                if (inputText.length > wordLength) {
-                    wordInput.value = inputText.substring(0, wordLength);
-                }
-                
-                const currentText = wordInput.value;
-                
-                // Actualizar las celdas
                 const row = boardElement.children[currentRow];
                 for (let i = 0; i < wordLength; i++) {
                     const cell = row.children[i];
@@ -499,6 +494,12 @@
                 }
                 
                 currentCell = currentText.length;
+            }
+            
+            // Abrir teclado al tocar la pantalla
+            function openKeyboard() {
+                if (gameOver) return;
+                wordInput.focus();
             }
             
             // Verificar la suposición actual
@@ -515,12 +516,12 @@
                     return;
                 }
                 
-                const row = boardElement.children[currentRow];
-                let guess = wordInput.value.toUpperCase();
+                const guess = wordInput.value.toUpperCase();
                 
                 // Verificar si la palabra es correcta
                 if (guess === currentWord) {
                     // Todas las letras son correctas
+                    const row = boardElement.children[currentRow];
                     for (let i = 0; i < wordLength; i++) {
                         setTimeout(() => {
                             const cell = row.children[i];
@@ -567,6 +568,7 @@
                 }
                 
                 // Aplicar colores a las celdas
+                const row = boardElement.children[currentRow];
                 for (let i = 0; i < wordLength; i++) {
                     setTimeout(() => {
                         const cell = row.children[i];
@@ -588,16 +590,6 @@
                 currentCell = 0;
                 wordInput.value = '';
                 
-                // Actualizar las celdas vacías
-                if (currentRow < 6) {
-                    const nextRow = boardElement.children[currentRow];
-                    for (let i = 0; i < wordLength; i++) {
-                        const cell = nextRow.children[i];
-                        cell.textContent = '';
-                        cell.classList.remove('filled');
-                    }
-                }
-                
                 // Verificar si se agotaron los intentos
                 if (currentRow === 6) {
                     setTimeout(() => {
@@ -606,29 +598,16 @@
                     gameOver = true;
                 }
                 
-                // Reenfocar el input
-                setTimeout(() => {
-                    wordInput.focus();
-                }, wordLength * 200 + 100);
+                // Actualizar el tablero
+                updateBoard();
             }
             
             // Eliminar la última letra
             function deleteLastLetter() {
                 if (gameOver || currentCell === 0) return;
                 
-                const wordLength = currentWord.length;
-                const currentText = wordInput.value;
-                wordInput.value = currentText.substring(0, currentText.length - 1);
-                
-                // Actualizar la celda
-                const row = boardElement.children[currentRow];
-                const cell = row.children[currentCell - 1];
-                cell.textContent = '';
-                cell.classList.remove('filled');
-                
-                currentCell--;
-                
-                // Reenfocar el input
+                wordInput.value = wordInput.value.slice(0, -1);
+                updateBoard();
                 wordInput.focus();
             }
             
@@ -672,22 +651,36 @@
             
             deleteButton.addEventListener('click', deleteLastLetter);
             
-            wordInput.addEventListener('input', handleInput);
+            // Abrir teclado al tocar cualquier parte del juego
+            gameContainer.addEventListener('click', openKeyboard);
+            
+            wordInput.addEventListener('input', updateBoard);
             
             wordInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     checkGuess();
                     e.preventDefault();
-                } else if (e.key === 'Backspace') {
-                    // Manejo de backspace ya está cubierto por el evento input
                 }
             });
             
-            // Permitir hacer clic en el tablero para enfocar el input
-            boardElement.addEventListener('click', () => {
-                if (!gameOver) {
-                    wordInput.focus();
+            // Manejar el botón de retroceso para cerrar el teclado
+            let backButtonPressed = false;
+            
+            // Simular el comportamiento del botón de retroceso
+            document.addEventListener('keydown', function(e) {
+                // Detectar la tecla Escape (usada en algunos navegadores para retroceso)
+                if (e.key === 'Escape') {
+                    if (document.activeElement === wordInput) {
+                        wordInput.blur();
+                        e.preventDefault();
+                    }
                 }
+            });
+            
+            // Para dispositivos Android, podemos usar el evento backbutton de Cordova/PhoneGap
+            // Pero como es HTML puro, nos enfocamos en la tecla Escape y en hacer blur
+            document.addEventListener('touchstart', function() {
+                backButtonPressed = false;
             });
             
             // Iniciar el juego cuando se carga la página
