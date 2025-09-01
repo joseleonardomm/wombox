@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wordle de Acertijos</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
     <style>
@@ -22,6 +22,7 @@
             align-items: center;
             padding: 20px;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
         header {
@@ -99,6 +100,8 @@
             color: white;
             text-transform: uppercase;
             transition: all 0.2s ease;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .cell.filled {
@@ -124,70 +127,22 @@
             color: white;
         }
 
-        .keyboard {
-            width: 100%;
+        .input-field {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .buttons-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 10px;
             margin-top: 20px;
-        }
-
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
             width: 100%;
-            margin-bottom: 8px;
-        }
-
-        .key {
-            min-width: 10%;
-            height: 50px;
-            margin: 4px;
-            border: none;
-            border-radius: 6px;
-            background-color: #4a5568;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-            font-family: 'Orbitron', sans-serif;
         }
 
-        .key:hover {
-            background-color: #00aaff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 170, 255, 0.4);
-        }
-
-        .key:active {
-            transform: translateY(0);
-        }
-
-        .key.wide {
-            min-width: 15%;
-            font-size: 0.9rem;
-        }
-
-        .key.correct {
-            background-color: #10b981;
-        }
-
-        .key.present {
-            background-color: #f59e0b;
-        }
-
-        .key.absent {
-            background-color: #3a3a3c;
-        }
-
-        .keyboard-toggle {
-            margin-top: 15px;
-            padding: 10px 20px;
+        .game-button {
+            padding: 12px 20px;
             background: linear-gradient(to right, #00aaff, #00ffff);
             border: none;
             border-radius: 25px;
@@ -199,9 +154,13 @@
             box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
         }
 
-        .keyboard-toggle:hover {
+        .game-button:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+        }
+
+        .game-button.secondary {
+            background: linear-gradient(to right, #4a5568, #718096);
         }
 
         .modal {
@@ -340,14 +299,9 @@
                 font-size: 1.5rem;
             }
             
-            .key {
-                height: 45px;
-                font-size: 1rem;
-                margin: 3px;
-            }
-            
-            .key.wide {
-                font-size: 0.8rem;
+            .game-button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -367,10 +321,12 @@
             <!-- Las celdas se generarán con JavaScript -->
         </div>
         
-        <button class="keyboard-toggle" id="keyboard-toggle">Mostrar/Ocultar Teclado</button>
+        <!-- Campo de entrada oculto para el teclado nativo -->
+        <input type="text" class="input-field" id="word-input" inputmode="text" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
         
-        <div class="keyboard" id="keyboard">
-            <!-- El teclado se generará con JavaScript -->
+        <div class="buttons-container">
+            <button class="game-button" id="enter-button">ENTER</button>
+            <button class="game-button secondary" id="delete-button">BORRAR</button>
         </div>
     </div>
     
@@ -446,8 +402,10 @@
             
             // Elementos del DOM
             const boardElement = document.getElementById('board');
-            const keyboardElement = document.getElementById('keyboard');
             const riddleElement = document.getElementById('riddle');
+            const wordInput = document.getElementById('word-input');
+            const enterButton = document.getElementById('enter-button');
+            const deleteButton = document.getElementById('delete-button');
             const introModal = document.getElementById('intro-modal');
             const resultModal = document.getElementById('result-modal');
             const startButton = document.getElementById('start-button');
@@ -456,7 +414,6 @@
             const resultMessage = document.getElementById('result-message');
             const resultWord = document.getElementById('result-word');
             const resultStats = document.getElementById('result-stats');
-            const keyboardToggle = document.getElementById('keyboard-toggle');
             
             // Variables del juego
             let currentWord = '';
@@ -464,7 +421,6 @@
             let currentRow = 0;
             let currentCell = 0;
             let gameOver = false;
-            let keyboardVisible = true;
             
             // Inicializar el juego
             function initGame() {
@@ -490,100 +446,77 @@
                         cell.className = 'cell';
                         cell.dataset.row = i;
                         cell.dataset.cell = j;
+                        // Permitir hacer clic en las celdas para enfocar el input
+                        cell.addEventListener('click', () => {
+                            if (!gameOver) {
+                                wordInput.focus();
+                            }
+                        });
                         row.appendChild(cell);
                     }
                     
                     boardElement.appendChild(row);
                 }
                 
-                // Configurar el teclado
-                setupKeyboard();
-                
                 // Reiniciar variables del juego
                 currentRow = 0;
                 currentCell = 0;
                 gameOver = false;
+                wordInput.value = '';
                 
-                // Ocultar teclado inicialmente en móviles
-                if (window.innerWidth <= 768) {
-                    keyboardVisible = false;
-                    keyboardElement.classList.add('hidden');
-                }
+                // Enfocar el input para mostrar el teclado
+                setTimeout(() => {
+                    wordInput.focus();
+                }, 300);
             }
             
-            // Configurar el teclado
-            function setupKeyboard() {
-                const keyboardRows = [
-                    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-                    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
-                    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫']
-                ];
-                
-                keyboardElement.innerHTML = '';
-                
-                keyboardRows.forEach(row => {
-                    const rowElement = document.createElement('div');
-                    rowElement.className = 'keyboard-row';
-                    
-                    row.forEach(key => {
-                        const keyElement = document.createElement('button');
-                        keyElement.className = 'key';
-                        keyElement.textContent = key;
-                        
-                        if (key === 'ENTER' || key === '⌫') {
-                            keyElement.classList.add('wide');
-                        }
-                        
-                        keyElement.addEventListener('click', () => handleKeyPress(key));
-                        rowElement.appendChild(keyElement);
-                    });
-                    
-                    keyboardElement.appendChild(rowElement);
-                });
-            }
-            
-            // Manejar la pulsación de teclas
-            function handleKeyPress(key) {
+            // Manejar la entrada de texto
+            function handleInput() {
                 if (gameOver) return;
                 
                 const wordLength = currentWord.length;
+                const inputText = wordInput.value.toUpperCase().replace(/[^A-ZÑ]/g, '');
+                wordInput.value = inputText;
                 
-                if (key === 'ENTER') {
-                    if (currentCell === wordLength) {
-                        checkGuess();
+                // Limitar la longitud de la entrada
+                if (inputText.length > wordLength) {
+                    wordInput.value = inputText.substring(0, wordLength);
+                }
+                
+                const currentText = wordInput.value;
+                
+                // Actualizar las celdas
+                const row = boardElement.children[currentRow];
+                for (let i = 0; i < wordLength; i++) {
+                    const cell = row.children[i];
+                    if (i < currentText.length) {
+                        cell.textContent = currentText[i];
+                        cell.classList.add('filled');
                     } else {
-                        // Animación de sacudida si la palabra no está completa
-                        const currentRowElement = boardElement.children[currentRow];
-                        currentRowElement.classList.add('shake');
-                        setTimeout(() => {
-                            currentRowElement.classList.remove('shake');
-                        }, 300);
-                    }
-                } else if (key === '⌫') {
-                    if (currentCell > 0) {
-                        currentCell--;
-                        const cell = boardElement.children[currentRow].children[currentCell];
                         cell.textContent = '';
                         cell.classList.remove('filled');
                     }
-                } else if (currentCell < wordLength) {
-                    const cell = boardElement.children[currentRow].children[currentCell];
-                    cell.textContent = key;
-                    cell.classList.add('filled');
-                    currentCell++;
                 }
+                
+                currentCell = currentText.length;
             }
             
             // Verificar la suposición actual
             function checkGuess() {
                 const wordLength = currentWord.length;
-                const row = boardElement.children[currentRow];
-                let guess = '';
                 
-                // Obtener la palabra intentada
-                for (let i = 0; i < wordLength; i++) {
-                    guess += row.children[i].textContent;
+                if (currentCell !== wordLength) {
+                    // Animación de sacudida si la palabra no está completa
+                    const currentRowElement = boardElement.children[currentRow];
+                    currentRowElement.classList.add('shake');
+                    setTimeout(() => {
+                        currentRowElement.classList.remove('shake');
+                    }, 300);
+                    return;
                 }
+                
+                const row = boardElement.children[currentRow];
+                let guess = wordInput.value.toUpperCase();
                 
                 // Verificar si la palabra es correcta
                 if (guess === currentWord) {
@@ -592,7 +525,6 @@
                         setTimeout(() => {
                             const cell = row.children[i];
                             cell.classList.add('correct');
-                            updateKeyboardKey(guess[i], 'correct');
                         }, i * 200);
                     }
                     
@@ -641,13 +573,10 @@
                         
                         if (correctLetters.includes(i)) {
                             cell.classList.add('correct');
-                            updateKeyboardKey(guess[i], 'correct');
                         } else if (presentLetters.includes(i)) {
                             cell.classList.add('present');
-                            updateKeyboardKey(guess[i], 'present');
                         } else {
                             cell.classList.add('absent');
-                            updateKeyboardKey(guess[i], 'absent');
                         }
                         
                         cell.classList.add('flip');
@@ -657,6 +586,17 @@
                 // Preparar para el siguiente intento
                 currentRow++;
                 currentCell = 0;
+                wordInput.value = '';
+                
+                // Actualizar las celdas vacías
+                if (currentRow < 6) {
+                    const nextRow = boardElement.children[currentRow];
+                    for (let i = 0; i < wordLength; i++) {
+                        const cell = nextRow.children[i];
+                        cell.textContent = '';
+                        cell.classList.remove('filled');
+                    }
+                }
                 
                 // Verificar si se agotaron los intentos
                 if (currentRow === 6) {
@@ -665,6 +605,31 @@
                     }, wordLength * 200);
                     gameOver = true;
                 }
+                
+                // Reenfocar el input
+                setTimeout(() => {
+                    wordInput.focus();
+                }, wordLength * 200 + 100);
+            }
+            
+            // Eliminar la última letra
+            function deleteLastLetter() {
+                if (gameOver || currentCell === 0) return;
+                
+                const wordLength = currentWord.length;
+                const currentText = wordInput.value;
+                wordInput.value = currentText.substring(0, currentText.length - 1);
+                
+                // Actualizar la celda
+                const row = boardElement.children[currentRow];
+                const cell = row.children[currentCell - 1];
+                cell.textContent = '';
+                cell.classList.remove('filled');
+                
+                currentCell--;
+                
+                // Reenfocar el input
+                wordInput.focus();
             }
             
             // Contar cuántas veces aparece una letra en una palabra
@@ -676,29 +641,6 @@
                     }
                 }
                 return count;
-            }
-            
-            // Actualizar el color de una tecla en el teclado
-            function updateKeyboardKey(key, status) {
-                const keys = keyboardElement.querySelectorAll('.key');
-                
-                keys.forEach(k => {
-                    if (k.textContent === key) {
-                        // Solo actualizar si no es correcta ya (para mantener el color más importante)
-                        if (!k.classList.contains('correct')) {
-                            if (status === 'correct') {
-                                k.classList.remove('present');
-                                k.classList.add('correct');
-                            } else if (status === 'present' && !k.classList.contains('correct')) {
-                                k.classList.add('present');
-                            } else if (status === 'absent' && 
-                                      !k.classList.contains('correct') && 
-                                      !k.classList.contains('present')) {
-                                k.classList.add('absent');
-                            }
-                        }
-                    }
-                });
             }
             
             // Mostrar el resultado del juego
@@ -726,35 +668,25 @@
                 initGame();
             });
             
-            keyboardToggle.addEventListener('click', () => {
-                keyboardVisible = !keyboardVisible;
-                if (keyboardVisible) {
-                    keyboardElement.classList.remove('hidden');
-                } else {
-                    keyboardElement.classList.add('hidden');
+            enterButton.addEventListener('click', checkGuess);
+            
+            deleteButton.addEventListener('click', deleteLastLetter);
+            
+            wordInput.addEventListener('input', handleInput);
+            
+            wordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    checkGuess();
+                    e.preventDefault();
+                } else if (e.key === 'Backspace') {
+                    // Manejo de backspace ya está cubierto por el evento input
                 }
             });
             
-            // Permitir hacer clic en las celdas para enfocar (útil para móviles)
+            // Permitir hacer clic en el tablero para enfocar el input
             boardElement.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    keyboardVisible = true;
-                    keyboardElement.classList.remove('hidden');
-                }
-            });
-            
-            // También permitir entrada de teclado físico
-            document.addEventListener('keydown', (e) => {
-                if (gameOver) return;
-                
-                const key = e.key.toUpperCase();
-                
-                if (key === 'ENTER') {
-                    handleKeyPress('ENTER');
-                } else if (key === 'BACKSPACE') {
-                    handleKeyPress('⌫');
-                } else if (/^[A-ZÑ]$/.test(key)) {
-                    handleKeyPress(key);
+                if (!gameOver) {
+                    wordInput.focus();
                 }
             });
             
