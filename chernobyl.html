@@ -323,7 +323,7 @@
         <!-- Pantalla de trivia -->
         <div id="trivia-screen" class="game-screen">
             <div class="trivia-container">
-                <div class="question-number" id="question-number">Pregunta 1 de 5</div>
+                <div class="question-number" id="question-number">Pregunta 1 de 6</div>
                 <h2 class="question-text" id="question-text">¿En qué año ocurrió el accidente de Chernóbil?</h2>
                 <div class="options-container" id="options-container">
                     <!-- Las opciones se generarán con JavaScript -->
@@ -338,7 +338,7 @@
         <div id="results-screen" class="game-screen">
             <h2 class="results-title">¡Has completado el viaje!</h2>
             <p class="score-text">Tu puntuación final:</p>
-            <div class="score-value" id="final-score">0/5</div>
+            <div class="score-value" id="final-score">0/6</div>
             <p class="modal-text">
                 El accidente de Chernóbil sigue siendo una lección poderosa sobre los riesgos 
                 de la energía nuclear y la importancia de los protocolos de seguridad. 
@@ -368,132 +368,91 @@
     </div>
 
     <script>
-        // Datos del juego - Información detallada (8 modales)
+        // Datos del juego - Información detallada (10 modales)
         const informationScreens = [
             {
-                title: "Antecedentes de Chernóbil",
+                title: "La prueba de seguridad",
                 image: "img/chernobyl/chernobyl1.png",
-                text: `La central nuclear de Chernóbil fue construida durante la era soviética en la década de 1970, como parte de un ambicioso programa de energía nuclear. Ubicada a 18 km de la ciudad de Chernóbil y a 3 km de Prípiat, la central contaba con cuatro reactores RBMK-1000, un diseño soviético único que utilizaba grafito como moderador y agua ligera como refrigerante.
-
-El reactor RBMK tenía una característica peligrosa: a bajas potencias, podía volverse inestable y experimentar un aumento masivo de reactividad. Esta característica, combinada con deficiencias en el diseño de las barras de control y la falta de un edificio de contención adecuado, creaba un riesgo significativo.
-
-Para 1986, Chernóbil era una de las centrales nucleares más grandes de la Unión Soviética, suministrando energía a gran parte de Ucrania. Sin embargo, los operadores no estaban completamente informados sobre las características peligrosas del reactor, y la cultura de seguridad priorizaba la producción sobre la precaución.`
+                text: `En la madrugada del 26 de abril de 1986, en la central nuclear de Chernóbil, se preparaba una prueba de seguridad en el reactor 4. El objetivo era comprobar si, tras un corte eléctrico, las turbinas podían seguir produciendo energía suficiente para enfriar el núcleo.`
             },
             {
-                title: "Contexto Político de la Era Soviética",
+                title: "Errores fatales",
                 image: "img/chernobyl/chernobyl2.png",
-                text: `La década de 1980 en la Unión Soviética estuvo marcada por una creciente competencia tecnológica con Occidente y una economía que comenzaba a mostrar signos de estancamiento. El programa nuclear soviético era una fuente de orgullo nacional y una demostración del poder tecnológico del país.
-
-En este contexto, existía una fuerte presión para cumplir con los objetivos de producción y demostrar la superioridad de la tecnología soviética. Esta mentalidad contribuyó a una cultura donde se priorizaba el cumplimiento de metas sobre las consideraciones de seguridad.
-
-La falta de transparencia y la burocracia soviéticas también jugaron un papel crucial. Los informes de problemas potenciales a menudo eran suprimidos o ignorados, y existía una tendencia a subestimar los riesgos para evitar admitir debilidades ante los superiores y ante el mundo exterior.
-
-Esta combinación de factores creó un ambiente propicio para el accidente, donde las advertencias sobre los defectos de diseño del reactor RBMK fueron minimizadas y la capacitación de los operadores resultó insuficiente para manejar situaciones de emergencia.`
+                text: `Los ingenieros cometieron varios errores de procedimiento y desactivaron sistemas automáticos de seguridad. Esto dejó al reactor inestable y con un exceso de energía muy difícil de controlar.`
             },
             {
-                title: "La Prueba del Reactor N°4",
-                image: "img/chernobyl/chernobyl3.png",
-                text: `La fatídica prueba programada para el 26 de abril de 1986 tenía como objetivo verificar si las turbinas, durante una pérdida de energía, podrían generar suficiente electricidad para operar las bombas de refrigeración de emergencia hasta que se activaran los generadores diésel.
-
-Esta prueba ya se había intentado anteriormente sin éxito. Para esta ocasión, se preparó un nuevo procedimiento que requería desactivar varios sistemas de seguridad. El turno de noche, menos experimentado, fue encargado de realizar la prueba, a pesar de que originalmente estaba programada para el día.
-
-Los operadores redujeron la potencia del reactor a niveles muy bajos, alrededor de 200 MW térmicos, mucho menos de lo planeado (700-1000 MW). A estas bajas potencias, el reactor se volvió inestable debido al envenenamiento por xenón, un subproducto de la fisión nuclear que absorbe neutrones y reduce la reactividad.
-
-En un intento por aumentar la potencia, los operadores retiraron casi todas las barras de control, violando múltiples protocolos de seguridad. El reactor se encontraba en un estado extremadamente peligroso e inestable.`
+                title: "La explosión del reactor",
+                image: "img/chernobyl/chernobyl3.jpg",
+                text: `A la 1:23 a.m., la potencia se disparó. Una primera explosión levantó la tapa del reactor, y segundos después otra explosión expulsó materiales radiactivos al aire, iniciando varios incendios en la planta.`
             },
             {
-                title: "Diseño del Reactor RBMK",
+                title: "Los héroes de Prípiat",
                 image: "img/chernobyl/chernobyl4.png",
-                text: `El reactor RBMK (Reaktor Bolshoy Moshchnosti Kanalnyy, que significa "reactor de alta potencia de tipo canal") era un diseño soviético único que difería significativamente de los reactores occidentales.
-
-Características clave del diseño RBMK:
-- Utilizaba grafito como moderador y agua ligera como refrigerante
-- Carecía de un edificio de contención robusto como los reactores occidentales
-- Tenía un coeficiente de vacío positivo: a medida que se formaba vapor en el refrigerante, la reactividad aumentaba
-- Las barras de control tenían puntas de grafito que inicialmente desplazaban el refrigerante, aumentando temporalmente la reactividad
-
-Este diseño hacía que el reactor fuera inherentemente inestable a bajas potencias. Cuando los operadores redujeron la potencia para la prueba, el reactor entró en un régimen operativo peligroso donde un aumento de vapor podía conducir a un rápido incremento de la potencia.
-
-La combinación de estas características de diseño con errores operativos durante la prueba creó las condiciones para el desastre. Los operadores no comprendían completamente estos comportamientos peligrosos del reactor, en parte porque esta información no se compartía ampliamente.`
+                text: `Los primeros en llegar fueron los bomberos de Prípiat, que lucharon contra las llamas sin saber que la radiación los estaba afectando gravemente. Muchos enfermaron en las horas siguientes.`
             },
             {
-                title: "La Explosión y sus Consecuencias Inmediatas",
-                image: "img/chernobyl/chernobyl5.png",
-                text: `A la 1:23:04 a.m. del 26 de abril, los operadores iniciaron la prueba cerrando la alimentación de vapor a las turbinas. Sin el flujo de refrigerante, la potencia del reactor comenzó a aumentar rápidamente.
-
-A la 1:23:40, el operador presionó el botón de parada de emergencia (AZ-5), que debía insertar todas las barras de control para apagar el reactor. Sin embargo, debido a un defecto de diseño, las puntas de grafito de las barras desplazaron inicialmente el refrigerante, causando un aumento dramático de la reactividad.
-
-En menos de tres segundos, la potencia del reactor aumentó a más de 100 veces su capacidad normal. El combustible nuclear se sobrecalentó y rompió las tuberías de refrigeración. El contacto entre el combustible sobrecalentado y el agua produjo una explosión de vapor que destrozó el techo del reactor de 2000 toneladas.
-
-Una segunda explosión, posiblemente nuclear, expulsó fragmentos de material radiactivo a la atmósfera. El grafito del moderador se incendió, creando un incendio que ardió durante 10 días y liberó enormes cantidades de material radiactivo a la atmósfera.
-
-La explosión fue tan poderosa que esparció escombros radiactivos sobre el edificio adyacente y creó columnas de humo radiactivo que se elevaron a un kilómetro de altura. Los bomberos locales, sin equipo de protección, acudieron a apagar el incendio, exponiéndose a dosis letales de radiación.`
+                title: "Una ciudad en peligro",
+                image: "img/chernobyl/chernobyl5.jpg",
+                text: `La ciudad de Prípiat, con más de 50.000 habitantes, no fue evacuada de inmediato. Durante 36 horas, las personas continuaron su vida normal mientras la radiación se extendía por el aire.`
             },
             {
-                title: "Primera Respuesta y Heroísmo",
+                title: "El mundo se entera",
                 image: "img/chernobyl/chernobyl6.png",
-                text: `La respuesta inicial al desastre estuvo marcada por una combinación de heroísmo y falta de preparación. Los bomberos de Prípiat llegaron primeros a la escena, sin saber que luchaban contra un incendio radiactivo.
-
-Muchos de estos primeros respondedores sufrieron el síndrome de irradiación aguda y murieron en las semanas siguientes. Su valentía evitó que el incendio se propagara a otros reactores, lo que habría multiplicado la magnitud del desastre.
-
-En los días siguientes, se movilizaron helicópteros para arrojar miles de toneladas de materiales como arena, plomo y boro sobre el reactor en llamas. Estos "liquidadores" trabajaron en turnos breves para limitar su exposición a la radiación, pero muchos recibieron dosis peligrosamente altas.
-
-La evacuación de la población circundante comenzó 36 horas después del accidente. A los residentes de Prípiat se les dijo que llevaran solo lo esencial, ya que regresarían en tres días. La mayoría nunca volvería a sus hogares.
-
-La respuesta soviética inicial se caracterizó por el secretismo. Las autoridades ocultaron la verdadera magnitud del desastre, tanto al público como al mundo exterior, retrasando la implementación de medidas protectoras completas.`
+                text: `El 28 de abril, Suecia detectó radiación en su territorio y alertó al mundo. Fue entonces cuando la Unión Soviética admitió el accidente, mientras la nube radiactiva ya cubría gran parte de Europa.`
             },
             {
-                title: "La Evacuación de Prípiat",
+                title: "Éxodo forzado",
                 image: "img/chernobyl/chernobyl7.png",
-                text: `Prípiat, la ciudad más cercana a la central nuclear, albergaba a unos 49,000 habitantes, principalmente trabajadores de la planta y sus familias. Inicialmente, las autoridades soviéticas ocultaron la gravedad del accidente.
-
-No fue hasta 36 horas después del accidente, el 27 de abril, que comenzó la evacuación. Los residentes fueron informados que era una "medida temporal" de tres días y se les dijo que llevaran solo lo esencial: documentos, dinero y ropa de abrigo.
-
-La evacuación se realizó con 1,200 autobuses en una caravana de 25 km de largo. Los residentes abandonaron sus pertenencias, mascotas y recuerdos, muchos sin saber que nunca regresarían.
-
-En los días siguientes, se estableció una zona de exclusión de 30 km alrededor de la planta, desplazando a más de 116,000 personas de 189 comunidades. La evacuación masiva fue uno de los traslados de población más grandes en la historia relacionada con un accidente industrial.
-
-Prípiat se convirtió en una "ciudad fantasma", un testimonio congelado en el tiempo de la vida soviética de los años 80, con edificios de apartamentos, escuelas, hospitales y parques abandonados para siempre.`
+                text: `En los días siguientes, más de 100.000 personas fueron evacuadas de la zona de exclusión, dejando atrás hogares, pertenencias y recuerdos. Muchos nunca pudieron regresar.`
             },
             {
-                title: "El Sarcófago y la Contención",
+                title: "Los liquidadores",
                 image: "img/chernobyl/chernobyl8.png",
-                text: `Inmediatamente después del accidente, se enfrentó el desafío monumental de contener la radiación. Los "liquidadores" - aproximadamente 600,000 trabajadores entre bomberos, soldados y civiles - fueron sentados para limpiar y contener el desastre.
-
-Entre mayo y noviembre de 1986, se construyó una estructura de contención masiva conocida como el "sarcófago". Bajo condiciones extremas de radiación, los trabajadores construyeron un enorme recinto de concreto y acero para encapsular el reactor destruido.
-
-El sarcófago original fue diseñado para durar 20-30 años, pero comenzó a deteriorarse mucho antes. En 2016, se completó una nueva estructura de confinamiento seguro (NSC), la mayor estructura terrestre móvil jamás construida. Esta gigantesca cúpula de acero de 36,000 toneladas, 108 metros de altura y 257 metros de ancho, fue deslizada sobre el sarcófago original para aislar el reactor durante los próximos 100 años.
-
-La NSC permite el desmantelamiento seguro del sarcófago original y la eventual eliminación de los materiales radiactivos. El proyecto, financiado por 45 países y costando más de 2,100 millones de euros, representa uno de los esfuerzos de cooperación internacional más significativos en la historia de la energía nuclear.`
+                text: `Para contener la catástrofe, se movilizaron más de 600.000 trabajadores, conocidos como "liquidadores", que limpiaron escombros, enterraron materiales contaminados y construyeron un enorme sarcófago de hormigón alrededor del reactor.`
+            },
+            {
+                title: "Las secuelas invisibles",
+                image: "img/chernobyl/chernobyl9.png",
+                text: `Las consecuencias fueron devastadoras: decenas de muertes inmediatas, miles de enfermos por radiación, un gran aumento de cáncer de tiroides y evacuaciones permanentes. El impacto social y ambiental duró décadas.`
+            },
+            {
+                title: "El legado de Chernóbil",
+                image: "img/chernobyl/chernobyl10.png",
+                text: `Hoy, Chernóbil sigue siendo un lugar peligroso, pero también un sitio de estudio y memoria. La zona de exclusión se ha convertido en un símbolo del riesgo nuclear y en un recordatorio de la importancia de la seguridad.`
             }
         ];
 
-        // Preguntas de trivia
+        // Preguntas de trivia (6 preguntas)
         const questions = [
             {
-                question: "¿En qué año ocurrió el accidente de Chernóbil?",
-                options: ["1976", "1986", "1996", "2006"],
+                question: "¿En qué ciudad cercana se encontraba la central de Chernóbil?",
+                options: ["Kiev", "Prípiat", "Bielorrusia", "Varsovia"],
                 correct: 1
             },
             {
-                question: "¿Qué país albergaba la central nuclear de Chernóbil?",
-                options: ["Rusia", "Ucrania", "Bielorrusia", "Polonia"],
-                correct: 1
-            },
-            {
-                question: "¿Qué escala se utilizó para medir la gravedad del accidente?",
-                options: ["Escala Richter", "Escala INES", "Escala Fujita", "Escala Beaufort"],
-                correct: 1
-            },
-            {
-                question: "¿Cómo se llamaba la ciudad cercana que fue evacuada?",
-                options: ["Kiev", "Prípiat", "Minsk", "Chernóbil"],
-                correct: 1
-            },
-            {
-                question: "¿Qué estructura se construyó para contener la radiación?",
-                options: ["Una pirámide de acero", "Un muro de hormigón", "Un sarcófago", "Una cúpula geodésica"],
+                question: "¿Quiénes fueron los primeros en responder a la emergencia en la central?",
+                options: ["Soldados", "Policia", "Bomberos", "Enfermeros"],
                 correct: 2
+            },
+            {
+                question: "¿Cuánto tiempo tardaron en evacuar a la población de Prípiat?",
+                options: ["36 horas", "48 horas", "12 horas", "72 horas"],
+                correct: 0
+            },
+            {
+                question: "¿Cómo se llamaron los trabajadores enviados a limpiar y contener el desastre?",
+                options: ["Rescatistas", "Liquidadores", "Protectores", "Voluntarios"],
+                correct: 1
+            },
+            {
+                question: "¿Qué cubre actualmente el reactor 4 para evitar que escape más radiación?",
+                options: ["Una pirámide de acero", "Un sarcófago de hormigón", "Una cúpula de cristal", "Una cúpula geodésica"],
+                correct: 1
+            },
+            {
+                question: "¿Cuál fue la principal consecuencia del accidente de Chernóbil para la población?",
+                options: ["Turismo", "Más empleo", "Cierre de los reactores núcleares", "Desplazamiento y problemas de salud"],
+                correct: 3
             }
         ];
 
