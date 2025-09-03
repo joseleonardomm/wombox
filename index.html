@@ -589,6 +589,16 @@
                     <p class="game-desc">Adivina la palabra oculta en 6 intentos con acertijos.</p>
                 </div>
             </div>
+            
+            <!-- NUEVO JUEGO: Música -->
+            <div class="game-item" data-game="music">
+                <div class="game-badge">Nuevo</div>
+                <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&h=400&q=80" alt="Memoria Musical" class="game-cover">
+                <div class="game-info">
+                    <h3 class="game-title">Memoria Musical</h3>
+                    <p class="game-desc">Entrena tu oído y memoria con secuencias musicales desafiantes.</p>
+                </div>
+            </div>
         </div>
         
         <!-- Footer con derechos reservados -->
@@ -702,6 +712,10 @@
                     case 'wordle':
                         // Abrir juego Wordle
                         window.location.href = 'wordle1.html';
+                        break;
+                    case 'music':
+                        // Abrir juego de música
+                        window.location.href = 'musica.html';
                         break;
                 }
             });

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria Musical</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .note {
+            aspect-ratio: 1/1;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            transition: all 0.2s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .note:hover {
+            transform: scale(1.05);
+        }
+        
+        .note:active, .note.active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        #do { background: linear-gradient(to bottom, #ff416c, #ff4b2b); }
+        #re { background: linear-gradient(to bottom, #FF9966, #FF5E62); }
+        #mi { background: linear-gradient(to bottom, #7F00FF, #E100FF); }
+        #fa { background: linear-gradient(to bottom, #00c6ff, #0072ff); }
+        #sol { background: linear-gradient(to bottom, #2af598, #08aeea); }
+        #la { background: linear-gradient(to bottom, #ffd200, #f7971e); }
+        #si { background: linear-gradient(to bottom, #f5515f, #9f041b); }
+        #do2 { background: linear-gradient(to bottom, #654ea3, #eaafc8); }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(to right, #8E2DE2, #4A00E0);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .level {
+            font-weight: bold;
+            color: #ffd200;
+        }
+        
+        .score {
+            font-weight: bold;
+            color: #2af598;
+        }
+        
+        .message {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        
+        .error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .game-board {
+                gap: 10px;
+            }
+            
+            button {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Memoria Musical 🎵</h1>
+        
+        <div class="instructions">
+            <p>¡Escucha la secuencia de notas y repítela en el mismo orden! Comienza con secuencias cortas que se irán haciendo más largas a medida que avanzas.</p>
+        </div>
+        
+        <div class="stats">
+            <div>Nivel: <span id="level" class="level">1</span></div>
+            <div>Puntuación: <span id="score" class="score">0</span></div>
+        </div>
+        
+        <div class="game-board">
+            <div class="note" id="do" data-note="do">Do</div>
+            <div class="note" id="re" data-note="re">Re</div>
+            <div class="note" id="mi" data-note="mi">Mi</div>
+            <div class="note" id="fa" data-note="fa">Fa</div>
+            <div class="note" id="sol" data-note="sol">Sol</div>
+            <div class="note" id="la" data-note="la">La</div>
+            <div class="note" id="si" data-note="si">Si</div>
+            <div class="note" id="do2" data-note="do2">Do²</div>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="controls">
+            <button id="startBtn">Comenzar</button>
+            <button id="resetBtn">Reiniciar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const notes = document.querySelectorAll('.note');
+            const startBtn = document.getElementById('startBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const levelDisplay = document.getElementById('level');
+            const scoreDisplay = document.getElementById('score');
+            const messageDisplay = document.getElementById('message');
+            
+            // Variables del juego
+            let sequence = [];
+            let playerSequence = [];
+            let level = 1;
+            let score = 0;
+            let isPlaying = false;
+            let isListening = false;
+            
+            // Contexto de audio
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Frecuencias para las notas (escala pentatónica para sonoridad agradable)
+            const frequencies = {
+                'do': 261.63,
+                're': 293.66,
+                'mi': 329.63,
+                'fa': 349.23,
+                'sol': 392.00,
+                'la': 440.00,
+                'si': 493.88,
+                'do2': 523.25
+            };
+            
+            // Generar sonido para una nota
+            function playNote(noteId, duration = 500) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = frequencies[noteId];
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + duration / 1000);
+                
+                // Efecto visual
+                const noteElement = document.getElementById(noteId);
+                noteElement.classList.add('active');
+                setTimeout(() => noteElement.classList.remove('active'), duration - 100);
+            }
+            
+            // Reproducir la secuencia completa
+            function playSequence() {
+                isListening = false;
+                let delay = 0;
+                
+                sequence.forEach((note, index) => {
+                    setTimeout(() => {
+                        playNote(note);
+                    }, delay);
+                    
+                    delay += 800; // Tiempo entre notas
+                });
+                
+                setTimeout(() => {
+                    isListening = true;
+                    messageDisplay.textContent = "¡Tu turno! Repite la secuencia.";
+                    messageDisplay.className = "message";
+                }, delay);
+            }
+            
+            // Iniciar nuevo juego
+            function startGame() {
+                if (isPlaying) return;
+                
+                isPlaying = true;
+                sequence = [];
+                playerSequence = [];
+                level = 1;
+                score = 0;
+                levelDisplay.textContent = level;
+                scoreDisplay.textContent = score;
+                
+                messageDisplay.textContent = "Escucha atentamente la secuencia...";
+                messageDisplay.className = "message";
+                
+                nextLevel();
+            }
+            
+            // Avanzar al siguiente nivel
+            function nextLevel() {
+                // Añadir una nueva nota a la secuencia
+                const noteKeys = Object.keys(frequencies);
+                const randomNote = noteKeys[Math.floor(Math.random() * noteKeys.length)];
+                sequence.push(randomNote);
+                
+                // Actualizar nivel
+                levelDisplay.textContent = level;
+                
+                // Reproducir la secuencia
+                setTimeout(playSequence, 1000);
+            }
+            
+            // Manejar la entrada del jugador
+            function handlePlayerInput(note) {
+                if (!isPlaying || !isListening) return;
+                
+                playNote(note);
+                playerSequence.push(note);
+                
+                // Verificar si la nota es correcta
+                const currentIndex = playerSequence.length - 1;
+                if (playerSequence[currentIndex] !== sequence[currentIndex]) {
+                    endGame();
+                    return;
+                }
+                
+                // Verificar si completó la secuencia
+                if (playerSequence.length === sequence.length) {
+                    // Secuencia completada correctamente
+                    score += level * 10;
+                    scoreDisplay.textContent = score;
+                    level++;
+                    
+                    messageDisplay.textContent = "¡Correcto! Nivel completado.";
+                    messageDisplay.className = "message success";
+                    
+                    isListening = false;
+                    playerSequence = [];
+                    
+                    // Avanzar al siguiente nivel después de un breve retraso
+                    setTimeout(() => {
+                        if (level <= 20) { // Límite de niveles
+                            nextLevel();
+                        } else {
+                            winGame();
+                        }
+                    }, 1500);
+                }
+            }
+            
+            // Finalizar el juego por error
+            function endGame() {
+                isPlaying = false;
+                isListening = false;
+                
+                messageDisplay.textContent = "Secuencia incorrecta. ¡Inténtalo de nuevo!";
+                messageDisplay.className = "message error";
+                
+                // Reproducir sonido de error
+                const oscillator = audioContext.createOscillator();
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.value = 150;
+                
+                const gainNode = audioContext.createGain();
+                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.5);
+            }
+            
+            // Ganar el juego
+            function winGame() {
+                isPlaying = false;
+                isListening = false;
+                
+                messageDisplay.textContent = "¡Felicidades! Has completado todos los niveles.";
+                messageDisplay.className = "message success";
+                
+                // Reproducir secuencia de victoria
+                const victorySequence = ['do', 'mi', 'sol', 'do2'];
+                let delay = 0;
+                
+                victorySequence.forEach(note => {
+                    setTimeout(() => playNote(note, 300), delay);
+                    delay += 300;
+                });
+            }
+            
+            // Reiniciar el juego
+            function resetGame() {
+                if (isPlaying) {
+                    isPlaying = false;
+                    isListening = false;
+                    
+                    sequence = [];
+                    playerSequence = [];
+                    level = 1;
+                    score = 0;
+                    
+                    levelDisplay.textContent = level;
+                    scoreDisplay.textContent = score;
+                    messageDisplay.textContent = "Juego reiniciado. ¡Presiona comenzar!";
+                    messageDisplay.className = "message";
+                }
+            }
+            
+            // Event listeners
+            startBtn.addEventListener('click', startGame);
+            resetBtn.addEventListener('click', resetGame);
+            
+            notes.forEach(note => {
+                note.addEventListener('click', () => {
+                    const noteId = note.getAttribute('data-note');
+                    handlePlayerInput(noteId);
+                });
+            });
+            
+            // Mensaje inicial
+            messageDisplay.textContent = "Presiona Comenzar para jugar!";
+        });
+    </script>
+</body>
+</html>
