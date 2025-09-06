@@ -163,7 +163,7 @@
         .game-cover {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Asegura que las imágenes mantengan sus proporciones */
             transition: transform 0.5s ease;
         }
         
@@ -316,7 +316,7 @@
         .story-image {
             width: 100%;
             height: 120px;
-            object-fit: cover;
+            object-fit: cover; /* Asegura que las imágenes mantengan sus proporciones */
         }
         
         .story-content {
@@ -545,7 +545,7 @@
             <!-- Juego 1: Historia -->
             <div class="game-item" data-game="history">
                 <div class="game-badge">Nuevo</div>
-                <img src="img/portada-historia.jpg" class="game-cover">
+                <img src="img/portada-historia.jpg" alt="Aventura Histórica" class="game-cover">
                 <div class="game-info">
                     <h3 class="game-title">Aventura Histórica</h3>
                     <p class="game-desc">Viaja en el tiempo y descubre eventos históricos fascinantes con experiencias interactivas.</p>
@@ -593,7 +593,7 @@
             <!-- NUEVO JUEGO: Música -->
             <div class="game-item" data-game="music">
                 <div class="game-badge">Nuevo</div>
-                <img src="img/musica-portada.png">
+                <img src="img/musica-portada.png" alt="Memoria Musical" class="game-cover">
                 <div class="game-info">
                     <h3 class="game-title">Memoria Musical</h3>
                     <p class="game-desc">Entrena tu oído y memoria con secuencias musicales desafiantes.</p>
@@ -603,7 +603,7 @@
             <!-- NUEVO JUEGO: Quiz General -->
             <div class="game-item" data-game="quiz">
                 <div class="game-badge">Nuevo</div>
-                <img src="img/cosmo-portada.png">
+                <img src="img/cosmo-portada.png" alt="Quiz General" class="game-cover">
                 <div class="game-info">
                     <h3 class="game-title">Quiz General</h3>
                     <p class="game-desc">Pon a prueba tus conocimientos sobre diversos temas con este quiz de preguntas variadas.</p>
@@ -613,7 +613,7 @@
             <!-- NUEVO JUEGO: Quiz por Tema -->
             <div class="game-item" data-game="quiz-tema">
                 <div class="game-badge">Nuevo</div>
-                <img src="img/quiz-portada.png">
+                <img src="img/quiz-portada.png" alt="Quiz por Tema" class="game-cover">
                 <div class="game-info">
                     <h3 class="game-title">Quiz por Tema</h3>
                     <p class="game-desc">Elige tu tema favorito y responde preguntas específicas sobre ese tema.</p>
@@ -641,7 +641,7 @@
                 <div class="stories-grid">
                     <!-- Historia de Chernóbil -->
                     <div class="story-card" data-story="chernobyl">
-                        <img src="img/portada-chernobyl.png">
+                        <img src="img/portada-chernobyl.png" alt="El Desastre de Chernóbil" class="story-image">
                         <div class="story-content">
                             <h3 class="story-title">El Desastre de Chernóbil</h3>
                             <p class="story-desc">Abril de 1986 - El peor accidente nuclear de la historia que conmocionó al mundo.</p>
@@ -650,7 +650,7 @@
                     
                     <!-- Historias futuras (próximamente) -->
                     <div class="story-card coming-soon">
-                        <img src="img/portada-diad.png">
+                        <img src="img/portada-diad.png" alt="El Desembarco de Normandía" class="story-image">
                         <div class="story-content">
                             <h3 class="story-title">El Desembarco de Normandía</h3>
                             <p class="story-desc">Junio de 1944 - La operación militar que cambió el curso de la Segunda Guerra Mundial.</p>
@@ -658,7 +658,7 @@
                     </div>
                     
                     <div class="story-card coming-soon">
-                        <img src="img/portada-luna.png">
+                        <img src="img/portada-luna.png" alt="La Llegada a la Luna" class="story-image">
                         <div class="story-content">
                             <h3 class="story-title">La Llegada a la Luna</h3>
                             <p class="story-desc">Julio de 1969 - El pequeño paso para el hombre que se convirtió en un gran salto para la humanidad.</p>
