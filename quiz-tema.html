@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FútbolQuiz - Juego de Cultura Futbolística</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #008f39; /* Verde césped */
+            --secondary: #ffffff; /* Blanco */
+            --accent: #ffcc00; /* Amarillo tarjeta */
+            --dark: #003c8f; /* Azul oscuro */
+            --darker: #002654; /* Azul más oscuro */
+            --light: #ffffff;
+            --success: #00c851; /* Verde éxito */
+            --warning: #ff8800; /* Naranja */
+            --danger: #ff4444; /* Rojo tarjeta */
+            --transition: all 0.3s ease;
+            --glow: 0 0 15px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, var(--darker), var(--dark));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            color: var(--light);
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 2px),
+                radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px, 80px 80px;
+            background-position: 0 0, 20px 20px;
+            z-index: -1;
+        }
+        
+        .container {
+            background: rgba(0, 60, 143, 0.85);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 143, 57, 0.3);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 143, 57, 0.1), rgba(255, 204, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            z-index: -1;
+        }
+        
+        h1 {
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
+        }
+        
+        .game-screen, .results-screen {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .letter-display {
+            font-size: 80px;
+            font-weight: bold;
+            margin: 15px 0;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: var(--glow) rgba(0, 143, 57, 0.4);
+            transition: var(--transition);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .letter-display::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 50%;
+            filter: blur(4px);
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--light);
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            padding: 0 10px;
+        }
+        
+        .timer {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin: 15px 0;
+            font-weight: bold;
+            text-shadow: var(--glow) rgba(255, 204, 0, 0.5);
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 143, 57, 0.3);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+            color: var(--light);
+            box-shadow: 0 0 15px rgba(0, 143, 57, 0.2);
+        }
+        
+        .answer-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 143, 57, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn {
+            padding: 14px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+            margin: 8px 5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            min-height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            z-index: -1;
+            transition: var(--transition);
+        }
+        
+        .btn:hover::before {
+            filter: brightness(1.2);
+            transform: scale(1.05);
+        }
+        
+        .btn-primary {
+            background: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 143, 57, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            backdrop-filter: blur(5px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            width: 100%;
+            transition: width 1s linear;
+            border-radius: 5px;
+        }
+        
+        .score-display {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            color: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+        }
+        
+        .score-value {
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+        
+        .results-screen h2 {
+            margin-bottom: 15px;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+            font-size: 1.5rem;
+        }
+        
+        .final-score {
+            font-size: 3.5rem;
+            color: var(--success);
+            margin: 15px 0;
+            font-weight: bold;
+            text-shadow: var(--glow) rgba(0, 200, 81, 0.4);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            padding: 15px;
+        }
+        
+        .modal-content {
+            background: linear-gradient(to bottom, #004c8c, #003c8f);
+            padding: 25px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 40px rgba(0, 143, 57, 0.3);
+            position: relative;
+            border: 1px solid rgba(0, 143, 57, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent);
+            transition: var(--transition);
+            z-index: 2;
+        }
+        
+        .close-modal:hover {
+            color: var(--danger);
+        }
+        
+        .rules-list {
+            text-align: left;
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        
+        .rules-list li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: var(--light);
+            font-size: 0.95rem;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+        
+        .controls-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--light);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+        
+        .controls-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .keyboard-visible .answer-input {
+            font-size: 16px; /* Evita zoom en iOS */
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s infinite;
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Mejoras para dispositivos muy pequeños */
+        @media (max-width: 350px) {
+            .container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .letter-display {
+                font-size: 70px;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .timer {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-height: 45px;
+            }
+        }
+        
+        /* Orientación horizontal */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                max-width: 90%;
+                padding: 15px;
+            }
+            
+            .letter-display {
+                font-size: 60px;
+                margin: 5px 0;
+            }
+            
+            .question {
+                font-size: 1rem;
+                margin-bottom: 10px;
+            }
+            
+            .timer {
+                font-size: 1.8rem;
+                margin: 8px 0;
+            }
+            
+            .answer-input {
+                padding: 10px;
+                margin-bottom: 10px;
+                font-size: 1rem;
+            }
+            
+            .progress-bar {
+                margin: 10px 0;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                min-height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FútbolQuiz</h1>
+        
+        <div id="start-screen" class="active">
+            <p>Demuestra tus conocimientos de fútbol de la A a la Z</p>
+            <button id="start-game" class="btn btn-primary">Comenzar Partido</button>
+        </div>
+        
+        <div id="game-screen" class="game-screen">
+            <div class="game-controls">
+                <div class="score-display">
+                    <span>Goles: <span id="score" class="score-value">0</span></span>
+                </div>
+                <button id="pause-game" class="controls-btn" title="Pausar juego">
+                    <i class="fas fa-pause"></i>
+                </button>
+            </div>
+            
+            <div class="letter-display float" id="current-letter">A</div>
+            <div class="question" id="question">¿Pregunta de ejemplo?</div>
+            <div class="timer" id="timer">15</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <input type="text" class="answer-input" id="answer-input" placeholder="Escribe tu respuesta..." autocomplete="off">
+            <button id="submit-answer" class="btn btn-primary">Chutar Respuesta</button>
+        </div>
+        
+        <div id="results-screen" class="results-screen">
+            <h2>¡Partido Terminado!</h2>
+            <p>Has respondido a <span id="total-questions">0</span> preguntas</p>
+            <div class="final-score" id="final-score">0</div>
+            <p>goles marcados</p>
+            <button id="play-again" class="btn btn-primary">Jugar de Nuevo</button>
+            <button id="back-to-menu" class="btn btn-secondary">Volver al Menú</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="rules-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2>Reglas del Juego</h2>
+            <ol class="rules-list">
+                <li>El juego presenta preguntas de fútbol organizadas por letras, desde la A hasta la Z.</li>
+                <li>Cada pregunta está asociada a una letra del alfabeto.</li>
+                <li>Tienes <strong>15 segundos</strong> para responder cada pregunta.</li>
+                <li>Si aciertas, marcas <strong>1 gol</strong>.</li>
+                <li>Si no respondes a tiempo, el juego pasa automáticamente a la siguiente letra.</li>
+                <li>Al final del juego, verás tu puntuación total.</li>
+                <li>¡Diviértete y demuestra que eres un crack del fútbol!</li>
+            </ol>
+            <button id="start-from-rules" class="btn btn-primary">Empezar Partido</button>
+        </div>
+    </div>
+
+    <div class="modal" id="pause-modal">
+        <div class="modal-content">
+            <h2>Juego en Pausa</h2>
+            <p>¿Qué deseas hacer?</p>
+            <button id="resume-game" class="btn btn-primary">Continuar Partido</button>
+            <button id="quit-game" class="btn btn-secondary">Salir al Menú</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detectar si es un dispositivo táctil
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            // Elementos del DOM
+            const startScreen = document.getElementById('start-screen');
+            const gameScreen = document.getElementById('game-screen');
+            const resultsScreen = document.getElementById('results-screen');
+            const rulesModal = document.getElementById('rules-modal');
+            const pauseModal = document.getElementById('pause-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const startGameBtn = document.getElementById('start-game');
+            const startFromRulesBtn = document.getElementById('start-from-rules');
+            const playAgainBtn = document.getElementById('play-again');
+            const backToMenuBtn = document.getElementById('back-to-menu');
+            const pauseGameBtn = document.getElementById('pause-game');
+            const resumeGameBtn = document.getElementById('resume-game');
+            const quitGameBtn = document.getElementById('quit-game');
+            const currentLetterEl = document.getElementById('current-letter');
+            const questionEl = document.getElementById('question');
+            const timerEl = document.getElementById('timer');
+            const progressEl = document.getElementById('progress');
+            const answerInput = document.getElementById('answer-input');
+            const submitAnswerBtn = document.getElementById('submit-answer');
+            const scoreEl = document.getElementById('score');
+            const totalQuestionsEl = document.getElementById('total-questions');
+            const finalScoreEl = document.getElementById('final-score');
+            
+            // Variables del juego
+            let currentLetterIndex = 0;
+            let score = 0;
+            let timer;
+            let timeLeft;
+            let questions = [];
+            let gamePaused = false;
+            let firstTimePlaying = true;
+            
+            // Alfabeto
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            
+            // Preguntas de fútbol por letra
+            const questionsByLetter = {
+                'A': { pregunta: "Selección campeona del Mundial 2022", respuesta: "Argentina" },
+                'B': { pregunta: "Apodo del club español Real Betis", respuesta: "Beticos" },
+                'C': { pregunta: "Ganador del balón de Oro del año 2006", respuesta: "Cannavaro" },
+                'D': { pregunta: "Mejor jugador de la final de la UEFA Champions League del año 2004", respuesta: "Deco" },
+                'E': { pregunta: " Apellido del único jugador en la historia en ganar el triplete con dos clubes diferentes en dos temporadas consecutivas", respuesta: "Etoo" },
+                'F': { pregunta: "Apellido del jugador que ganó el Balón de Oro en el año 2000", respuesta: "Figo" },
+                'G': { pregunta: "Apodo del club de fútbol inglés Arsenal FC", respuesta: "Gunners" },
+                'H': { pregunta: "Leyenda histórica de la selección Rumana", respuesta: "Hagi" },
+                'I': { pregunta: "País sede del La copa del Mundo 1990", respuesta: "Italia" },
+                'J': { pregunta: "Equipo con más subcampeonatos de la UEFA Champions League", respuesta: "Juventus" },
+                'K': { pregunta: "Apellido del delantero que fue máximo goleador del Mundial 2006", respuesta: "Klose" },
+                'L': { pregunta: "Máximo goleador del Chelsea", respuesta: "Lampard" },
+                'M': { pregunta: "Equipo italiano conocido como 'Rossoneri'", respuesta: "Milan" },
+                'N': { pregunta: "Ganador del Premio Puskas al mejor gol del año 2011", respuesta: "Neymar" },
+                'O': { pregunta: "Apellido del portero mexicano que ha jugado cinco Copas del Mundo", respuesta: "Ochoa" },
+                'P': { pregunta: "Selección apodada 'Los Tulipanes'", respuesta: "Paises Bajos" },
+                'Q': { pregunta: "Equipo contra el que jugó el Manchester City en la última fecha de La Premier League en la temporada 2011/2012", respuesta: "QPR" },
+                'R': { pregunta: "Apellido del jugado ganador de la bota y balón de oro de la Copa Del Mundo 1982", respuesta: "Rossi" },
+                'S': { pregunta: "Ganador de la bota de oro de la Premier League en 04 ocasiones", respuesta: "Salah" },
+                'T': { pregunta: "Apellido del mediocampista italiano que anotó el gol decisivo en la final del Mundial 1982 contra Alemania", respuesta: "Tardelli" },
+                'U': { pregunta: "Selección campeona de los dos primeros Mundiales de fútbol", respuesta: "Uruguay" },
+                'V': { pregunta: "Ganador del balón de oro en 03 ocasiones", respuesta: "Van Basten" },
+                'W': { pregunta: "Legendario DT del Arsenal FC", respuesta: "Wenger" },
+                'X': { pregunta: "Jugador del Barcelona apodado 'Ilusionista'", respuesta: "Xavi" },
+                'Y': { pregunta: "Equipo 'Yellow Submarine' de LaLiga", respuesta: "Villarreal" },
+                'Z': { pregunta: "Jugador que anotó dos goles en la final del Mundial 1998", respuesta: "Zidane" }
+            };
+            
+            // Inicializar preguntas
+            function initQuestions() {
+                questions = [];
+                alphabet.forEach(letter => {
+                    if (questionsByLetter[letter]) {
+                        questions.push({
+                            letter: letter,
+                            question: questionsByLetter[letter].pregunta,
+                            answer: questionsByLetter[letter].respuesta.toLowerCase().trim()
+                        });
+                    }
+                });
+            }
+            
+            // Mostrar reglas solo la primera vez
+            function showRulesIfFirstTime() {
+                if (firstTimePlaying) {
+                    rulesModal.style.display = 'flex';
+                    firstTimePlaying = false;
+                } else {
+                    startGame();
+                }
+            }
+            
+            // Iniciar juego
+            function startGame() {
+                initQuestions();
+                currentLetterIndex = 0;
+                score = 0;
+                scoreEl.textContent = score;
+                startScreen.classList.remove('active');
+                gameScreen.classList.add('active');
+                rulesModal.style.display = 'none';
+                showQuestion();
+                
+                // Enfocar el input pero con un pequeño retraso para dispositivos móviles
+                setTimeout(() => {
+                    answerInput.focus();
+                }, 300);
+            }
+            
+            // Ajustar para teclado virtual en móviles
+            if (isTouchDevice) {
+                answerInput.addEventListener('focus', function() {
+                    document.body.classList.add('keyboard-visible');
+                });
+                
+                answerInput.addEventListener('blur', function() {
+                    document.body.classList.remove('keyboard-visible');
+                });
+            }
+            
+            startGameBtn.addEventListener('click', showRulesIfFirstTime);
+            startFromRulesBtn.addEventListener('click', startGame);
+            
+            // Pausar juego
+            pauseGameBtn.addEventListener('click', () => {
+                clearInterval(timer);
+                gamePaused = true;
+                pauseModal.style.display = 'flex';
+            });
+            
+            // Reanudar juego
+            resumeGameBtn.addEventListener('click', () => {
+                pauseModal.style.display = 'none';
+                gamePaused = false;
+                updateTimer();
+                timer = setInterval(updateTimer, 1000);
+                answerInput.focus();
+            });
+            
+            // Salir del juego
+            quitGameBtn.addEventListener('click', () => {
+                pauseModal.style.display = 'none';
+                gameScreen.classList.remove('active');
+                startScreen.classList.add('active');
+            });
+            
+            // Mostrar pregunta actual
+            function showQuestion() {
+                if (currentLetterIndex >= questions.length) {
+                    endGame();
+                    return;
+                }
+                
+                const currentQ = questions[currentLetterIndex];
+                currentLetterEl.textContent = currentQ.letter;
+                questionEl.textContent = currentQ.question;
+                answerInput.value = '';
+                
+                // Enfocar el input pero con un pequeño retraso para animaciones
+                setTimeout(() => {
+                    answerInput.focus();
+                }, 300);
+                
+                // Iniciar temporizador
+                timeLeft = 15;
+                timerEl.textContent = timeLeft;
+                progressEl.style.width = '100%';
+                
+                clearInterval(timer);
+                timer = setInterval(updateTimer, 1000);
+            }
+            
+            // Actualizar temporizador
+            function updateTimer() {
+                if (gamePaused) return;
+                
+                timeLeft--;
+                timerEl.textContent = timeLeft;
+                progressEl.style.width = (timeLeft / 15 * 100) + '%';
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }
+            
+            // Verificar respuesta
+            function checkAnswer() {
+                const userAnswer = answerInput.value.toLowerCase().trim();
+                const correctAnswer = questions[currentLetterIndex].answer;
+                
+                clearInterval(timer);
+                
+                if (userAnswer === correctAnswer) {
+                    score++;
+                    scoreEl.textContent = score;
+                    timerEl.textContent = "¡Gol!";
+                    timerEl.style.color = "var(--success)";
+                } else {
+                    timerEl.textContent = "Fuera";
+                    timerEl.style.color = "var(--danger)";
+                }
+                
+                setTimeout(nextQuestion, 1500);
+            }
+            
+            // Siguiente pregunta
+            function nextQuestion() {
+                currentLetterIndex++;
+                timerEl.style.color = "var(--accent)";
+                showQuestion();
+            }
+            
+            // Finalizar juego
+            function endGame() {
+                gameScreen.classList.remove('active');
+                resultsScreen.classList.add('active');
+                totalQuestionsEl.textContent = questions.length;
+                finalScoreEl.textContent = score;
+            }
+            
+            // Event listeners para dispositivos táctiles
+            if (isTouchDevice) {
+                // Aumentar área táctil de los botones
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.style.minHeight = '50px';
+                    btn.style.padding = '14px 25px';
+                });
+                
+                // Evitar zoom en inputs
+                answerInput.addEventListener('touchstart', function(e) {
+                    this.style.fontSize = '16px'; // Prevenir zoom en iOS
+                });
+            }
+            
+            // Event listeners
+            submitAnswerBtn.addEventListener('click', checkAnswer);
+            
+            answerInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+            
+            playAgainBtn.addEventListener('click', () => {
+                resultsScreen.classList.remove('active');
+                startGame();
+            });
+            
+            backToMenuBtn.addEventListener('click', () => {
+                resultsScreen.classList.remove('active');
+                startScreen.classList.add('active');
+            });
+            
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener('click', (e) => {
+                if (e.target === rulesModal) {
+                    rulesModal.style.display = 'none';
+                }
+                if (e.target === pauseModal) {
+                    pauseModal.style.display = 'none';
+                    gamePaused = false;
+                    updateTimer();
+                    timer = setInterval(updateTimer, 1000);
+                    answerInput.focus();
+                }
+            });
+            
+            // Soporte para gestos táctiles (opcional)
+            let touchStartY = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                touchStartY = e.changedTouches[0].screenY;
+            }, false);
+            
+            document.addEventListener('touchend', function(e) {
+                const touchEndY = e.changedTouches[0].screenY;
+                const diffY = touchEndY - touchStartY;
+                
+                // Deslizar hacia abajo para ocultar teclado
+                if (diffY > 100 && document.activeElement === answerInput) {
+                    answerInput.blur();
+                }
+            }, false);
+        });
+    </script>
+</body>
+</html>

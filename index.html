@@ -593,10 +593,30 @@
             <!-- NUEVO JUEGO: Música -->
             <div class="game-item" data-game="music">
                 <div class="game-badge">Nuevo</div>
-                <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&h=400&q=80" alt="Memoria Musical" class="game-cover">
+                <img src="img/musica-portada.png">
                 <div class="game-info">
                     <h3 class="game-title">Memoria Musical</h3>
                     <p class="game-desc">Entrena tu oído y memoria con secuencias musicales desafiantes.</p>
+                </div>
+            </div>
+            
+            <!-- NUEVO JUEGO: Quiz General -->
+            <div class="game-item" data-game="quiz">
+                <div class="game-badge">Nuevo</div>
+                <img src="img/cosmo-portada.png">
+                <div class="game-info">
+                    <h3 class="game-title">Quiz General</h3>
+                    <p class="game-desc">Pon a prueba tus conocimientos sobre diversos temas con este quiz de preguntas variadas.</p>
+                </div>
+            </div>
+            
+            <!-- NUEVO JUEGO: Quiz por Tema -->
+            <div class="game-item" data-game="quiz-tema">
+                <div class="game-badge">Nuevo</div>
+                <img src="img/quiz-portada.png">
+                <div class="game-info">
+                    <h3 class="game-title">Quiz por Tema</h3>
+                    <p class="game-desc">Elige tu tema favorito y responde preguntas específicas sobre ese tema.</p>
                 </div>
             </div>
         </div>
@@ -716,6 +736,14 @@
                     case 'music':
                         // Abrir juego de música
                         window.location.href = 'musica.html';
+                        break;
+                    case 'quiz':
+                        // Abrir juego Quiz General
+                        window.location.href = 'quiz.html';
+                        break;
+                    case 'quiz-tema':
+                        // Abrir juego Quiz por Tema
+                        window.location.href = 'quiz-tema.html';
                         break;
                 }
             });
